@@ -1,0 +1,13 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { VoiceToneGuidelines } from './VoiceToneGuidelines';
+
+<Meta title="Identity/Visual Assets/Voice & Tone" />
+
+<BrandPage
+  title="Voice & Tone"
+  crumbs={[{ label: 'Identity', href: '?path=/docs/identity-color--docs' }]}
+  intro="How Melio sounds in writing - the voice, the principles, and the house rules."
+  guidelines={<VoiceToneGuidelines />}
+  tabs={false}
+/>

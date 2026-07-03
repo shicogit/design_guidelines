@@ -1,0 +1,15 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { MotionGuidelines, MotionResources } from './MotionGuidelines';
+
+<Meta title="Identity/Visual Assets/Motion" />
+
+<BrandPage
+  title="Motion"
+  crumbs={[{ label: 'Identity', href: '?path=/docs/identity-color--docs' }]}
+  intro="How Melio moves - purpose, timing, easing, and choreography."
+  sections={[
+    { label: 'Guidelines', guidelines: <MotionGuidelines /> },
+    { label: 'Resources', guidelines: <MotionResources /> },
+  ]}
+/>

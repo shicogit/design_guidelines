@@ -1,0 +1,13 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { AccessibilityGuidelines } from './AccessibilityGuidelines';
+
+<Meta title="Standards/Accessibility" />
+
+<BrandPage
+  title="Accessibility"
+  crumbs={[{ label: 'Standards', href: '?path=/docs/standards-spacing-layout--docs' }]}
+  intro="The WCAG AA baseline every Melio surface should meet."
+  guidelines={<AccessibilityGuidelines />}
+  tabs={false}
+/>

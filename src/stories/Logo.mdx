@@ -1,0 +1,16 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { LogoGuidelines, LogoCoBranding, LogoResources } from './LogoGuidelines';
+
+<Meta title="Identity/Logo" />
+
+<BrandPage
+  title="Logo"
+  crumbs={[{ label: 'Identity', href: '?path=/docs/identity-color--docs' }]}
+  intro="How to properly use the Melio logo - its modes, colors, spacing, and the rules that keep it consistent."
+  sections={[
+    { label: 'melio', guidelines: <LogoGuidelines /> },
+    { label: 'Co-Branding', guidelines: <LogoCoBranding /> },
+    { label: 'Resources', guidelines: <LogoResources /> },
+  ]}
+/>

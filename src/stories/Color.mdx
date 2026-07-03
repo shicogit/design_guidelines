@@ -1,0 +1,15 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { ColorGuidelines, ColorResources } from './ColorGuidelines';
+
+<Meta title="Identity/Color" />
+
+<BrandPage
+  title="Color"
+  crumbs={[{ label: 'Identity', href: '?path=/docs/identity-color--docs' }]}
+  intro="Primary, neutral and secondary color palettes used within the Melio brand."
+  sections={[
+    { label: 'Guidelines', guidelines: <ColorGuidelines /> },
+    { label: 'Resources', guidelines: <ColorResources /> },
+  ]}
+/>

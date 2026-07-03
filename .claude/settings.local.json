@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api *)",
+      "mcp__fc66b37b-b74f-41bc-9149-fd6b75e7ead5__get_metadata",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

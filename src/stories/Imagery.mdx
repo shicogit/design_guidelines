@@ -1,0 +1,19 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { ImageryGuidelines, MelInImages, ImageryResources } from './ImageryGuidelines';
+
+<Meta title="Identity/Visual Assets/Imagery" />
+
+<BrandPage
+  title="Imagery"
+  crumbs={[
+    { label: 'Identity', href: '?path=/docs/identity-color--docs' },
+    { label: 'Visual Assets', href: '?path=/docs/identity-visual-assets-overview--docs' },
+  ]}
+  intro="Art direction and photography - how imagery is selected and treated across the Melio brand."
+  sections={[
+    { label: 'Guidelines', guidelines: <ImageryGuidelines /> },
+    { label: 'Mel in images', guidelines: <MelInImages /> },
+    { label: 'Resources', guidelines: <ImageryResources /> },
+  ]}
+/>
