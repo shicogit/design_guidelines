@@ -19,6 +19,20 @@ const TAG_STYLE: Record<Entry['tag'], { c: string; b: string }> = {
 
 const ENTRIES: Entry[] = [
   {
+    date: 'July 10, 2026',
+    title: 'Collaborators hub redesign',
+    tag: 'Update',
+    items: [
+      'Download cards: each asset type now shows a visual preview (Lottie, logo strip, color swatch, icon grid, illustration) instead of a pill button.',
+      'Color card: swatches are clickable mini cards - click to copy the hex value.',
+      '"How we work" steps redesigned: numbered (1, 2, 3) with the number stacked above the title, no circle badges.',
+      'All card descriptions trimmed to 2 lines max.',
+      'Removed "The non-negotiables", "Before you hand off", and "Questions & approvals" sections.',
+      'Partners illustration card now uses the local partners kit Lottie (accent recolored to partner brand).',
+      'Logo card footers always white, even on the dark (White logo) card.',
+    ],
+  },
+  {
     date: 'June 28, 2026',
     title: 'Site-wide visual alignment, Imagery, and Simplified UI',
     tag: 'Update',
@@ -110,7 +124,7 @@ export function ChangelogGuidelines() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0 28px', fontSize: 13, color: COLOR.muted }}>
         <DsIcon name="refresh-circle-outline" size={15} style={{ color: COLOR.muted }} />
         <span>
-          Reviewed daily. Last updated <Med>June 28, 2026</Med>.
+          Reviewed daily. Last updated <Med>July 10, 2026</Med>.
         </span>
       </div>
 
