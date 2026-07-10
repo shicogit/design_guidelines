@@ -16,7 +16,7 @@ const preview: Preview = {
             ['Overview', 'Illustrations', 'Icons', 'Motion', 'Simplified UI', 'Imagery', 'Agent Mel'],
           ],
           'Writing',
-          ['Voice & Tone'],
+          ['Brand Narrative', 'Voice & Tone'],
           'Standards',
           ['Spacing & Layout', 'Accessibility', 'Data Visualization'],
           'Marketing',

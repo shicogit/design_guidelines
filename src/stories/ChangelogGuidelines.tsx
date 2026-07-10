@@ -20,6 +20,16 @@ const TAG_STYLE: Record<Entry['tag'], { c: string; b: string }> = {
 const ENTRIES: Entry[] = [
   {
     date: 'July 10, 2026',
+    title: 'New "Writing" section',
+    tag: 'New',
+    items: [
+      'New top-level "Writing" section in the sidebar, styled like Identity.',
+      'Voice & Tone moved into Writing.',
+      'New "Brand Narrative" page, starting with the Principles section: mission, plus the why, what, and how behind it.',
+    ],
+  },
+  {
+    date: 'July 10, 2026',
     title: 'Collaborators hub redesign',
     tag: 'Update',
     items: [
