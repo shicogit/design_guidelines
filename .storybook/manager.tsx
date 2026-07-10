@@ -35,7 +35,7 @@ addons.register('melio/section-links', () => {
    collapse each group that doesn't contain the currently-selected page, so at most the group
    you deep-linked into stays open - and on Overview, all of them close. Runs once. */
 addons.register('melio/default-collapsed', () => {
-  const GROUPS = ['foundations', 'identity', 'standards'];
+  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
   setTimeout(() => {
     GROUPS.forEach((id) => {
       const root = document.getElementById(id);
@@ -51,7 +51,7 @@ addons.register('melio/default-collapsed', () => {
    Sidebar items are a flat list — group children are next-siblings of the heading div,
    not descendants. We click the first child item directly so Storybook handles routing. */
 addons.register('melio/section-navigate', () => {
-  const GROUPS = ['foundations', 'identity', 'standards'];
+  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement | null)?.closest?.('button[data-action="collapse-root"]') as HTMLElement | null;
     if (!btn) return;
@@ -82,7 +82,7 @@ addons.register('melio/section-navigate', () => {
 
 /* Accordion: opening one top-level group collapses the others, so only one is open at a time. */
 addons.register('melio/accordion', () => {
-  const GROUPS = ['foundations', 'identity', 'standards'];
+  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement | null)?.closest?.('button[data-action="collapse-root"]') as HTMLElement | null;
     if (!btn) return;
@@ -184,7 +184,7 @@ addons.register('melio/wip-labels', () => {
     'identity-visual-assets-motion--docs',
     'identity-visual-assets-simplified-ui--docs',
     'identity-visual-assets-imagery--docs',
-    'identity-visual-assets-voice-tone--docs',
+    'writing-voice-tone--docs',
   ];
   const PILL = 'display:inline-block;margin-left:6px;padding:1px 5px;font-size:10px;font-weight:600;line-height:1.5;border-radius:999px;background:#FEF9C3;color:#854D0E;border:1px solid #FDE047;vertical-align:middle;flex-shrink:0;font-family:inherit';
   const paint = () => {

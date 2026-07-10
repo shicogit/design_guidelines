@@ -115,7 +115,7 @@
 
     /* Drawer state: mark open group header + its children for CSS drawer styling */
     function updateDrawerState() {
-      var GROUPS = ['foundations', 'identity', 'standards'];
+      var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
       var BOTTOM = ['overview--docs', 'collaborators--docs', 'changelog--docs', 'penny-test--docs'];
       GROUPS.forEach(function(id) {
         var group = document.getElementById(id);
@@ -125,7 +125,7 @@
         group.classList.toggle('melio-open', expanded);
         var sib = group.nextElementSibling;
         while (sib) {
-          if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'standards') break;
+          if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'standards' || sib.id === 'writing') break;
           var itemId = sib.getAttribute('data-item-id') || '';
           if (BOTTOM.indexOf(itemId) !== -1) break;
           if (sib.classList.contains('sidebar-item')) sib.classList.toggle('melio-child', expanded);
@@ -175,17 +175,6 @@
     }
     setInterval(tagBottomItems, 400);
     setTimeout(tagBottomItems, 1000);
-
-    function applyVoiceToneDivider() {
-      var el = document.querySelector('.sidebar-item[data-item-id="identity-visual-assets-voice-tone--docs"]');
-      if (el) {
-        el.style.setProperty('border-bottom', '1px solid #ECECF1', 'important');
-        el.style.setProperty('margin-bottom', '4px', 'important');
-        el.style.setProperty('padding-bottom', '4px', 'important');
-      }
-    }
-    setInterval(applyVoiceToneDivider, 400);
-    setTimeout(applyVoiceToneDivider, 1000);
 
     setInterval(updateDrawerState, 400);
     setTimeout(updateDrawerState, 1000);
@@ -467,7 +456,8 @@
   #identity .sidebar-subheading-action,
   #identity-visual-assets .sidebar-subheading-action,
   #foundations .sidebar-subheading-action,
-  #standards .sidebar-subheading-action {
+  #standards .sidebar-subheading-action,
+  #writing .sidebar-subheading-action {
     display: none !important;
   }
 
@@ -488,13 +478,6 @@
     padding-left: 12px !important;
     border-top: none !important;
     border-bottom: 1px solid #D8DCE9 !important;
-  }
-
-  /* Divider below Voice & Tone */
-  .sidebar-item[data-item-id="identity-visual-assets-voice-tone--docs"] {
-    border-bottom: 1px solid #ECECF1 !important;
-    margin-bottom: 4px !important;
-    padding-bottom: 4px !important;
   }
 
   /* Penny Test: visually distinct "temporary/WIP" item at the very bottom */
@@ -607,7 +590,8 @@
      matching the Identity treatment.
      ========================================================= */
   #foundations > button[data-action="collapse-root"],
-  #standards > button[data-action="collapse-root"] {
+  #standards > button[data-action="collapse-root"],
+  #writing > button[data-action="collapse-root"] {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -631,30 +615,16 @@
     white-space: nowrap !important;
   }
   #foundations > button[data-action="collapse-root"]:hover,
-  #standards > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
-  /* hide the default icon/chevron wrapper, paint a clean DS icon as ::before */
+  #standards > button[data-action="collapse-root"]:hover,
+  #writing > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
+  /* hide the default icon/chevron wrapper */
   #foundations > button[data-action="collapse-root"] > div:first-child,
-  #standards > button[data-action="collapse-root"] > div:first-child { display: none !important; }
-  #foundations > button[data-action="collapse-root"]::before,
-  #standards > button[data-action="collapse-root"]::before {
-    content: '' !important;
-    display: block !important;
-    flex: 0 0 auto !important;
-    width: 18px !important;
-    height: 18px !important;
-    background-color: currentColor !important;
-  }
-  #foundations > button[data-action="collapse-root"]::before {
-    -webkit-mask: url('/sb-icons/foundations.svg') center / 18px 18px no-repeat;
-    mask: url('/sb-icons/foundations.svg') center / 18px 18px no-repeat;
-  }
-  #standards > button[data-action="collapse-root"]::before {
-    -webkit-mask: url('/sb-icons/standards.svg') center / 18px 18px no-repeat;
-    mask: url('/sb-icons/standards.svg') center / 18px 18px no-repeat;
-  }
-  /* Dividers above the Foundations and Standards groups (consistent with Identity) */
+  #standards > button[data-action="collapse-root"] > div:first-child,
+  #writing > button[data-action="collapse-root"] > div:first-child { display: none !important; }
+  /* Dividers above the Foundations, Standards, and Writing groups (consistent with Identity) */
   [data-item-id="foundations"],
-  [data-item-id="standards"] {
+  [data-item-id="standards"],
+  [data-item-id="writing"] {
     margin-top: 0 !important;
     padding-top: 0 !important;
     margin-left: -12px !important;
@@ -663,10 +633,11 @@
   }
 
   /* Right-aligned chevron on the collapsible group headers (Foundations, Identity,
-     Standards). Points right when collapsed, rotates down when the group is open. */
+     Standards, Writing). Points right when collapsed, rotates down when open. */
   #foundations > button[data-action="collapse-root"]::after,
   #identity > button[data-action="collapse-root"]::after,
-  #standards > button[data-action="collapse-root"]::after {
+  #standards > button[data-action="collapse-root"]::after,
+  #writing > button[data-action="collapse-root"]::after {
     content: '' !important;
     position: absolute !important;
     right: 14px !important;
@@ -683,7 +654,8 @@
   }
   #foundations > button[data-action="collapse-root"][aria-expanded="true"]::after,
   #identity > button[data-action="collapse-root"][aria-expanded="true"]::after,
-  #standards > button[data-action="collapse-root"][aria-expanded="true"]::after {
+  #standards > button[data-action="collapse-root"][aria-expanded="true"]::after,
+  #writing > button[data-action="collapse-root"][aria-expanded="true"]::after {
     transform: rotate(0deg) !important;
   }
 
@@ -698,6 +670,7 @@
   #identity > button[data-action="collapse-root"][data-melio-active]::before,
   #foundations > button[data-action="collapse-root"]::before,
   #standards > button[data-action="collapse-root"]::before,
+  #writing > button[data-action="collapse-root"]::before,
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
   .sidebar-item[data-item-id="collaborators--docs"][data-selected="true"] #collaborators--docs::before,
   .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs::before {
@@ -710,7 +683,8 @@
   #changelog--docs,
   #identity > button[data-action="collapse-root"],
   #foundations > button[data-action="collapse-root"],
-  #standards > button[data-action="collapse-root"] {
+  #standards > button[data-action="collapse-root"],
+  #writing > button[data-action="collapse-root"] {
     font-family: 'Poppins', sans-serif !important;
   }
 
