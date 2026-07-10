@@ -283,7 +283,8 @@
   #overview--docs,
   #collaborators--docs,
   #changelog--docs,
-  #identity > button[data-action="collapse-root"] {
+  #identity > button[data-action="collapse-root"],
+  #writing > button[data-action="collapse-root"] {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -311,7 +312,8 @@
   #overview--docs:hover,
   #collaborators--docs:hover,
   #changelog--docs:hover,
-  #identity > button[data-action="collapse-root"]:hover {
+  #identity > button[data-action="collapse-root"]:hover,
+  #writing > button[data-action="collapse-root"]:hover {
     background: #EBEFF2 !important;
   }
 
@@ -590,8 +592,7 @@
      matching the Identity treatment.
      ========================================================= */
   #foundations > button[data-action="collapse-root"],
-  #standards > button[data-action="collapse-root"],
-  #writing > button[data-action="collapse-root"] {
+  #standards > button[data-action="collapse-root"] {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -615,21 +616,34 @@
     white-space: nowrap !important;
   }
   #foundations > button[data-action="collapse-root"]:hover,
-  #standards > button[data-action="collapse-root"]:hover,
-  #writing > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
+  #standards > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
   /* hide the default icon/chevron wrapper */
   #foundations > button[data-action="collapse-root"] > div:first-child,
   #standards > button[data-action="collapse-root"] > div:first-child,
   #writing > button[data-action="collapse-root"] > div:first-child { display: none !important; }
-  /* Dividers above the Foundations, Standards, and Writing groups (consistent with Identity) */
+  /* Dividers above Foundations and Standards */
   [data-item-id="foundations"],
-  [data-item-id="standards"],
+  [data-item-id="standards"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: 1px solid #D8DCE9 !important;
+  }
+  /* Writing gets identity-level divider: top AND bottom border */
   [data-item-id="writing"] {
     margin-top: 0 !important;
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: 1px solid #D8DCE9 !important;
+    border-bottom: 1px solid #D8DCE9 !important;
+  }
+  /* Writing container: full width like Identity */
+  #writing {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+    margin-bottom: 0 !important;
   }
 
   /* Right-aligned chevron on the collapsible group headers (Foundations, Identity,
@@ -693,17 +707,24 @@
      Title button stays transparent - no bg or border.
      ========================================================= */
 
-  /* Divider between Identity/Foundations title and their children */
+  /* Divider between Identity/Foundations/Writing title and their children */
   #identity.melio-open,
-  #foundations.melio-open {
+  #foundations.melio-open,
+  #writing.melio-open {
     border-bottom: 1px solid #E2E8F0 !important;
     margin-bottom: 0 !important;
   }
 
   /* Open section header button: white (the grey section is below it) */
   #identity.melio-open > button[data-action="collapse-root"],
-  #foundations.melio-open > button[data-action="collapse-root"] {
+  #foundations.melio-open > button[data-action="collapse-root"],
+  #writing.melio-open > button[data-action="collapse-root"] {
     background: white !important;
+  }
+
+  /* Writing: child page open → text goes purple */
+  #writing:has(.sidebar-item[data-selected="true"]) > button[data-action="collapse-root"] {
+    color: #7849FF !important;
   }
 
   /* Items in open drawer: grey section background */
