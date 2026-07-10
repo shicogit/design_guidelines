@@ -182,7 +182,7 @@
       var writing = document.getElementById('writing');
       if (!writing) return;
 
-      /* Container: full-width band with top + bottom divider, same as #identity.
+      /* Container: full-width band, same box as #identity.
          The -12px left margin + 12px left padding + (100%+12px) width is what
          makes the band span edge-to-edge and align the text with Identity. */
       writing.style.setProperty('display', 'block', 'important');
@@ -193,8 +193,15 @@
       writing.style.setProperty('padding-top', '0', 'important');
       writing.style.setProperty('padding-bottom', '0', 'important');
       writing.style.setProperty('padding-left', '12px', 'important');
-      writing.style.setProperty('border-top', '1px solid #D8DCE9', 'important');
-      writing.style.setProperty('border-bottom', '1px solid #D8DCE9', 'important');
+      /* NO border-top: Writing stacks directly under Identity, whose border-bottom
+         already draws the single divider between them. A border-top here would
+         stack with Identity's border-bottom into a 2px "double divider".
+         (Same reason Collaborators/Changelog use border-top: none.) */
+      writing.style.setProperty('border-top', 'none', 'important');
+      /* border-bottom matches Identity: lighter #E2E8F0 when open (drawer divider),
+         darker #D8DCE9 when collapsed (section divider). */
+      var wOpen = writing.classList.contains('melio-open');
+      writing.style.setProperty('border-bottom', '1px solid ' + (wOpen ? '#E2E8F0' : '#D8DCE9'), 'important');
 
       /* Hide the expand-all button */
       var expandBtn = writing.querySelector('button[data-action="expand-all"]');
@@ -688,13 +695,14 @@
     padding-left: 12px !important;
     border-top: 1px solid #D8DCE9 !important;
   }
-  /* Writing gets identity-level divider: top AND bottom border */
+  /* Writing stacks under Identity: NO border-top (Identity's border-bottom is the
+     single divider between them), border-bottom only - like Collaborators/Changelog. */
   [data-item-id="writing"] {
     margin-top: 0 !important;
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #D8DCE9 !important;
+    border-top: none !important;
     border-bottom: 1px solid #D8DCE9 !important;
   }
   /* Writing container: full width like Identity */
