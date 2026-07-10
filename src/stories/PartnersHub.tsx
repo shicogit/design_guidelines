@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { FONT, COLOR, RADIUS, Body, Med, Lead, SectionTitle, InfoCard, Hero, DsIcon, DownloadIcon } from './brandKit';
 import { triggerDownload } from './downloadUtils';
 import { MelAnim, melioUrl } from './IllustrationsGuidelines';
@@ -7,9 +7,6 @@ import { MelAnim, melioUrl } from './IllustrationsGuidelines';
    marketing team: a short orientation, the non-negotiables, and every file to download
    in one place. */
 
-// Penny DS icon SVGs, collected by size (large = 24px, small = 16px).
-const iconLargeMods = import.meta.glob('../assets/icons/large/*.svg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const iconSmallMods = import.meta.glob('../assets/icons/small/*.svg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 
 // Melio product illustration Lottie files.
 const melioIllustMods = import.meta.glob('../assets/illustrations/melio/*.json', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
@@ -18,6 +15,8 @@ const partnersIllustMods = import.meta.glob('../assets/illustrations/partners/*.
 
 // Agent Mel MOV alpha files (for card button).
 const agentMelMovMods = import.meta.glob('../assets/agent-mel/*.mov', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const agentMelLottieMods = import.meta.glob('../assets/agent-mel/*.json', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const agentMelIconUrl = agentMelLottieMods['../assets/agent-mel/icon-thinking.json'];
 // Agent Mel _mov alpha deliverables (for download all zip).
 const agentMelAlphaMods = import.meta.glob('../assets/agent-mel/mov-alpha/*.mov', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 
@@ -228,6 +227,84 @@ function Check({ children }: { children: ReactNode }) {
   );
 }
 
+function MiniDownloadCard({
+  visual, label, count, onClick, href, download: dl, disabled, dark,
+}: {
+  visual: ReactNode; label: string; count?: number;
+  onClick?: () => void; href?: string; download?: string; disabled?: boolean; dark?: boolean;
+}) {
+  const [hov, setHov] = useState(false);
+  const borderColor = hov && !disabled ? COLOR.outline : COLOR.cardBorder;
+  const inner = (
+    <>
+      <div style={{
+        background: dark ? COLOR.ink : COLOR.panel,
+        height: 76,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+      }}>
+        {visual}
+      </div>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 5,
+        padding: '6px 9px',
+        borderTop: `1px solid ${COLOR.cardBorder}`,
+        background: COLOR.white,
+      }}>
+        <DsIcon name="download" size={13} style={{ color: COLOR.ink, flexShrink: 0 }} />
+        <span style={{ fontSize: 11, fontWeight: 500, flex: 1, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {label}
+        </span>
+        {count !== undefined && <CountPill count={count} />}
+      </div>
+    </>
+  );
+  const base: React.CSSProperties = {
+    borderRadius: 10, border: `1px solid ${borderColor}`, overflow: 'hidden',
+    cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
+    transition: 'border-color 120ms', display: 'block', textDecoration: 'none',
+    color: 'inherit', fontFamily: FONT, background: 'none', padding: 0,
+    width: '100%', textAlign: 'left' as const,
+  };
+  const evts = { onMouseEnter: () => setHov(true), onMouseLeave: () => setHov(false) };
+  if (onClick) return <button style={base as any} onClick={disabled ? undefined : onClick} {...evts}>{inner}</button>;
+  if (href) return <a href={href} download={dl} style={base} {...evts}>{inner}</a>;
+  return <div style={{ ...base, cursor: 'default' }}>{inner}</div>;
+}
+
+function MiniColorCard({ name, hex }: { name: string; hex: string }) {
+  const [copied, setCopied] = useState(false);
+  const [hov, setHov] = useState(false);
+  const isLight = hex.toUpperCase() === '#F6F8FE' || hex.toUpperCase() === '#EAEDFE' || hex.toUpperCase() === '#D8DEFE';
+  return (
+    <div
+      title="Click to copy hex"
+      onClick={() => { navigator.clipboard.writeText(hex).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }); }}
+      style={{
+        cursor: 'pointer',
+        borderRadius: 10,
+        overflow: 'hidden',
+        border: `1px solid ${hov ? COLOR.outline : COLOR.cardBorder}`,
+        transition: 'border-color 120ms',
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      <div style={{ height: 76, background: hex, borderBottom: isLight ? `1px solid ${COLOR.hairline}` : undefined }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 9px', borderTop: `1px solid ${COLOR.cardBorder}`, background: COLOR.white }}>
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0, color: COLOR.ink }}>
+          <rect x="5" y="1" width="9" height="11" rx="2" stroke="currentColor" strokeWidth="1.4" />
+          <path d="M3 5H2a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+        <span style={{ fontSize: 11, fontWeight: 500, flex: 1, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+        <span style={{ fontSize: 10, color: copied ? COLOR.purple : COLOR.muted, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{copied ? 'Copied!' : hex.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+}
+
+const SAMPLE_ICONS = ['home', 'settings', 'chat', 'get-started', 'search', 'notification'];
+
 const COLOR_TOKENS: { name: string; hex: string }[] = [
   { name: 'Primary / Purple', hex: COLOR.purple },
   { name: 'lilac-400', hex: COLOR.lilac400 },
@@ -240,6 +317,29 @@ const COLOR_TOKENS: { name: string; hex: string }[] = [
 export function PartnersHub() {
   const [kitState, setKitState] = useState<'idle' | 'busy' | 'error'>('idle');
   const [fontZipState, setFontZipState] = useState<Record<string, 'idle' | 'busy'>>({});
+
+  // Icon lists loaded from melio/penny on GitHub via Vite proxy.
+  // Keys use the path segment so path.split('/').pop() still yields the filename.
+  const [iconLargeMods, setIconLargeMods] = useState<Record<string, string>>({});
+  const [iconSmallMods, setIconSmallMods] = useState<Record<string, string>>({});
+  useEffect(() => {
+    fetch('/penny-gh/list/medium.json')
+      .then((r) => r.json() as Promise<string[]>)
+      .then((files) => {
+        const mods: Record<string, string> = {};
+        files.forEach((f) => { mods[`medium/${f}`] = `/penny-gh/raw/medium/${f}`; });
+        setIconLargeMods(mods);
+      })
+      .catch(console.error);
+    fetch('/penny-gh/list/small.json')
+      .then((r) => r.json() as Promise<string[]>)
+      .then((files) => {
+        const mods: Record<string, string> = {};
+        files.forEach((f) => { mods[`small/${f}`] = `/penny-gh/raw/small/${f}`; });
+        setIconSmallMods(mods);
+      })
+      .catch(console.error);
+  }, []);
 
   const downloadFontZip = async (id: string, zipName: string, files: FontFile[]) => {
     setFontZipState((s) => ({ ...s, [id]: 'busy' }));
@@ -279,6 +379,12 @@ export function PartnersHub() {
   };
 
   // Download everything: all font families, logos, illustrations, icons, and Agent Mel.
+  const downloadLogoColor = (color: string) => {
+    const mods: Record<string, string> = {};
+    LOGOS.filter((l) => l.color === color).forEach((l) => { mods[l.file] = l.url; });
+    downloadAssetZip(`logos-${color.toLowerCase()}`, `melio-logos-${color.toLowerCase()}.zip`, mods);
+  };
+
   const downloadStarterKit = async () => {
     setKitState('busy');
     try {
@@ -358,27 +464,18 @@ export function PartnersHub() {
 
       {/* How we work */}
       <SectionTitle sub="A few principles that keep partner work unmistakably Melio.">How we work</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-        <InfoCard
-          icon={<DsIcon name="get-started" size={16} style={{ color: COLOR.ink }} />}
-          label="Use what's here"
-          text="Build from the provided assets and tokens - don't recreate the logo, type, color, or Mel from scratch."
-        />
-        <InfoCard
-          icon={<DsIcon name="mel" size={16} style={{ color: COLOR.ink }} />}
-          label="Keep assets as-is"
-          text="Never redraw, recolor, stretch, or rotate the logo or the Mel mascot. Use the supplied files as-is."
-        />
-        <InfoCard
-          icon={<DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />}
-          label="Match type & color"
-          text="Set type in PolySans (or Poppins for product), and pull color from the exact hex tokens - no eyeballing."
-        />
-        <InfoCard
-          icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />}
-          label="Ask early"
-          text="When a brief is ambiguous or a use case isn't covered here, check with your Melio contact before producing."
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+        {([
+          { n: '1', label: "Use what's here", text: "Use the provided assets and tokens. Don't recreate from scratch." },
+          { n: '2', label: 'Keep assets as-is', text: 'Never redraw, recolor, or resize. Use the files exactly as supplied.' },
+          { n: '3', label: 'Match type & color', text: 'PolySans for marketing, Poppins for product. Use the exact hex tokens.' },
+        ] as const).map(({ n, label, text }) => (
+          <div key={n} style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '16px 18px' }}>
+            <div style={{ fontSize: 28, fontWeight: 600, color: COLOR.purple, fontFamily: FONT, lineHeight: 1, marginBottom: 8 }}>{n}</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: COLOR.ink, fontFamily: FONT, marginBottom: 4 }}>{label}</div>
+            <p style={{ fontSize: 13, color: COLOR.muted, fontFamily: FONT, margin: 0, lineHeight: 1.5 }}>{text}</p>
+          </div>
+        ))}
       </div>
 
       {/* Downloads hub */}
@@ -386,7 +483,7 @@ export function PartnersHub() {
         Files to download
       </SectionTitle>
 
-      <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, border: `1px solid ${COLOR.cardBorder}`, padding: '18px 18px 20px' }}>
+      <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '18px 18px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12 }}>
           <span style={{ fontSize: 13, color: COLOR.muted }}>Fonts, logos, color tokens, icons &amp; illustrations</span>
           <button
@@ -422,14 +519,14 @@ export function PartnersHub() {
         {/* Fonts */}
         <Card>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />
+            <DsIcon name="file" size={16} style={{ color: COLOR.ink }} />
             <div style={{ fontSize: 15, fontWeight: 600 }}>Fonts</div>
             <CountPill count={POLYSANS_FILES.length + MONO_FILES.length + WIDE_FILES.length} />
           </div>
           <Body style={{ margin: '0 0 12px' }}>
-            <Med>PolySans</Med> (marketing) as web fonts, and <Med>Poppins</Med> (product) from Google Fonts.
+            <Med>PolySans</Med> for marketing assets, <Med>Poppins</Med> for product (free on Google Fonts).
           </Body>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
             {([
               { id: 'polysans', label: 'PolySans', family: POLY, files: POLYSANS_FILES, zip: 'polysans.zip' },
               { id: 'mono', label: 'PolySans Mono', family: POLY_MONO, files: MONO_FILES, zip: 'polysans-mono.zip' },
@@ -437,14 +534,31 @@ export function PartnersHub() {
             ] as const).map(({ id, label, family, files, zip }) => {
               const busy = fontZipState[id] === 'busy';
               return (
-                <DownloadButton key={id} onClick={() => downloadFontZip(id, zip, files)} disabled={busy}>
-                  <span style={{ fontFamily: family, fontWeight: 400 }}>{busy ? 'Zipping…' : label}</span>
-                </DownloadButton>
+                <MiniDownloadCard
+                  key={id}
+                  label={busy ? 'Zipping…' : label}
+                  count={files.length}
+                  disabled={busy}
+                  onClick={() => downloadFontZip(id, zip, files)}
+                  visual={
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontFamily: family, fontWeight: 500, fontSize: 28, lineHeight: 1, color: COLOR.ink }}>Ag</div>
+                      <div style={{ fontFamily: family, fontWeight: 400, fontSize: 10, color: COLOR.muted, marginTop: 5 }}>Aa Bb Cc</div>
+                    </div>
+                  }
+                />
               );
             })}
-            <DownloadButton href="https://fonts.google.com/specimen/Poppins">
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400 }}>Poppins</span>
-            </DownloadButton>
+            <MiniDownloadCard
+              label="Poppins"
+              href="https://fonts.google.com/specimen/Poppins"
+              visual={
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 500, fontSize: 28, lineHeight: 1, color: COLOR.ink }}>Ag</div>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 10, color: COLOR.muted, marginTop: 5 }}>Aa Bb Cc</div>
+                </div>
+              }
+            />
           </div>
           <div style={{ marginTop: 12 }}>
             <PageLink id={PAGES.type}>Typography guidelines</PageLink>
@@ -458,23 +572,30 @@ export function PartnersHub() {
             <div style={{ fontSize: 15, fontWeight: 600 }}>Logos</div>
           </div>
           <Body style={{ margin: '0 0 14px' }}>
-            Every mode and color as PNG - click any logo to download it. Full rules live on the Logo page.
+            All modes and colors as PNG - click any to download. Full rules on the Logo page.
           </Body>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
             {COLOR_ORDER.map((color) => {
               const group = LOGOS.filter((l) => l.color === color);
               if (!group.length) return null;
+              const isDark = color === 'White';
+              const busy = fontZipState[`logos-${color.toLowerCase()}`] === 'busy';
               return (
-                <div key={color}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: COLOR.muted, marginBottom: 8 }}>{color}</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {group.map((l) => (
-                      <DownloadButton key={l.file} href={l.url} download={l.file} title={`${l.mode} - ${l.color}`} dark={l.color === 'White'}>
-                        <img src={l.url} alt={`${l.mode} ${l.color}`} style={{ height: 14, maxWidth: 56, objectFit: 'contain', display: 'block' }} />
-                      </DownloadButton>
-                    ))}
-                  </div>
-                </div>
+                <MiniDownloadCard
+                  key={color}
+                  label={busy ? 'Zipping…' : `${color}`}
+                  count={group.length}
+                  dark={isDark}
+                  disabled={busy}
+                  onClick={() => downloadLogoColor(color)}
+                  visual={
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 5, padding: 8 }}>
+                      {group.map((l) => (
+                        <img key={l.file} src={l.url} alt={l.mode} style={{ height: 11, maxWidth: 38, objectFit: 'contain' }} />
+                      ))}
+                    </div>
+                  }
+                />
               );
             })}
           </div>
@@ -489,23 +610,10 @@ export function PartnersHub() {
             <DsIcon name="light-sun" size={16} style={{ color: COLOR.ink }} />
             <div style={{ fontSize: 15, fontWeight: 600 }}>Color</div>
           </div>
-          <Body style={{ margin: '0 0 12px' }}>The core palette - use these exact values.</Body>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Body style={{ margin: '0 0 12px' }}>Exact hex values only - no eyeballing. Click any swatch to copy.</Body>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
             {COLOR_TOKENS.map((c) => (
-              <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: 6,
-                    background: c.hex,
-                    border: `1px solid ${COLOR.hairline}`,
-                    flex: '0 0 auto',
-                  }}
-                />
-                <span style={{ fontSize: 13, color: COLOR.body, flex: 1 }}>{c.name}</span>
-                <CopyHex hex={c.hex} />
-              </div>
+              <MiniColorCard key={c.name} name={c.name} hex={c.hex} />
             ))}
           </div>
           <div style={{ marginTop: 12 }}>
@@ -521,24 +629,28 @@ export function PartnersHub() {
             <CountPill count={Object.keys(melioIllustMods).length} />
           </div>
           <Body style={{ margin: '0 0 12px' }}>
-            The full illustration kit (Lottie, SVG, PNG, GIF). Download the product kit below, or get all formats from the Illustrations page.
+            Melio kit (with Mel) and Partners kit (recolored to your brand). Lottie, SVG, PNG, or GIF.
           </Body>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-            <DownloadButton
-              onClick={() => downloadAssetZip('illustrationsProduct', 'melio-product-illustrations.zip', melioIllustMods)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8, marginBottom: 12 }}>
+            <MiniDownloadCard
+              label={fontZipState['illustrationsProduct'] === 'busy' ? 'Zipping…' : 'Melio product kit'}
+              count={Object.keys(melioIllustMods).length}
               disabled={fontZipState['illustrationsProduct'] === 'busy'}
-            >
-              {fontZipState['illustrationsProduct'] === 'busy' ? 'Zipping...' : 'Melio product kit'}
-            </DownloadButton>
-            <DownloadButton
-              onClick={() => downloadAssetZip('illustrationsPartners', 'partners-product-illustrations.zip', partnersIllustMods)}
+              onClick={() => downloadAssetZip('illustrationsProduct', 'melio-product-illustrations.zip', melioIllustMods)}
+              visual={<MelAnim url={melioUrl('money-success')} size={64} />}
+            />
+            <MiniDownloadCard
+              label={fontZipState['illustrationsPartners'] === 'busy' ? 'Zipping…' : 'Partners product kit'}
+              count={Object.keys(partnersIllustMods).length}
               disabled={fontZipState['illustrationsPartners'] === 'busy'}
-            >
-              {fontZipState['illustrationsPartners'] === 'busy' ? 'Zipping...' : 'Partners product kit'}
-            </DownloadButton>
-            <DownloadButton disabled>
-              Mel illustrations
-            </DownloadButton>
+              onClick={() => downloadAssetZip('illustrationsPartners', 'partners-product-illustrations.zip', partnersIllustMods)}
+              visual={<MelAnim url={partnersIllustMods['../assets/illustrations/partners/announce.json']} size={64} />}
+            />
+            <MiniDownloadCard
+              label="Mel illustrations"
+              disabled
+              visual={<img src="/src/assets/guidelines/illustrations/01_This%20is%20Mel.png" alt="Mel" style={{ height: 68, objectFit: 'contain' }} />}
+            />
           </div>
           <PageLink id={PAGES.illustrations}>Open the illustration kit</PageLink>
         </Card>
@@ -551,21 +663,31 @@ export function PartnersHub() {
             <CountPill count={Object.keys(iconLargeMods).length} />
           </div>
           <Body style={{ margin: '0 0 12px' }}>
-            The Penny icon set. Bulk SVG zips below, or download individual icons from the gallery.
+            Penny - Melio's 340-icon set at 16px and 24px. Download SVG zips or browse the gallery.
           </Body>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-            <DownloadButton
-              onClick={() => downloadAssetZip('icons24', 'penny-icons-24px.zip', iconLargeMods)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8, marginBottom: 12 }}>
+            <MiniDownloadCard
+              label={fontZipState['icons24'] === 'busy' ? 'Zipping…' : 'Medium · 24px'}
+              count={Object.keys(iconLargeMods).length}
               disabled={fontZipState['icons24'] === 'busy'}
-            >
-              {fontZipState['icons24'] === 'busy' ? 'Zipping...' : 'Medium · 24px'}
-            </DownloadButton>
-            <DownloadButton
-              onClick={() => downloadAssetZip('icons16', 'penny-icons-16px.zip', iconSmallMods)}
+              onClick={() => downloadAssetZip('icons24', 'penny-icons-24px.zip', iconLargeMods)}
+              visual={
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, padding: 4 }}>
+                  {SAMPLE_ICONS.map((n) => <DsIcon key={n} name={n} size={20} style={{ color: COLOR.ink }} />)}
+                </div>
+              }
+            />
+            <MiniDownloadCard
+              label={fontZipState['icons16'] === 'busy' ? 'Zipping…' : 'Small · 16px'}
+              count={Object.keys(iconSmallMods).length}
               disabled={fontZipState['icons16'] === 'busy'}
-            >
-              {fontZipState['icons16'] === 'busy' ? 'Zipping...' : 'Small · 16px'}
-            </DownloadButton>
+              onClick={() => downloadAssetZip('icons16', 'penny-icons-16px.zip', iconSmallMods)}
+              visual={
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, padding: 4 }}>
+                  {SAMPLE_ICONS.map((n) => <DsIcon key={n} name={n} size={14} style={{ color: COLOR.ink }} />)}
+                </div>
+              }
+            />
           </div>
           <PageLink id={PAGES.icons}>Open the icon gallery</PageLink>
         </Card>
@@ -573,98 +695,31 @@ export function PartnersHub() {
         {/* Agent Mel */}
         <Card>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <DsIcon name="agent-mel" size={16} style={{ color: COLOR.ink }} />
+            <DsIcon name="mel" size={16} style={{ color: COLOR.ink }} />
             <div style={{ fontSize: 15, fontWeight: 600 }}>Agent Mel</div>
           </div>
           <Body style={{ margin: '0 0 12px' }}>
-            Melio's AI agent. Read the usage rules before placing Agent Mel anywhere.
+            Melio's AI agent character - distinct from the Mel mascot. Read the usage rules before placing.
           </Body>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-            <DownloadButton
-              onClick={() => downloadAssetZip('agentMelMov', 'agent-mel-mov-alpha.zip', agentMelMovMods)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8, marginBottom: 12 }}>
+            <MiniDownloadCard
+              label={fontZipState['agentMelMov'] === 'busy' ? 'Zipping…' : 'Motion assets'}
+              count={Object.keys(agentMelMovMods).length}
               disabled={fontZipState['agentMelMov'] === 'busy'}
-            >
-              {fontZipState['agentMelMov'] === 'busy' ? 'Zipping...' : 'Motion assets'}
-            </DownloadButton>
+              onClick={() => downloadAssetZip('agentMelMov', 'agent-mel-mov-alpha.zip', agentMelMovMods)}
+              visual={
+                <div style={{ textAlign: 'center' }}>
+                  <MelAnim url={agentMelIconUrl} size={52} />
+                  <div style={{ fontSize: 10, color: COLOR.muted, marginTop: 3, fontFamily: FONT }}>MOV · Alpha</div>
+                </div>
+              }
+            />
           </div>
           <PageLink id={PAGES.agentMel}>Agent Mel guidelines</PageLink>
         </Card>
         </div>
       </div>
 
-      {/* Do / Don't */}
-      <SectionTitle>The non-negotiables</SectionTitle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {([
-          { ok: true,  text: 'Use the supplied logos, fonts, icons, and illustrations.' },
-          { ok: false, text: 'Redraw, recolor, or distort the logo or Mel.' },
-          { ok: true,  text: 'Pull color from the hex tokens - no eyeballing.' },
-          { ok: false, text: 'Add colors outside the palette.' },
-          { ok: true,  text: 'Keep generous clear space around the logo.' },
-          { ok: false, text: 'Mix icons, illustrations, and mocks in one container.' },
-          { ok: true,  text: 'Export at the right format and resolution for the channel.' },
-          { ok: false, text: 'Use off-brand stock fonts or clip-art.' },
-        ] as const).map(({ ok, text }, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 10,
-              background: ok ? '#F2FAF5' : '#FEF4F4',
-              border: `1px solid ${ok ? '#D4EDDA' : '#FAD4D4'}`,
-              borderRadius: RADIUS.md,
-              padding: '12px 14px',
-            }}
-          >
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 18,
-                height: 18,
-                borderRadius: 999,
-                background: ok ? '#E7F6EC' : '#FDE8E8',
-                color: ok ? '#1F9254' : '#D64545',
-                flexShrink: 0,
-                marginTop: 1,
-              }}
-            >
-              <DsIcon name={ok ? 'checked' : 'close'} size={12} />
-            </span>
-            <span style={{ fontSize: 14, lineHeight: 1.5, color: COLOR.body }}>{text}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Pre-delivery checklist */}
-      <SectionTitle sub="A quick self-check before you send work back.">Before you hand off</SectionTitle>
-      <Card style={{ background: COLOR.lilac100, border: `1px solid ${COLOR.lilac300}` }}>
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-          <Check>Logo and Mel are the supplied files - untouched, with clear space.</Check>
-          <Check>Every color matches a hex token from the palette.</Check>
-          <Check>Type is PolySans (or Poppins for product), no substitutes.</Check>
-          <Check>Icons and illustrations come from the kit, not mixed in one container.</Check>
-          <Check>Files are exported at the right format and resolution for the channel.</Check>
-          <Check>Anything not covered here was confirmed with your Melio contact.</Check>
-        </ul>
-      </Card>
-
-      {/* Questions & approvals */}
-      <SectionTitle sub="When something isn't covered here, or you need sign-off.">Questions &amp; approvals</SectionTitle>
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />
-          <div style={{ fontSize: 15, fontWeight: 600 }}>Your Melio contact</div>
-        </div>
-        <Body style={{ margin: 0 }}>
-          Reach out to the marketing team member who briefed you for questions, edge cases, and final approval before
-          anything ships.{' '}
-          <span style={{ color: COLOR.faint }}>[Add the team contact / Slack channel / email here.]</span>
-        </Body>
-      </Card>
     </div>
   );
 }

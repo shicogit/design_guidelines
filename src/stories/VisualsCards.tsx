@@ -1,3 +1,5 @@
+import { FONT } from './brandKit';
+
 const CARD_BG = '#FFFFFF';
 const CARD_BORDER = '#E5E5EA';
 
@@ -49,7 +51,7 @@ export function VisualsCards() {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
         gap: 20,
-        fontFamily: '"Poppins", sans-serif',
+        fontFamily: FONT,
       }}
     >
       {CARDS.map((c) => (

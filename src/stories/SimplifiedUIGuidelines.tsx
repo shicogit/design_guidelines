@@ -57,7 +57,7 @@ export function SimplifiedUIGuidelines() {
         <InfoCard icon={<DsIcon name="checked" size={16} style={{ color: COLOR.ink }} />} label="Success & confirmation" text="When celebrating an action (payment sent, invoice received), the checkmark and amount are all that need to be there." />
         <InfoCard icon={<DsIcon name="shield-check" size={16} style={{ color: COLOR.ink }} />} label="Error and recovery" text="In an error state, simplify to the message and the recovery action. Remove anything that isn't directly solving the problem." />
         <InfoCard icon={<DsIcon name="promote" size={16} style={{ color: COLOR.ink }} />} label="Marketing and ads" text="When a product interface appears in a campaign, strip it to just the feature being promoted. The audience processes it in seconds." />
-        <InfoCard icon={<DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />} label="Documentation" text="Step-by-step guides need clean callouts. Highlighting one area in a dense UI means everything else competes for attention." />
+        <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Documentation" text="Step-by-step guides need clean callouts. Highlighting one area in a dense UI means everything else competes for attention." />
       </div>
 
       <SectionTitle sub="Reduced UI in context - only the elements that matter for the specific moment.">Examples</SectionTitle>
@@ -98,6 +98,12 @@ export function SimplifiedUIGuidelines() {
 export function SimplifiedUIResources() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Simplified UI kit"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>The Mini Mock library for quick UI mockups - app chrome, cards, buttons, and input states.</Lead>
+      </Hero>
       <ResourceFooter
         title="Simplified UI kit"
         body={<>The Mini Mock library lives in DS Foundations under the Simplified UI frame - includes app chrome, cards, buttons, and input states. <Med>To request new components</Med> or report inconsistencies, reach out to the design team.</>}

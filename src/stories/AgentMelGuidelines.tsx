@@ -90,33 +90,34 @@ function AgentAnim({
   return <div ref={box} style={{ width: width ?? size, height: height ?? size }} />;
 }
 
-// A lilac tile holding one animation (its own container).
-function Tile({ children, w, h }: { children: ReactNode; w: number; h: number }) {
-  return (
-    <div style={{ flex: '0 0 auto', width: w, height: h, display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLOR.lilac100, borderRadius: RADIUS.lg }}>
-      {children}
-    </div>
-  );
-}
-
-/** A standalone feature: a large visual (Rive component or product mock) beside its explanation. */
-function FeatureRow({
+function SplitRow({
   visual,
   title,
-  text,
-  align = 'center',
+  body,
+  noDivider,
 }: {
   visual: ReactNode;
   title: string;
-  text: ReactNode;
-  align?: 'center' | 'flex-start';
+  body: ReactNode;
+  noDivider?: boolean;
 }) {
   return (
-    <div style={{ display: 'flex', gap: 20, alignItems: align, flexWrap: 'wrap', margin: '0 0 14px' }}>
-      {visual}
-      <div style={{ flex: '1 1 260px', minWidth: 0 }}>
-        <div style={{ fontSize: 16, fontWeight: 600, color: COLOR.ink, marginBottom: 4 }}>{title}</div>
-        <Body style={{ margin: 0 }}>{text}</Body>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 190px',
+        gap: 36,
+        padding: '36px 0',
+        borderTop: noDivider ? undefined : `1px solid ${COLOR.hairline}`,
+        alignItems: 'start',
+      }}
+    >
+      <div>{visual}</div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>
+          {title}
+        </h3>
+        <div style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65 }}>{body}</div>
       </div>
     </div>
   );
@@ -167,48 +168,48 @@ export function AgentMelGuidelines() {
         </Lead>
       </Hero>
 
-      <SectionTitle sub="A quick look at Agent Mel in motion, across its states.">A first look</SectionTitle>
-      <VideoClip src={demoUrl} />
+      <SplitRow
+        visual={<VideoClip src={demoUrl} />}
+        title="A first look"
+        body="A quick look at Agent Mel in motion, across its states."
+      />
 
-      <SectionTitle sub="Mel, reshaped for AI - a technologic, app-like squircle, fused with the spark.">
-        From mascot to AI agent
-      </SectionTitle>
-      <FeatureRow
-        align="flex-start"
+      <SplitRow
         visual={
-          <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 88, height: 88, borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.lilac100 }}>
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+            <div style={{ width: 130, height: 130, borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.white }}>
               {MEL_MASCOT
                 ? <img src={MEL_MASCOT} alt="Mel mascot" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><DsIcon name="image-add" size={24} style={{ color: COLOR.faint }} /></div>
               }
             </div>
-            <DsIcon name="arrow right" size={22} style={{ color: COLOR.muted }} />
-            <div style={{ width: 88, height: 88 }}>
+            <DsIcon name="arrow right" size={24} style={{ color: COLOR.muted }} />
+            <div style={{ width: 130, height: 130 }}>
               <AgentAnim url={agentUrl('blink')} width="100%" height="100%" still />
             </div>
           </div>
         }
         title="From mascot to squircle"
-        text="We took Mel, Melio's mascot, and reshaped it into a technologic, app-like squircle - a friendly, robot-ish form that feels at home inside an interface."
+        body="We took Mel, Melio's mascot, and reshaped it into a technologic, app-like squircle - a friendly, robot-ish form that feels at home inside an interface."
       />
-      <FeatureRow
-        align="flex-start"
+
+      <SplitRow
+        noDivider
         visual={
-          <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 88, height: 88 }}>
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+            <div style={{ width: 130, height: 130 }}>
               <AgentAnim url={agentUrl('blink')} width="100%" height="100%" />
             </div>
-            <DsIcon name="add" size={22} style={{ color: COLOR.muted }} />
-            <div style={{ width: 88, height: 88, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 68, height: 68 }}>
+            <DsIcon name="add" size={24} style={{ color: COLOR.muted }} />
+            <div style={{ width: 130, height: 130, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 100, height: 100 }}>
                 <AgentAnim url={agentUrl('spark-standalone')} width="100%" height="100%" />
               </div>
             </div>
           </div>
         }
         title="Fused with the spark"
-        text={
+        body={
           <>
             Then we fused it with the well-known <Med>spark</Med> and its magic touch, in Melio's brand colors - the
             result is <Med>Agent Mel</Med>: a recognizable face for AI that's unmistakably Melio.
@@ -216,80 +217,108 @@ export function AgentMelGuidelines() {
         }
       />
 
-      <SectionTitle>Vision &amp; purpose</SectionTitle>
-      <Body>
-        Humanize digital interactions - make the agent feel like a <Med>helpful companion</Med> rather than faceless
-        technology, while reinforcing Melio's brand identity. It's a recognizable face for the AI, not a generic spark.
-      </Body>
-
-      <SectionTitle sub="A small repertoire of states and expressions keeps Agent Mel feeling alive and responsive.">
-        Expressions &amp; states
-      </SectionTitle>
-      <div style={{ background: COLOR.lilac100, borderRadius: RADIUS.lg, padding: '12px 20px 20px', display: 'flex', gap: 8, justifyContent: 'center' }}>
-        {([['blink', 'Blink'], ['look', 'Look'], ['yes', 'Yes'], ['no', 'No'], ['yay', 'Yay'], ['shock', 'Shock'], ['voice-listening', 'Listening']] as [string, string][]).map(([n, l]) => (
-          <div key={n} style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: '100%', maxWidth: 132, aspectRatio: '1 / 1' }}>
-              <AgentAnim url={agentUrl(n)} width="100%" height="100%" />
-            </div>
-            <span style={{ fontSize: 12, color: COLOR.muted, marginTop: -10 }}>{l}</span>
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AgentAnim url={agentUrl('yay')} size={160} />
           </div>
-        ))}
-      </div>
-
-      <SectionTitle>Tone &amp; personality</SectionTitle>
-      <Body>Warm, approachable, and subtly playful - always active and engaged, the way a person responds in conversation.</Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
-        <InfoCard icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />} label="Tone" text="Friendly, empathetic, encouraging." />
-        <InfoCard icon={<DsIcon name="play-circle-outline" size={16} style={{ color: COLOR.ink }} />} label="Behavior" text="Always present, never static." />
-        <InfoCard icon={<DsIcon name="heart" size={16} style={{ color: COLOR.ink }} />} label="Emotion" text="Light and approachable - but never childish." />
-      </div>
-
-      <SectionTitle sub="Agent Mel morphs to communicate what it's doing - never a fixed icon.">
-        Motion is the core principle
-      </SectionTitle>
-      <FeatureRow
-        visual={<Tile w={264} h={210}><AgentAnim url={agentUrl('icon-button-hover')} size={112} /></Tile>}
-        title="The interactive icon button"
-        text="Agent Mel's icon button morphs as you interact with it. The looping preview here is a Lottie export of that motion."
+        }
+        title="Vision & purpose"
+        body={
+          <>
+            Humanize digital interactions - make the agent feel like a <Med>helpful companion</Med> rather than faceless
+            technology, while reinforcing Melio's brand identity. A recognizable face for the AI, not a generic spark.
+          </>
+        }
       />
 
-      <SectionTitle sub="Where you'll meet Agent Mel inside Melio - woven into real moments like the toolbar and loading states.">
-        In the product
-      </SectionTitle>
-      <FeatureRow
-        visual={<Tile w={400} h={210}><AgentAnim url={agentUrl('menu-icon-button')} width={340} height={158} /></Tile>}
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: '12px 16px 16px', display: 'flex', gap: 8, justifyContent: 'center' }}>
+            {([['blink', 'Blink'], ['look', 'Look'], ['yes', 'Yes'], ['no', 'No'], ['yay', 'Yay'], ['shock', 'Shock'], ['voice-listening', 'Listening']] as [string, string][]).map(([n, l]) => (
+              <div key={n} style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ width: '100%', maxWidth: 100, aspectRatio: '1 / 1' }}>
+                  <AgentAnim url={agentUrl(n)} width="100%" height="100%" />
+                </div>
+                <span style={{ fontSize: 11, color: COLOR.muted, marginTop: -8 }}>{l}</span>
+              </div>
+            ))}
+          </div>
+        }
+        title="Expressions & states"
+        body="A small repertoire of states and expressions keeps Agent Mel feeling alive and responsive."
+      />
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16, display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+            <InfoCard icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />} label="Tone" text="Friendly, empathetic, encouraging." />
+            <InfoCard icon={<DsIcon name="play-circle-outline" size={16} style={{ color: COLOR.ink }} />} label="Behavior" text="Always present, never static." />
+            <InfoCard icon={<DsIcon name="heart" size={16} style={{ color: COLOR.ink }} />} label="Emotion" text="Light and approachable - but never childish." />
+          </div>
+        }
+        title="Tone & personality"
+        body="Warm, approachable, and subtly playful - always active and engaged, the way a person responds in conversation."
+      />
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AgentAnim url={agentUrl('icon-button-hover')} size={112} />
+          </div>
+        }
+        title="Motion is the core"
+        body="Agent Mel morphs to communicate what it's doing - never a fixed icon. The interactive icon button morphs as you interact with it."
+      />
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AgentAnim url={agentUrl('menu-icon-button')} width={340} height={158} />
+          </div>
+        }
         title="Menu entry point"
-        text="In the toolbar, Agent Mel sits among the actions as a tappable menu icon - the way in to start a conversation."
-      />
-      <FeatureRow
-        visual={<Tile w={400} h={210}><AgentAnim url={agentUrl('loader')} width={300} height={90} /></Tile>}
-        title="Loading state"
-        text={`While the agent works, a loading state keeps it present and reassuring - e.g. "Looking up the latest data...".`}
+        body="In the toolbar, Agent Mel sits among the actions as a tappable menu icon - the way in to start a conversation."
       />
 
-      <SectionTitle sub={`The purple spark is the anchor of Mel's transformations - the "magic" of AI, always tied back to Mel as a character rather than an abstract effect.`}>
-        The purple spark
-      </SectionTitle>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-        {([['spark', 'Spark'], ['chat', 'Chat'], ['scan', 'Scan'], ['search', 'Search']] as [string, string][]).map(([n, l], i) => (
-          <div key={n} style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: '100%', maxWidth: 160, aspectRatio: '1 / 1' }}>
-              <AgentAnim url={agentUrl(n)} width="100%" height="100%" delay={i * 400} />
-            </div>
-            <span style={{ fontSize: 12, color: COLOR.muted }}>{l}</span>
+      <SplitRow
+        noDivider
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AgentAnim url={agentUrl('loader')} width={300} height={90} />
           </div>
-        ))}
-      </div>
+        }
+        title="Loading state"
+        body={`While the agent works, a loading state keeps it present and reassuring - e.g. "Looking up the latest data...".`}
+      />
 
-      <SectionTitle sub="In the product the button isn't a fixed clip - it's a live Rive component, driven by a state machine that reacts to hover and press in real time.">
-        Built in Rive
-      </SectionTitle>
-      <Body>
-        Unlike the Lottie previews elsewhere on this page, the production icon button is a real-time <Med>Rive</Med>{' '}
-        <Med>state machine</Med> - it follows interaction rather than playing a fixed timeline. Below is the actual state
-        machine reacting to input.
-      </Body>
-      <VideoClip src={riveUrl} />
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.lilac100, borderRadius: 15, padding: '12px 16px 16px', display: 'flex', gap: 8, justifyContent: 'center' }}>
+            {([['spark', 'Spark'], ['chat', 'Chat'], ['scan', 'Scan'], ['search', 'Search']] as [string, string][]).map(([n, l], i) => (
+              <div key={n} style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                <div style={{ width: '100%', maxWidth: 140, aspectRatio: '1 / 1' }}>
+                  <AgentAnim url={agentUrl(n)} width="100%" height="100%" delay={i * 400} />
+                </div>
+                <span style={{ fontSize: 12, color: COLOR.muted }}>{l}</span>
+              </div>
+            ))}
+          </div>
+        }
+        title="The purple spark"
+        body="The purple spark is the anchor of Mel's transformations - the magic of AI, always tied back to Mel as a character rather than an abstract effect."
+      />
+
+      <SplitRow
+        visual={<VideoClip src={riveUrl} />}
+        title="Built in Rive"
+        body={
+          <>
+            Unlike the Lottie previews elsewhere on this page, the production icon button is a real-time <Med>Rive</Med>{' '}
+            <Med>state machine</Med> - it follows interaction rather than playing a fixed timeline.
+          </>
+        }
+      />
     </div>
   );
 }
@@ -449,6 +478,12 @@ export function AgentMelResources() {
 
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Agent Mel animations"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Lottie JSON files for all Agent Mel states - ready to drop into any product surface.</Lead>
+      </Hero>
       <DownloadAllBanner
         count={ALL_ANIM_FILES.length}
         format=".zip (JSON)"

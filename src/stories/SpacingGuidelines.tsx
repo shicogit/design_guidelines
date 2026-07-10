@@ -76,7 +76,7 @@ export function SpacingGuidelines() {
       <SectionTitle sub="A few habits that keep layouts tidy.">Layout</SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
         <InfoCard icon={<DsIcon name="checked" size={16} style={{ color: COLOR.ink }} />} label="Give it room" text="Generous whitespace is on-brand. When unsure, add space rather than remove it." />
-        <InfoCard icon={<DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />} label="Keep a max width" text="Cap long text columns so lines stay readable - around 60-75 characters." />
+        <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Keep a max width" text="Cap long text columns so lines stay readable - around 60-75 characters." />
         <InfoCard icon={<DsIcon name="get-started" size={16} style={{ color: COLOR.ink }} />} label="Align to the grid" text="Line edges up. Consistent alignment does more for polish than any single element." />
         <InfoCard icon={<DsIcon name="close" size={16} style={{ color: COLOR.ink }} />} label="No arbitrary values" text="Avoid one-off numbers like 13px or 27px. Pull from the scale so spacing stays consistent." />
       </div>

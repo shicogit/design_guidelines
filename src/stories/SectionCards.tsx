@@ -86,15 +86,6 @@ const CARDS: Card[] = [
 export function SectionCards() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
-      <div style={{ fontSize: 22, fontWeight: 600, margin: '4px 0 8px' }}>What &amp; why</div>
-      <Lead style={{ maxWidth: 760, margin: '0 0 8px' }}>
-        The brand elements chapter introduces the core elements that make up the Melio brand - the essentials that
-        create Melio's complete visual vocabulary.
-      </Lead>
-      <Lead style={{ maxWidth: 760, margin: '0 0 24px' }}>
-        The guidelines keep us consistent in how we share Melio's story and values visually.
-      </Lead>
-      <div style={{ fontSize: 22, fontWeight: 600, margin: '0 0 12px' }}>Get started</div>
       <div
         style={{
           display: 'grid',

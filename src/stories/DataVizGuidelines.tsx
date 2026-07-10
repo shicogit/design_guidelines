@@ -72,7 +72,7 @@ export function DataVizGuidelines() {
       <SectionTitle sub="Habits that keep charts honest and easy to read.">Principles</SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
         <InfoCard icon={<DsIcon name="info" size={16} style={{ color: COLOR.ink }} />} label="One big idea" text="Each chart makes a single, clear point. If it needs a paragraph to explain, simplify it." />
-        <InfoCard icon={<DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />} label="Label directly" text="Put labels and values on or beside the data. Make people hunt through a legend only when you must." />
+        <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Label directly" text="Put labels and values on or beside the data. Make people hunt through a legend only when you must." />
         <InfoCard icon={<DsIcon name="close" size={16} style={{ color: COLOR.ink }} />} label="Not color alone" text="Distinguish series with labels, order, or patterns too - so colorblind readers aren't lost." />
         <InfoCard icon={<DsIcon name="checked" size={16} style={{ color: COLOR.ink }} />} label="Start at zero" text="Bar charts start the axis at zero. Don't truncate it and exaggerate a difference." />
         <InfoCard icon={<DsIcon name="light-sun" size={16} style={{ color: COLOR.ink }} />} label="Keep contrast" text="Aim for 3:1 between adjacent colors and against the background so shapes stay legible." />

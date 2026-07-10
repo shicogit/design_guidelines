@@ -129,11 +129,64 @@
           var itemId = sib.getAttribute('data-item-id') || '';
           if (BOTTOM.indexOf(itemId) !== -1) break;
           if (sib.classList.contains('sidebar-item')) sib.classList.toggle('melio-child', expanded);
-          if (sib.id && sib.id.indexOf('melio-subtabs-') === 0) sib.classList.toggle('melio-child-subtabs', expanded);
+          if (sib.id && sib.id.indexOf('melio-subtabs-') === 0) {
+            sib.classList.toggle('melio-child-subtabs', expanded);
+            if (expanded) {
+              sib.style.setProperty('width', '100%', 'important');
+              sib.style.setProperty('margin-left', '0', 'important');
+              sib.style.setProperty('border-left', 'none', 'important');
+              sib.style.setProperty('box-sizing', 'border-box', 'important');
+              sib.style.setProperty('background', 'linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 0 / 2px 100%, #F8FAFC', 'important');
+              sib.style.setProperty('padding', '2px 0', 'important');
+              sib.style.setProperty('display', 'block', 'important');
+            } else {
+              ['width', 'margin-left', 'border-left', 'box-sizing', 'background', 'padding', 'display'].forEach(function(p) { sib.style.removeProperty(p); });
+            }
+          }
           sib = sib.nextElementSibling;
         }
       });
     }
+    /* Hover bg on page title rows (melio-child items) - inline style beats emotion cascade */
+    function applyChildHoverListeners() {
+      document.querySelectorAll('.sidebar-item.melio-child > a').forEach(function(a) {
+        if (a.dataset.melioHover) return;
+        a.dataset.melioHover = '1';
+        a.addEventListener('mouseenter', function() {
+          if (a.parentElement && a.parentElement.getAttribute('data-selected') !== 'true') {
+            a.style.setProperty('background', '#EBEFF2', 'important');
+          }
+        });
+        a.addEventListener('mouseleave', function() {
+          a.style.removeProperty('background');
+        });
+      });
+    }
+    setInterval(applyChildHoverListeners, 400);
+    setTimeout(applyChildHoverListeners, 1000);
+
+    /* Tag standalone bottom items so future entries just need adding to this array */
+    var FULL_WIDTH_BOTTOM = ['collaborators--docs', 'changelog--docs'];
+    function tagBottomItems() {
+      FULL_WIDTH_BOTTOM.forEach(function(id) {
+        var el = document.querySelector('.sidebar-item[data-item-id="' + id + '"]');
+        if (el && !el.classList.contains('melio-bottom')) el.classList.add('melio-bottom');
+      });
+    }
+    setInterval(tagBottomItems, 400);
+    setTimeout(tagBottomItems, 1000);
+
+    function applyVoiceToneDivider() {
+      var el = document.querySelector('.sidebar-item[data-item-id="identity-visual-assets-voice-tone--docs"]');
+      if (el) {
+        el.style.setProperty('border-bottom', '1px solid #ECECF1', 'important');
+        el.style.setProperty('margin-bottom', '4px', 'important');
+        el.style.setProperty('padding-bottom', '4px', 'important');
+      }
+    }
+    setInterval(applyVoiceToneDivider, 400);
+    setTimeout(applyVoiceToneDivider, 1000);
+
     setInterval(updateDrawerState, 400);
     setTimeout(updateDrawerState, 1000);
   })();
@@ -149,7 +202,7 @@
      Tokens
      black           #1A1A1A   text + icons (rest)
      grey-band       #F4F4F6   PRESSED background (selected item, leaf or header)
-     grey-hover      #FAFAFB   hover (lighter than the pressed grey)
+     grey-hover      #EBEFF2   hover (lighter than the pressed grey)
      purple          #7849FF   pressed text/icon + active-ancestor text
      border          #ECECF1   dividers
      Rules: pressed = grey bg + purple text. A header has NO background unless it's
@@ -204,7 +257,7 @@
   /* hover: white -> very light grey (lighter than the #F4F4F6 title bands
      so it doesn't compete with them) */
   .sidebar-item > a:hover {
-    background: #FAFAFB !important;
+    background: #EBEFF2 !important;
   }
   /* pressed (selected): grey bg + purple text */
   .sidebar-item[data-selected="true"] > a,
@@ -222,6 +275,10 @@
 
   .sidebar-item[data-item-id="collaborators--docs"],
   .sidebar-item[data-item-id="changelog--docs"],
+  .sidebar-item.melio-bottom {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+  }
   .sidebar-item[data-item-id="identity-visual-assets"] {
     display: block !important;
     width: 100% !important;
@@ -231,6 +288,7 @@
   #identity {
     display: block !important;
     width: calc(100% + 12px) !important;
+    margin-bottom: 0 !important;
   }
 
   #overview--docs,
@@ -245,9 +303,9 @@
     box-sizing: border-box !important;
     position: relative !important;
     width: 100% !important;
-    min-height: 36px !important;
+    min-height: 45px !important;
     margin: 0 !important;
-    padding: 0 14px 0 22px !important;
+    padding: 12px 14px 12px 22px !important;
     border: none !important;
     border-radius: 0 !important;
     background: transparent !important;
@@ -265,7 +323,7 @@
   #collaborators--docs:hover,
   #changelog--docs:hover,
   #identity > button[data-action="collapse-root"]:hover {
-    background: #FAFAFB !important;
+    background: #EBEFF2 !important;
   }
 
   /* A child page is open → Identity text + icon go purple, NO background.
@@ -364,7 +422,7 @@
   }
   /* Visuals hover: white -> very light grey (same as the other children) */
   #identity-visual-assets:hover {
-    background: #FAFAFB !important;
+    background: #EBEFF2 !important;
   }
   /* Items under Visuals: same alignment as other leaf items - no indent, no guide line */
   .sidebar-item[data-parent-id="identity-visual-assets"]::before {
@@ -415,19 +473,28 @@
 
   /* Dividers between the high-level headers — full-width (negative margin beats container padding) */
   [data-item-id="identity"] {
-    margin-top: 6px !important;
-    padding-top: 6px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: 1px solid #D8DCE9 !important;
+    border-bottom: 1px solid #D8DCE9 !important;
   }
   .sidebar-item[data-item-id="collaborators--docs"],
   .sidebar-item[data-item-id="changelog--docs"] {
     margin-top: 0 !important;
-    padding-top: 4px !important;
+    padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #D8DCE9 !important;
+    border-top: none !important;
+    border-bottom: 1px solid #D8DCE9 !important;
+  }
+
+  /* Divider below Voice & Tone */
+  .sidebar-item[data-item-id="identity-visual-assets-voice-tone--docs"] {
+    border-bottom: 1px solid #ECECF1 !important;
+    margin-bottom: 4px !important;
+    padding-bottom: 4px !important;
   }
 
   /* Penny Test: visually distinct "temporary/WIP" item at the very bottom */
@@ -443,7 +510,7 @@
     background: transparent !important;
   }
   .sidebar-item[data-item-id="penny-test--docs"] > a:hover {
-    background: #FAFAFB !important;
+    background: #EBEFF2 !important;
   }
   .sidebar-item[data-item-id="penny-test--docs"][data-selected="true"] > a,
   .sidebar-item[data-item-id="penny-test--docs"][data-selected="true"] > a:hover {
@@ -490,7 +557,7 @@
     line-height: 1.5;
     transition: color 120ms;
   }
-  .melio-subtabs .melio-subtab:hover { background: #FAFAFB; color: #1A1A1A; }
+  .melio-subtabs .melio-subtab:hover { background: transparent; color: #1A1A1A; }
   .melio-subtabs .melio-subtab[data-active] { color: #7849FF; font-weight: 600; }
   /* never show a container background — kills Storybook's light-purple
      selection/hover tint on every sidebar row (we never use light purple). */
@@ -551,7 +618,7 @@
     width: 100% !important;
     min-height: 36px !important;
     margin: 0 !important;
-    padding: 0 14px 0 22px !important;
+    padding: 1px 14px 1px 22px !important;
     border: none !important;
     border-radius: 0 !important;
     background: transparent !important;
@@ -564,7 +631,7 @@
     white-space: nowrap !important;
   }
   #foundations > button[data-action="collapse-root"]:hover,
-  #standards > button[data-action="collapse-root"]:hover { background: #FAFAFB !important; }
+  #standards > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
   /* hide the default icon/chevron wrapper, paint a clean DS icon as ::before */
   #foundations > button[data-action="collapse-root"] > div:first-child,
   #standards > button[data-action="collapse-root"] > div:first-child { display: none !important; }
@@ -588,8 +655,8 @@
   /* Dividers above the Foundations and Standards groups (consistent with Identity) */
   [data-item-id="foundations"],
   [data-item-id="standards"] {
-    margin-top: 6px !important;
-    padding-top: 6px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: 1px solid #D8DCE9 !important;
@@ -669,11 +736,15 @@
   .sidebar-item.melio-child {
     background: #F8FAFC !important;
   }
-  /* Page title rows within the drawer: transparent on the grey */
+  /* Page title rows within the drawer: transparent on the grey, aligned with main headers */
   .sidebar-item.melio-child > a {
     background: transparent !important;
     border-radius: 0 !important;
     margin: 0 !important;
+    padding: 5px 14px 5px 22px !important;
+  }
+  .sidebar-item.melio-child > a:hover {
+    background: #EBEFF2 !important;
   }
   /* Selected page: transparent bg, brand purple text */
   .sidebar-item.melio-child[data-selected="true"] > a,
@@ -696,4 +767,7 @@
     margin: 0 !important;
     padding: 3px 12px 3px 32px !important;
   }
+
+  /* "No components found" renders as <strong> (weight 700) — override to stay within max fontWeight 600 */
+  #storybook-explorer-menu strong { font-weight: 500 !important; }
 </style>

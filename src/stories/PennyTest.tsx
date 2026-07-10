@@ -12,6 +12,7 @@ import quickbooksNeutralSvg from '../assets/brands/penny/quickbooks-neutral.svg?
 import melioInverseSvg from '../assets/brands/penny/melio-inverse.svg?raw';
 import xeroSvg from '../assets/brand-symbols/penny/xero.svg?raw';
 import usFlagSvg from '../assets/flags/penny/US.svg?raw';
+import { FONT } from './brandKit';
 
 // Penny illustration token colors — from packages/penny-assets/src/styles/illustrations.css
 const PENNY_CSS = `
@@ -46,7 +47,7 @@ const ASSETS: { svg: string; name: string; type: string; size?: number; bg?: str
 
 export function PennyTestPage() {
   return (
-    <div style={{ fontFamily: '"Poppins", sans-serif', padding: '40px 48px' }}>
+    <div style={{ fontFamily: FONT, padding: '40px 48px' }}>
       <style>{PENNY_CSS}</style>
 
       <p style={{ fontSize: 12, color: '#9AA0AA', margin: '0 0 32px', letterSpacing: 0.2 }}>

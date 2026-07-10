@@ -1,4 +1,5 @@
 import { addons } from 'storybook/manager-api';
+import lottie, { AnimationItem } from 'lottie-web';
 import melioTheme from './melio-theme';
 
 addons.setConfig({
@@ -296,4 +297,59 @@ addons.register('melio/section-subtabs', (api) => {
   // across Storybook's virtual-DOM re-renders.
   setInterval(render, 400);
   setTimeout(render, 900);
+});
+
+/* Show the Melio "missing" Lottie animation above "No components found" in the sidebar empty state.
+   The empty state lives in #storybook-explorer-menu (the search dropdown OL), not in the tree. */
+addons.register('melio/empty-state-animation', () => {
+  const CONTAINER_ID = 'melio-empty-state-lottie';
+  let anim: AnimationItem | null = null;
+
+  const inject = (liEl: HTMLElement) => {
+    if (document.getElementById(CONTAINER_ID)) return;
+    const wrap = document.createElement('li');
+    wrap.id = CONTAINER_ID;
+    wrap.style.cssText = 'display:flex;justify-content:center;padding:20px 0 4px;list-style:none;';
+    const player = document.createElement('div');
+    player.style.cssText = 'width:96px;height:96px;flex-shrink:0;';
+    wrap.appendChild(player);
+    liEl.parentElement?.insertBefore(wrap, liEl);
+    anim = lottie.loadAnimation({
+      container: player,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: '/illustrations/missing.json',
+    });
+  };
+
+  const remove = () => {
+    const el = document.getElementById(CONTAINER_ID);
+    if (el) {
+      anim?.destroy();
+      anim = null;
+      el.remove();
+    }
+  };
+
+  const check = () => {
+    const menu = document.getElementById('storybook-explorer-menu');
+    if (!menu) { remove(); return; }
+    const strong = Array.from(menu.querySelectorAll('strong')).find(
+      (el) => el.textContent?.trim() === 'No components found'
+    ) as HTMLElement | undefined;
+    if (strong) {
+      // Walk up to the <li> ancestor inside the OL
+      let li: HTMLElement | null = strong.parentElement;
+      while (li && li.tagName !== 'LI') li = li.parentElement as HTMLElement | null;
+      if (li) inject(li);
+    } else {
+      remove();
+    }
+  };
+
+  setTimeout(() => {
+    new MutationObserver(check).observe(document.body, { childList: true, subtree: true });
+    check();
+  }, 800);
 });

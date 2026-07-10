@@ -328,6 +328,12 @@ export function MotionGuidelines() {
 export function MotionResources() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Motion resources"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Duration and easing tokens, animation specs, and contacts for branded motion work.</Lead>
+      </Hero>
       <ResourceFooter
         title="Motion assets and tokens"
         body={<>Duration and easing tokens live in DS Foundations alongside each component. <Med>For new motion patterns</Med> - branded transitions, campaigns, or logo motion - contact the design team before producing.</>}

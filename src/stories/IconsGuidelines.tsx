@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { IconGallery } from './IconGallery';
 import { ColorChip } from './ColorChip';
 import { MissingImage } from './MissingImage';
-import { FONT, COLOR, RADIUS, Med, Lead, Body, SectionTitle, Hero, SlackIcon } from './brandKit';
+import { FONT, COLOR, RADIUS, Med, Lead, Body, Hero, DsIcon, SlackIcon } from './brandKit';
 
 const FIGMA_FOUNDATIONS =
   'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/%F0%9F%A4%8D-DS-Foundations-%F0%9F%A4%8D';
@@ -66,14 +66,9 @@ function FigmaLogo() {
   );
 }
 
-// The hero contact-sheet: nine real Melio DS icons (24px set), in this order.
-const iconMods = import.meta.glob('../assets/icons/large/*.svg', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>;
-const HERO_ICON_NAMES = ['Funds', 'promote', 'wallet', 'fast', 'to-do', 'shop', 'inbox', 'gift', 'business'];
-const HERO_ICONS = HERO_ICON_NAMES.map((n) => iconMods[`../assets/icons/large/${n}.svg`]).filter(Boolean);
+// The hero contact-sheet: nine real Melio DS icons (24px set), served from melio/penny via Vite proxy.
+const HERO_ICON_NAMES = ['funds', 'promote', 'wallet', 'fast', 'to-do', 'shop', 'inbox', 'gift', 'business'];
+const HERO_ICONS = HERO_ICON_NAMES.map((n) => `/penny-gh/raw/medium/${n}.svg`);
 
 function IconHero() {
   return (
@@ -129,7 +124,7 @@ function GridSpec({
       </div>
       <div style={{ margin: '0 0 12px', borderRadius: RADIUS.md, overflow: 'hidden', background: COLOR.panel }}>
         {imgUrl
-          ? <img src={imgUrl} alt={`${title} ${grid} grid diagram`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+          ? <img src={imgUrl} alt={`${title} ${grid} grid diagram`} style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
           : <MissingImage label={`${title} - ${grid} diagram`} ratio="1 / 1" />}
       </div>
       <Row k="Stroke width" v={stroke} />
@@ -140,6 +135,18 @@ function GridSpec({
   );
 }
 
+
+function SplitRow({ visual, title, body, noDivider }: { visual: React.ReactNode; title: string; body: React.ReactNode; noDivider?: boolean }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 36, padding: '36px 0', borderTop: noDivider ? undefined : `1px solid ${COLOR.hairline}`, alignItems: 'start' }}>
+      <div>{visual}</div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>{title}</h3>
+        <div style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65 }}>{body}</div>
+      </div>
+    </div>
+  );
+}
 
 const ICON_CONTACTS = [
   { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
@@ -242,7 +249,7 @@ export function IconsGuidelines() {
       </Hero>
 
       {ICON_VIDEOS.length > 0 && (
-        <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
+        <div style={{ display: 'flex', gap: 12 }}>
           {ICON_VIDEOS.map((src, i) => (
             <div key={i} style={{ flex: 1, minWidth: 0 }}>
               <VideoClip src={src} />
@@ -251,68 +258,111 @@ export function IconsGuidelines() {
         </div>
       )}
 
-      <SectionTitle sub="Every icon is drawn twice - on a 24px and a 16px grid - so it stays pixel-perfect at both scales. Each size has its own stroke and corner-radius values.">
-        Grid &amp; sizes
-      </SectionTitle>
-      {iconGuideUrl('the 2 Grids.jpg') && (
-        <div style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel, marginBottom: 16 }}>
-          <img src={iconGuideUrl('the 2 Grids.jpg')} alt="The two icon grids" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-        </div>
-      )}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
-        <GridSpec title="Large" grid="24px grid" stroke="2px" corner="2px (usually)" imgFile="Grid 24px.jpg" />
-        <GridSpec title="Small" grid="16px grid" stroke="1.5px" corner="1.5px (usually)" imgFile="Grid 16px.jpg" />
-      </div>
-      <p style={{ fontSize: 13, color: COLOR.faint, margin: '10px 0 0', lineHeight: 1.6 }}>
-        Corner radius is the rule "in most cases" - exceptional icons may deviate slightly where pixel-perfect clarity requires it.
-      </p>
-      {iconGuideUrl('pixel boundaries.jpg') && (
-        <div style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel, marginTop: 16 }}>
-          <img src={iconGuideUrl('pixel boundaries.jpg')} alt="Pixel boundaries" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-        </div>
-      )}
-
-      <SectionTitle sub="Icons live in the DS Foundations Figma file, organized in frames by category. Each icon is a component with 24px and 16px variants.">
-        Figma structure
-      </SectionTitle>
-      {iconGuideUrl('DS Figma layers.jpg') && (
-        <div style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel, marginBottom: 4 }}>
-          <img src={iconGuideUrl('DS Figma layers.jpg')} alt="DS Figma layer structure" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-        </div>
-      )}
-
-      <SectionTitle sub="Each icon works alone or inside a category strip. The same glyph is consistent at both sizes - redrawn on each grid.">
-        Categories &amp; combinations
-      </SectionTitle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {(['Icons categories examples.jpg', 'Icons visual 01.jpg', 'Icons visual 02.jpg'] as const).map((file) => {
-          const url = iconGuideUrl(file);
-          return url ? (
-            <div key={file} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt={file.replace('.jpg', '')} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+      <SplitRow
+        title="Grid & sizes"
+        body="Every icon is drawn twice - on a 24px and a 16px grid - staying pixel-perfect at both scales. Each size has its own stroke and corner-radius values."
+        visual={
+          iconGuideUrl('the 2 Grids.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('the 2 Grids.jpg')} alt="The two icon grids" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
             </div>
-          ) : null;
-        })}
-      </div>
+          ) : <div />
+        }
+      />
 
-      <SectionTitle sub="Icons are monochrome - one solid color at a time, never gradients - and inherit the color of their context.">
-        Color
-      </SectionTitle>
-      {iconGuideUrl('Icons color use.jpg') && (
-        <div style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel, marginBottom: 14 }}>
-          <img src={iconGuideUrl('Icons color use.jpg')} alt="Icon color use" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-        </div>
-      )}
-      <Body>
-        Use an icon in an <Med>approved brand color</Med> chosen for the context and for legible contrast. Common
-        choices: <ColorChip hex="#1A1A1A" /> for default UI, <ColorChip hex="#7849FF" /> for active / accent, and white
-        on dark or photographic backgrounds. The authoritative color rules live in the{' '}
-        <a href="/?path=/docs/identity-color--docs" target="_top" style={{ color: 'inherit', textDecoration: 'underline' }}>
-          Color
-        </a>{' '}
-        section.
-      </Body>
+      <SplitRow
+        noDivider
+        title="Large"
+        body="24px grid - 2px stroke, rounded ends, 2px corner radius, 1px frame margin."
+        visual={
+          iconGuideUrl('Grid 24px.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('Grid 24px.jpg')} alt="Large 24px grid" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+            </div>
+          ) : <div />
+        }
+      />
 
+      <SplitRow
+        noDivider
+        title="Small"
+        body={
+          <>
+            16px grid - 1.5px stroke, rounded ends, 1.5px corner radius, 1px frame margin.
+            <p style={{ margin: '8px 0 0', fontSize: 12, color: COLOR.faint, lineHeight: 1.5 }}>
+              Corner radius is the rule in most cases - exceptional icons may deviate slightly where pixel clarity requires it.
+            </p>
+          </>
+        }
+        visual={
+          iconGuideUrl('Grid 16px.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('Grid 16px.jpg')} alt="Small 16px grid" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+            </div>
+          ) : <div />
+        }
+      />
+
+      <SplitRow
+        noDivider
+        title="Pixel boundaries"
+        body="On the 16px grid, align the outer edge of shapes to pixel boundaries for crispness at small sizes."
+        visual={
+          iconGuideUrl('pixel boundaries.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('pixel boundaries.jpg')} alt="Pixel boundaries" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+              <p style={{ margin: '10px 0 0', fontSize: 12, color: COLOR.muted, lineHeight: 1.5 }}>
+                On the 16px grid, align the outer edge of shapes to pixel boundaries.
+              </p>
+            </div>
+          ) : <div />
+        }
+      />
+
+      <SplitRow
+        title="Figma structure"
+        body="Icons live in the DS Foundations Figma file, organized in frames by category. Each icon is a component with 24px and 16px variants."
+        visual={
+          iconGuideUrl('DS Figma layers.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('DS Figma layers.jpg')} alt="DS Figma layer structure" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+            </div>
+          ) : <div />
+        }
+      />
+
+      <SplitRow
+        title="Categories"
+        body="Each icon works alone or inside a category strip. The same glyph is consistent at both sizes - redrawn on each grid."
+        visual={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {(['Icons categories examples.jpg', 'Icons visual 01.jpg', 'Icons visual 02.jpg'] as const).map((file) => {
+              const url = iconGuideUrl(file);
+              return url ? (
+                <div key={file} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+                  <img src={url} alt={file.replace('.jpg', '')} style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+                </div>
+              ) : null;
+            })}
+          </div>
+        }
+      />
+
+      <SplitRow
+        title="Color"
+        body={
+          <>
+            Icons are monochrome - one solid color at a time, never gradients. Use an <Med>approved brand color</Med> for the context and legible contrast. Common choices: <ColorChip hex="#1A1A1A" /> default UI, <ColorChip hex="#7849FF" /> active/accent, white on dark backgrounds.
+          </>
+        }
+        visual={
+          iconGuideUrl('Icons color use.jpg') ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={iconGuideUrl('Icons color use.jpg')} alt="Icon color use" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain', border: '1px solid #E4E7EC' }} />
+            </div>
+          ) : <div />
+        }
+      />
     </div>
   );
 }
@@ -320,9 +370,12 @@ export function IconsGuidelines() {
 export function IconsResources() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
-      <SectionTitle sub="Search, switch between the 24px and 16px sets, and download any icon (SVG / PNG / JPEG) - or grab the whole set with Download all.">
-        The library
-      </SectionTitle>
+      <Hero
+        title="The library"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Search, switch between the 24px and 16px sets, and download any icon (SVG / PNG / JPEG) - or grab the whole set with Download all.</Lead>
+      </Hero>
       <IconGallery />
 
       <div style={{ marginTop: 28 }}>

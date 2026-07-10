@@ -35,8 +35,8 @@ function SplitRow({ visual, title, body }: { visual: React.ReactNode; title: str
 function CutCard({ name, cut, family = POLY }: { name: string; cut: string; family?: string }) {
   return (
     <div style={{ background: COLOR.white, borderRadius: RADIUS.lg, padding: '18px 18px 16px', border: '1px solid #E4E7EC' }}>
-      <div style={{ fontFamily: family, fontSize: 40, fontWeight: 400, color: COLOR.ink, lineHeight: 1 }}>Aa</div>
-      <div style={{ fontSize: 14, fontWeight: 600, color: COLOR.ink, margin: '12px 0 2px' }}>{name}</div>
+      <div style={{ fontFamily: family, fontSize: 60, fontWeight: 400, color: COLOR.ink, lineHeight: 1 }}>Aa</div>
+      <div style={{ fontFamily: family, fontSize: 14, fontWeight: 600, color: COLOR.ink, margin: '12px 0 2px' }}>{name}</div>
       <div style={{ fontSize: 13, color: COLOR.muted }}>{cut} cut</div>
     </div>
   );
@@ -48,12 +48,15 @@ const POLY_WIDE = "'PolySans Wide', 'PolySans', sans-serif";
 // A weights specimen grid for a given cut (renders the real font).
 function CutSpecimen({ family, suffix }: { family: string; suffix: string }) {
   return (
-    <div style={{ background: COLOR.panel, borderRadius: RADIUS.xl, padding: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-      {([['Slim', 300], ['Neutral', 400], ['Median', 500], ['Bulky', 700]] as [string, number][]).map(([w, wt]) => (
-        <div key={w}>
+    <div style={{ background: COLOR.panel, borderRadius: RADIUS.xl, padding: 24, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 24, rowGap: 0 }}>
+      {([['Slim', 300, 'internal'], ['Neutral', 400, 'internal'], ['Median', 500, 'internal'], ['Bulky', 700, 'avoid']] as [string, number, Use][]).map(([w, wt, use], i) => (
+        <div key={w} style={i >= 2 ? { borderTop: `1px solid ${COLOR.hairline}`, paddingTop: 20 } : {}}>
+          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 999, background: TAG[use].bg, color: TAG[use].color, marginBottom: 6 }}>{TAG[use].label}</span>
           <div style={{ fontSize: 12, color: COLOR.muted, marginBottom: 6 }}>PolySans {w}{suffix}</div>
-          <div style={{ fontFamily: family, fontWeight: wt, fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
-          <div style={{ fontFamily: family, fontWeight: wt, fontStyle: 'italic', fontSize: 19, color: COLOR.ink, lineHeight: 1.35, marginTop: 4 }}>AaBbCcDdEe</div>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <div style={{ fontFamily: family, fontWeight: wt, fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
+            <div style={{ fontFamily: family, fontWeight: wt, fontStyle: 'italic', fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
+          </div>
         </div>
       ))}
     </div>
@@ -64,7 +67,7 @@ type Use = 'use' | 'avoid' | 'internal';
 const TAG: Record<Use, { label: string; bg: string; color: string }> = {
   use: { label: 'Use', bg: '#E7F6EC', color: '#1F9254' },
   avoid: { label: 'Avoid', bg: '#FDE8E8', color: '#D64545' },
-  internal: { label: 'Internal only', bg: '#EEF1F4', color: '#4B5563' },
+  internal: { label: 'Internal only', bg: '#DBEAFE', color: '#1D4ED8' },
 };
 
 function Weight({ name, use }: { name: string; use?: Use }) {
@@ -114,14 +117,7 @@ export function TypographyGuidelines() {
                 <CutCard name="PolySans Wide" cut="Wide" family={POLY_WIDE} />
               </div>
             </div>
-            {(['fonts comparison 01.png', 'fonts comparison 02.png'] as const).map((name) => {
-              const u = typeGuideUrl(name);
-              return u ? (
-                <div key={name} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #E4E7EC' }} />
-                </div>
-              ) : null;
-            })}
+
             <p style={{ fontSize: 13, color: COLOR.faint, margin: 0, lineHeight: 1.6 }}>
               Specimens render in the real PolySans - Standard, Mono, and Wide cuts are all bundled.
             </p>
@@ -134,26 +130,23 @@ export function TypographyGuidelines() {
       <SplitRow
         visual={
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10 }}>
-              <Weight name="PolySans Slim" />
-              <Weight name="PolySans Neutral" use="use" />
-              <Weight name="PolySans Median" use="use" />
-              <Weight name="PolySans Bulky" use="avoid" />
-            </div>
-            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-              {([['Slim', 300], ['Neutral', 400], ['Median', 500], ['Bulky', 700]] as [string, number][]).map(([w, wt]) => (
-                <div key={w}>
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 20, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 24, rowGap: 0 }}>
+              {([['Slim', 300, 'use'], ['Neutral', 400, 'use'], ['Median', 500, 'use'], ['Bulky', 700, 'avoid']] as [string, number, Use][]).map(([w, wt, use], i) => (
+                <div key={w} style={i >= 2 ? { borderTop: `1px solid ${COLOR.hairline}`, paddingTop: 20 } : {}}>
+                  <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 999, background: TAG[use].bg, color: TAG[use].color, marginBottom: 6 }}>{TAG[use].label}</span>
                   <div style={{ fontSize: 12, color: COLOR.muted, marginBottom: 6 }}>PolySans {w}</div>
-                  <div style={{ fontFamily: POLY, fontWeight: wt, fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
-                  <div style={{ fontFamily: POLY, fontWeight: wt, fontStyle: 'italic', fontSize: 19, color: COLOR.ink, lineHeight: 1.35, marginTop: 4 }}>AaBbCcDdEe</div>
+                  <div style={{ display: 'flex', gap: 16 }}>
+                    <div style={{ fontFamily: POLY, fontWeight: wt, fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
+                    <div style={{ fontFamily: POLY, fontWeight: wt, fontStyle: 'italic', fontSize: 19, color: COLOR.ink, lineHeight: 1.35 }}>AaBbCcDdEe<br />0123456789</div>
+                  </div>
                 </div>
               ))}
             </div>
-            {(['PolySans Regular.png', 'PolySans Regular-1.png', 'PolySans Regular-2.png', 'PolySans Regular Mishkalim.png'] as const).map((name) => {
+            {(['PolySans Regular.png'] as const).map((name) => {
               const u = typeGuideUrl(name);
               return u ? (
                 <div key={name} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #E4E7EC' }} />
+                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
                 </div>
               ) : null;
             })}
@@ -166,18 +159,12 @@ export function TypographyGuidelines() {
       <SplitRow
         visual={
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10 }}>
-              <Weight name="PolySans Slim Wide" use="internal" />
-              <Weight name="PolySans Neutral Wide" use="internal" />
-              <Weight name="PolySans Median Wide" use="internal" />
-              <Weight name="PolySans Bulky Wide" use="avoid" />
-            </div>
             <CutSpecimen family={POLY_WIDE} suffix=" Wide" />
-            {(['PolySans Wide.png', 'PolySans Wide Mishkalim.png'] as const).map((name) => {
+            {(['PolySans Wide.png'] as const).map((name) => {
               const u = typeGuideUrl(name);
               return u ? (
                 <div key={name} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #E4E7EC' }} />
+                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
                 </div>
               ) : null;
             })}
@@ -190,18 +177,12 @@ export function TypographyGuidelines() {
       <SplitRow
         visual={
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10 }}>
-              <Weight name="PolySans Slim Mono" use="internal" />
-              <Weight name="PolySans Neutral Mono" use="internal" />
-              <Weight name="PolySans Median Mono" use="internal" />
-              <Weight name="PolySans Bulky Mono" use="avoid" />
-            </div>
             <CutSpecimen family={POLY_MONO} suffix=" Mono" />
-            {(['PolySans Mono.png', 'PolySans Mono Mishkalim.png'] as const).map((name) => {
+            {(['PolySans Mono.png'] as const).map((name) => {
               const u = typeGuideUrl(name);
               return u ? (
                 <div key={name} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #E4E7EC' }} />
+                  <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
                 </div>
               ) : null;
             })}
@@ -234,30 +215,49 @@ export function TypographyGuidelines() {
       <SplitRow
         visual={
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-              <Weight name="Only one hierarchy is italic" use="use" />
-              <Weight name="If italic, it must be purple" use="use" />
-              <Weight name="All parts stay the same size" use="use" />
-            </div>
             <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-                {(['italic-dont-1.png', 'italic-dont-2.png', 'italic-dont-3.png', 'italic-dont-4.png', 'italic-dont-5.png', 'italic-dont-6.png'] as const).map((name) => {
-                  const u = typeGuideUrl(name);
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gridTemplateRows: 'auto auto', gap: 10 }}>
+                {([
+                  { file: 'italic-do-1.png', label: 'One italic hierarchy' },
+                  { file: 'italic-do-2.png', label: 'Purple italic only' },
+                  { file: 'italic-do-3.png', label: 'Same size throughout' },
+                  { file: 'italic-do-4.png', label: 'Italic ends the sentence' },
+                ] as const).map(({ file, label }) => {
+                  const u = typeGuideUrl(file);
                   return u ? (
-                    <img key={name} src={u} alt="Italic usage don't" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #FAD4D4' }} />
+                    <div key={file} style={{ display: 'grid', gridTemplateRows: 'subgrid', gridRow: 'span 2', rowGap: 8 }}>
+                      <img src={u} alt={label} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+                        <DsIcon name="checked" size={12} style={{ color: '#1F9254', flexShrink: 0 }} />
+                        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
+                      </div>
+                    </div>
                   ) : null;
                 })}
               </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {(["Line don't 9.png", "Line don't 10.png", "Line don't 11.png", "Line don't 12.png", "Line don't 13.png", "Line don't 14.png"] as const).map((name) => {
-                const u = typeGuideUrl(name);
-                return u ? (
-                  <div key={name} style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-                    <img src={u} alt={name.replace('.png', '')} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md, border: '1px solid #FAD4D4' }} />
-                  </div>
-                ) : null;
-              })}
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gridTemplateRows: 'auto auto', gap: 10 }}>
+                {([
+                  { file: 'italic-dont-1.png', label: 'All italic' },
+                  { file: 'italic-dont-2.png', label: 'Black color' },
+                  { file: 'italic-dont-3.png', label: 'Off-brand color' },
+                  { file: 'italic-dont-4.png', label: 'Two sizes' },
+                  { file: 'italic-dont-5.png', label: 'Wrong weight' },
+                  { file: 'italic-dont-6.png', label: 'All caps' },
+                ] as const).map(({ file, label }) => {
+                  const u = typeGuideUrl(file);
+                  return u ? (
+                    <div key={file} style={{ display: 'grid', gridTemplateRows: 'subgrid', gridRow: 'span 2', rowGap: 8 }}>
+                      <img src={u} alt={label} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+                        <DsIcon name="close" size={12} style={{ color: '#D64545', flexShrink: 0 }} />
+                        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
+                      </div>
+                    </div>
+                  ) : null;
+                })}
+              </div>
             </div>
           </div>
         }
@@ -514,6 +514,12 @@ export function TypographyResources() {
 
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Download fonts"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>PolySans (licensed) and Poppins (free via Google Fonts) - ready to use in any project.</Lead>
+      </Hero>
       <DownloadAllBanner
         count={allFontFiles.length}
         busy={allBusy}
@@ -543,7 +549,6 @@ export function TypographyResources() {
         body="Typography styles and PolySans font settings live in the BD Foundations Figma file. For licensing questions or new type applications, reach out to the design team."
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },
-          { label: 'Type usage guide', disabled: true },
         ]}
         contacts={[
           { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },

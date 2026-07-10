@@ -3,18 +3,29 @@ import lottie, { type AnimationItem } from 'lottie-web';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
 import { ColorChip } from './ColorChip';
-import { COLOR, DownloadIcon, DsIcon } from './brandKit';
+import { FONT, COLOR, DownloadIcon, DsIcon } from './brandKit';
 
 // Each Melio illustration has a Partners twin (same name). We render the UNION of both
 // sets so every illustration keeps the same grid position; the set that lacks a given
 // illustration shows a "missing" placeholder in that spot.
 // Animated illustrations are Lottie .json; a few twins are static .svg. We load json as a URL
 // (lottie fetches it) and svg as raw text (so we can string-swap its accent color).
-const melioJson = import.meta.glob('../assets/illustrations/melio/*.json', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>;
+const MELIO_S3 = 'https://platform-static.meliopayments.com/assets/melio';
+const MELIO_NAMES = [
+  'academy', 'add', 'add-card', 'add-user', 'announce', 'approval-workflows', 'approve',
+  'bank', 'bank-success', 'blocked', 'calendar', 'camera', 'card', 'celebration',
+  'construction', 'create-invoice', 'customer-add', 'customize', 'customize-invoice',
+  'declined', 'discount', 'edit', 'error', 'expired', 'faq', 'fast', 'fun-fact', 'gift',
+  'grow', 'invoice', 'missing', 'mobile', 'money-success', 'network-download', 'network-error',
+  'network-pay', 'new-email', 'no-items', 'notification', 'page-not-found', 'paper-check',
+  'pay', 'payment-link', 'payout-add', 'pending', 'processing', 'processing 2', 'product',
+  'question', 'save-money', 'security', 'sent', 'set-up-account', 'single-use-card',
+  'small-business', 'success', 'sync-accounts', 'sync-user', 'tax-form', 'troubleshooting',
+  'under-review', 'upgrade-plan', 'user-approve', 'user-management', 'vendor-add', 'warning',
+];
+const melioJson: Record<string, string> = Object.fromEntries(
+  MELIO_NAMES.map(name => [`../assets/illustrations/melio/${name}.json`, `${MELIO_S3}/${name}.lottie.json`])
+);
 const partnersJson = import.meta.glob('../assets/illustrations/partners/*.json', {
   eager: true,
   query: '?url',
@@ -167,7 +178,7 @@ const dlItemStyle: CSSProperties = {
   borderRadius: 8,
   padding: '9px 10px',
   fontSize: 14,
-  fontFamily: '"Poppins", sans-serif',
+  fontFamily: FONT,
   textAlign: 'left',
   background: 'transparent',
 };
@@ -328,7 +339,7 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
         cursor: missing ? 'default' : 'pointer',
         opacity: missing ? 0.7 : 1,
         transition: 'background 120ms, border-color 120ms',
-        fontFamily: '"Poppins", sans-serif',
+        fontFamily: FONT,
         position: 'relative',
       }}
       onMouseOver={
@@ -393,7 +404,7 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
     {menu && entry && (
       <div
         ref={menuRef}
-        style={{ position: 'fixed', left: menu.x, top: menu.y, minWidth: 188, background: '#FFFFFF', borderRadius: 12, border: '1px solid #ECECF1', boxShadow: '0 12px 32px rgba(20,20,40,0.18)', padding: 6, zIndex: 1000, fontFamily: '"Poppins", sans-serif' }}
+        style={{ position: 'fixed', left: menu.x, top: menu.y, minWidth: 188, background: '#FFFFFF', borderRadius: 12, border: '1px solid #ECECF1', boxShadow: '0 12px 32px rgba(20,20,40,0.18)', padding: 6, zIndex: 1000, fontFamily: FONT }}
       >
         <div style={{ fontSize: 11, color: '#9AA0AA', padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>Download {name}</div>
         {FORMATS.map((f) => {
@@ -444,7 +455,7 @@ function PartnerPicker({ idx, onPick }: { idx: number; onPick: (i: number) => vo
   }, [open]);
 
   return (
-    <div ref={wrap} style={{ position: 'relative', fontFamily: '"Poppins", sans-serif' }}>
+    <div ref={wrap} style={{ position: 'relative', fontFamily: FONT }}>
       <button
         onClick={() => setOpen((o) => !o)}
         style={{
@@ -521,7 +532,7 @@ const menuItemStyle = (active: boolean): CSSProperties => ({
   borderRadius: 9,
   padding: '9px 12px',
   fontSize: 14,
-  fontFamily: '"Poppins", sans-serif',
+  fontFamily: FONT,
   textAlign: 'left',
   background: active ? '#F6F8FE' : 'transparent',
 });
@@ -656,7 +667,7 @@ export function IllustrationGallery({
   }, [query]);
 
   return (
-    <div style={{ fontFamily: '"Poppins", sans-serif', color: '#1A1A1A' }}>
+    <div style={{ fontFamily: FONT, color: '#1A1A1A' }}>
       <style>{`
         .ill-scroll { scrollbar-width: none; }
         .ill-scroll::-webkit-scrollbar { display: none; }
@@ -814,7 +825,7 @@ export function IllustrationGallery({
       {confirm && (
         <div
           onMouseDown={() => setConfirm(null)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(20,20,40,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, fontFamily: '"Poppins", sans-serif' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(20,20,40,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, fontFamily: FONT }}
         >
           {(() => {
             const isDefault = partnerIdx === 0;

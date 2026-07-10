@@ -133,20 +133,9 @@ export function Hero({ title, visual, children }: { title: string; visual: React
 // Every icon glyph in the Storybook comes from the Melio DS (Penny) icon set - never emoji
 // or unicode arrows. `DsIcon` renders any icon by name, recolored to the current text color
 // via a CSS mask (works for both fill- and stroke-based DS svgs).
-const DS_ICON_URLS = import.meta.glob('../assets/icons/*/*.svg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-function dsIconUrl(name: string): string | undefined {
-  return (
-    DS_ICON_URLS[`../assets/icons/small/${name}.svg`] ||
-    DS_ICON_URLS[`../assets/icons/large/${name}.svg`] ||
-    DS_ICON_URLS[`../assets/icons/small/${name} Type=Outline.svg`] ||
-    DS_ICON_URLS[`../assets/icons/large/${name} Type=Outline.svg`] ||
-    DS_ICON_URLS[`../assets/icons/small/${name} Type=Fill.svg`] ||
-    DS_ICON_URLS[`../assets/icons/large/${name} Type=Fill.svg`]
-  );
-}
+// Icons are served via the Vite dev-server proxy at /penny-gh/icon/* (melio/penny on GitHub).
 export function DsIcon({ name, size = 16, style }: { name: string; size?: number; style?: CSSProperties }) {
-  const url = dsIconUrl(name);
-  if (!url) return null;
+  const url = `/penny-gh/icon/${name}.svg`;
   return (
     <span
       aria-hidden

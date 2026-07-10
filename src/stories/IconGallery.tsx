@@ -1,63 +1,21 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
-import { COLOR, DownloadIcon, DsIcon } from './brandKit';
+import { FONT, COLOR, DownloadIcon, DsIcon } from './brandKit';
 
-// Load every icon as a URL (for <img>) and as raw text (for downloads) via Vite's glob import.
-const largeMods = import.meta.glob('../assets/icons/large/*.svg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const smallMods = import.meta.glob('../assets/icons/small/*.svg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const largeRaw = import.meta.glob('../assets/icons/large/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const smallRaw = import.meta.glob('../assets/icons/small/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
+// Icons are loaded at runtime from melio/penny on GitHub via the Vite dev-server
+// proxy plugin at /penny-gh/* (see vite.config.ts).
+// medium/ = 24px icons, small/ = 16px icons.
+
+// Icons to suppress — American-spelling duplicates that exist alongside the British form.
+const EXCLUDED = new Set(['favorite']);
 
 type IconEntry = { name: string; url: string };
+type SetKey = '24 - Large' | '16 - Small';
 
-// Normalize a filename to the hyphenated, lowercase-variant style:
-//   "ai Type=Fill"               -> "ai-fill"
-//   "heart-circle Variant=Outline" -> "heart-circle-outline"
-//   "add-circle-outline Type=Fill" -> "add-circle-fill"  (redundant base "-outline" dropped)
-//   "add-circle-outline Type=Outline" -> "add-circle-outline"
-// Names already in this style (e.g. "play-circle-fill", "clock-fill") are left untouched.
-function cleanName(file: string): string {
-  const m = file.match(/(?:Type|Variant)=(Fill|Outline)/i);
-  if (!m) return file;
-  const variant = m[1].toLowerCase();
-  const base = file
-    .replace(/\s*(?:Type|Variant)=\w+/i, '')
-    .trim()
-    .replace(/-(?:outline|fill)$/i, ''); // drop a redundant variant word baked into the base
-  return `${base}-${variant}`;
-}
-
-const baseName = (path: string) => cleanName(decodeURIComponent(path.split('/').pop()!.replace(/\.svg$/, '')));
-
-function toEntries(mods: Record<string, string>): IconEntry[] {
-  return Object.entries(mods)
-    .map(([path, url]) => ({ name: baseName(path), url }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-}
-
-const SETS = {
-  '24 - Large': toEntries(largeMods),
-  '16 - Small': toEntries(smallMods),
-} as const;
-
-type SetKey = keyof typeof SETS;
-
-// Name -> url / raw lookup per size, and the union of all names (sorted).
-const byName = (entries: IconEntry[]): Record<string, string> => Object.fromEntries(entries.map((e) => [e.name, e.url]));
-const rawByName = (mods: Record<string, string>): Record<string, string> =>
-  Object.fromEntries(Object.entries(mods).map(([path, raw]) => [baseName(path), raw]));
-
-const URL_BY_SIZE: Record<SetKey, Record<string, string>> = {
-  '24 - Large': byName(SETS['24 - Large']),
-  '16 - Small': byName(SETS['16 - Small']),
+const GITHUB_FOLDER: Record<SetKey, string> = {
+  '24 - Large': 'medium',
+  '16 - Small': 'small',
 };
-const RAW_BY_SIZE: Record<SetKey, Record<string, string>> = {
-  '24 - Large': rawByName(largeRaw),
-  '16 - Small': rawByName(smallRaw),
-};
-const ALL_NAMES = [
-  ...new Set([...Object.keys(URL_BY_SIZE['24 - Large']), ...Object.keys(URL_BY_SIZE['16 - Small'])]),
-].sort((a, b) => a.localeCompare(b));
 
 const PURPLE = COLOR.purple;
 
@@ -68,8 +26,17 @@ const FORMATS: { key: FmtKey; label: string; ext: string }[] = [
   { key: 'jpeg', label: 'JPEG', ext: 'flattened' },
 ];
 
+async function fetchRawSvg(url: string): Promise<string | undefined> {
+  try {
+    const res = await fetch(url);
+    return res.ok ? await res.text() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** One icon cell: shows the icon; clicking opens a menu to download (SVG/PNG/JPEG) or copy the name. */
-function IconCell({ name, url, raw, px, copied, onCopy }: { name: string; url?: string; raw?: string; px: number; copied: boolean; onCopy: (n: string) => void }) {
+function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: string; px: number; copied: boolean; onCopy: (n: string) => void }) {
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
@@ -92,18 +59,21 @@ function IconCell({ name, url, raw, px, copied, onCopy }: { name: string; url?: 
     };
   }, [menu]);
 
-  const handlers: Record<FmtKey, () => Promise<void> | void> = {
-    svg: () => {
-      const s = normalizeSvg(null, raw);
+  const handlers: Record<FmtKey, () => Promise<void>> = {
+    svg: async () => {
+      const rawText = url ? await fetchRawSvg(url) : undefined;
+      const s = normalizeSvg(null, rawText);
       if (s) triggerDownload(new Blob([s], { type: 'image/svg+xml' }), `${name}.svg`);
     },
     png: async () => {
-      const s = normalizeSvg(null, raw);
+      const rawText = url ? await fetchRawSvg(url) : undefined;
+      const s = normalizeSvg(null, rawText);
       const o = s && (await svgToRaster(s, 'png'));
       if (o) triggerDownload(o.blob, `${name}.${o.ext}`);
     },
     jpeg: async () => {
-      const s = normalizeSvg(null, raw);
+      const rawText = url ? await fetchRawSvg(url) : undefined;
+      const s = normalizeSvg(null, rawText);
       const o = s && (await svgToRaster(s, 'jpeg'));
       if (o) triggerDownload(o.blob, `${name}.${o.ext}`);
     },
@@ -132,7 +102,7 @@ function IconCell({ name, url, raw, px, copied, onCopy }: { name: string; url?: 
         ref={btnRef}
         onClick={missing ? undefined : openMenu}
         disabled={missing}
-        title={missing ? `“${name}” has no ${px}px version` : `Download or copy “${name}”`}
+        title={missing ? `"${name}" has no ${px}px version` : `Download or copy "${name}"`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -202,7 +172,7 @@ function IconCell({ name, url, raw, px, copied, onCopy }: { name: string; url?: 
             boxShadow: '0 12px 32px rgba(20,20,40,0.18)',
             padding: 6,
             zIndex: 1000,
-            fontFamily: '"Poppins", sans-serif',
+            fontFamily: FONT,
           }}
         >
           <div style={{ fontSize: 11, color: '#9AA0AA', padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>Download {name}</div>
@@ -216,13 +186,14 @@ function IconCell({ name, url, raw, px, copied, onCopy }: { name: string; url?: 
               onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}
             >
               <span style={{ fontWeight: 500 }}>{f.label}</span>
-              <span style={{ fontSize: 11, color: '#9AA0AA' }}>{busy === f.key ? 'preparing…' : f.ext}</span>
+              <span style={{ fontSize: 11, color: '#9AA0AA' }}>{busy === f.key ? 'preparing...' : f.ext}</span>
             </button>
           ))}
           <div style={{ height: 1, background: '#F0F0F4', margin: '6px 4px' }} />
           <button
             onClick={async () => {
-              const s = normalizeSvg(null, raw);
+              const rawText = url ? await fetchRawSvg(url) : undefined;
+              const s = normalizeSvg(null, rawText);
               if (s) await navigator.clipboard.writeText(s).catch(() => {});
               onCopy(name);
               setMenu(null);
@@ -264,18 +235,59 @@ const menuItemStyle: React.CSSProperties = {
   borderRadius: 8,
   padding: '9px 10px',
   fontSize: 14,
-  fontFamily: '"Poppins", sans-serif',
+  fontFamily: FONT,
   textAlign: 'left',
   background: 'transparent',
   color: '#1A1A1A',
 };
 
 export function IconGallery() {
+  const [sets, setSets] = useState<Record<SetKey, IconEntry[]>>({ '24 - Large': [], '16 - Small': [] });
+  const [loading, setLoading] = useState(true);
   const [set, setSet] = useState<SetKey>('24 - Large');
   const [query, setQuery] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
 
-  // "Download all" → zip every icon in the current size into a folder.
+  // Load icon lists from GitHub via Vite proxy.
+  useEffect(() => {
+    Promise.all([
+      fetch('/penny-gh/list/medium.json').then((r) => r.json() as Promise<string[]>),
+      fetch('/penny-gh/list/small.json').then((r) => r.json() as Promise<string[]>),
+    ])
+      .then(([mediumFiles, smallFiles]) => {
+        const toEntries = (files: string[], folder: string): IconEntry[] =>
+          files
+            .filter((f) => f.endsWith('.svg'))
+            .map((f) => ({ name: f.replace(/\.svg$/, ''), url: `/penny-gh/raw/${folder}/${f}` }))
+            .filter((e) => !EXCLUDED.has(e.name))
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        setSets({
+          '24 - Large': toEntries(mediumFiles, 'medium'),
+          '16 - Small': toEntries(smallFiles, 'small'),
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('[IconGallery] Failed to load icons from GitHub:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const ALL_NAMES = useMemo(() => {
+    const names = new Set([
+      ...sets['24 - Large'].map((e) => e.name),
+      ...sets['16 - Small'].map((e) => e.name),
+    ]);
+    return [...names].sort((a, b) => a.localeCompare(b));
+  }, [sets]);
+
+  const urlBySize = useMemo<Record<SetKey, Record<string, string>>>(() => ({
+    '24 - Large': Object.fromEntries(sets['24 - Large'].map((e) => [e.name, e.url])),
+    '16 - Small': Object.fromEntries(sets['16 - Small'].map((e) => [e.name, e.url])),
+  }), [sets]);
+
+  // "Download all" -> zip every icon in the current size.
   const [allMenu, setAllMenu] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const allWrap = useRef<HTMLDivElement>(null);
@@ -288,7 +300,7 @@ export function IconGallery() {
     return () => document.removeEventListener('mousedown', onDoc);
   }, [allMenu]);
 
-  // Keep the scroll position steady when switching icon size.
+  // Keep scroll position steady when switching icon size.
   const scrollRef = useRef<HTMLDivElement>(null);
   const savedScroll = useRef(0);
   useLayoutEffect(() => {
@@ -299,7 +311,7 @@ export function IconGallery() {
     setSet(k);
   };
 
-  // Custom always-visible scrollbar (the native overlay one is invisible here).
+  // Custom always-visible scrollbar.
   const [thumb, setThumb] = useState({ top: 0, height: 40, show: false });
   const updateThumb = () => {
     const el = scrollRef.current;
@@ -310,9 +322,9 @@ export function IconGallery() {
     const top = maxScroll > 0 ? Math.round((el.scrollTop / maxScroll) * (trackH - h)) : 0;
     setThumb({ top, height: h, show: el.scrollHeight > el.clientHeight + 2 });
   };
-  useLayoutEffect(updateThumb, [set, query]);
+  useLayoutEffect(updateThumb, [set, query, loading]);
 
-  // Draggable thumb
+  // Draggable thumb.
   const [dragging, setDragging] = useState(false);
   const dragData = useRef<{ startY: number; startThumbTop: number } | null>(null);
   const startThumbDrag = (e: React.MouseEvent) => {
@@ -338,13 +350,12 @@ export function IconGallery() {
     return () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
   }, [dragging, thumb.height]);
 
-  const urlBySize = URL_BY_SIZE[set];
-  const rawBySize = RAW_BY_SIZE[set];
+  const urlByCurrentSize = urlBySize[set];
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return ALL_NAMES;
     return ALL_NAMES.filter((n) => n.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, ALL_NAMES]);
 
   const copy = (name: string) => {
     navigator.clipboard?.writeText(name);
@@ -354,7 +365,7 @@ export function IconGallery() {
 
   const downloadAll = async (fmt: FmtKey) => {
     setAllMenu(false);
-    const names = filtered.filter((n) => rawBySize[n]);
+    const names = filtered.filter((n) => urlByCurrentSize[n]);
     if (!names.length) return;
     setProgress({ done: 0, total: names.length });
     try {
@@ -364,7 +375,9 @@ export function IconGallery() {
       const folderName = `icons-${sizeLabel}-${fmt === 'jpeg' ? 'jpg' : fmt}`;
       const folder = zip.folder(folderName)!;
       for (let i = 0; i < names.length; i++) {
-        const svgStr = normalizeSvg(null, rawBySize[names[i]]);
+        const svgUrl = urlByCurrentSize[names[i]];
+        const rawText = svgUrl ? await fetchRawSvg(svgUrl) : undefined;
+        const svgStr = normalizeSvg(null, rawText);
         try {
           if (svgStr) {
             if (fmt === 'svg') folder.file(`${names[i]}.svg`, svgStr);
@@ -389,7 +402,7 @@ export function IconGallery() {
   const px = set.startsWith('24') ? 24 : 16;
 
   return (
-    <div style={{ fontFamily: '"Poppins", sans-serif', color: '#1A1A1A' }}>
+    <div style={{ fontFamily: FONT, color: '#1A1A1A' }}>
       <style>{`
         .icon-scroll { scrollbar-width: none; }
         .icon-scroll::-webkit-scrollbar { display: none; }
@@ -415,11 +428,13 @@ export function IconGallery() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search icons…"
+                placeholder="Search icons..."
                 style={{ width: '100%', boxSizing: 'border-box', padding: '9px 14px 9px 36px', borderRadius: 8, border: '1px solid #E5E5EA', fontSize: 14, fontFamily: 'inherit', outline: 'none' }}
               />
             </div>
-            <span style={{ color: '#8A8A99', fontSize: 13, whiteSpace: 'nowrap' }}>{filtered.length} shown</span>
+            <span style={{ color: '#8A8A99', fontSize: 13, whiteSpace: 'nowrap' }}>
+              {loading ? 'Loading...' : `${filtered.length} shown`}
+            </span>
           </div>
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -427,29 +442,29 @@ export function IconGallery() {
             <div ref={allWrap} style={{ position: 'relative' }}>
               <button
                 onClick={() => (progress ? null : setAllMenu((o) => !o))}
-                disabled={!!progress}
+                disabled={!!progress || loading}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 7,
                   border: '1px solid #E5E5EA',
-                  cursor: progress ? 'default' : 'pointer',
+                  cursor: progress || loading ? 'default' : 'pointer',
                   borderRadius: 999,
                   padding: '6px 14px',
                   fontSize: 13,
                   fontWeight: 500,
                   fontFamily: 'inherit',
                   background: '#FFFFFF',
-                  color: progress ? '#9AA0AA' : '#1A1A1A',
+                  color: progress || loading ? '#9AA0AA' : '#1A1A1A',
                 }}
               >
                 <DownloadIcon size={14} />
-                {progress ? `Preparing ${progress.done}/${progress.total}…` : 'Download all'}
+                {progress ? `Preparing ${progress.done}/${progress.total}...` : 'Download all'}
               </button>
               {allMenu && !progress && (
                 <div style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, minWidth: 190, background: '#FFFFFF', borderRadius: 12, border: '1px solid #ECECF1', boxShadow: '0 12px 32px rgba(20,20,40,0.18)', padding: 6, zIndex: 50 }}>
                   <div style={{ fontSize: 11, color: '#9AA0AA', padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                    All {px}px · {filtered.filter((n) => rawBySize[n]).length} files
+                    All {px}px - {filtered.filter((n) => urlByCurrentSize[n]).length} files
                   </div>
                   {FORMATS.map((f) => (
                     <button key={f.key} onClick={() => downloadAll(f.key)} style={menuItemStyle} onMouseOver={(e) => (e.currentTarget.style.background = '#F4F4F6')} onMouseOut={(e) => (e.currentTarget.style.background = 'transparent')}>
@@ -463,7 +478,7 @@ export function IconGallery() {
 
             {/* Icon size toggle */}
             <div style={{ display: 'inline-flex', border: '1px solid #E5E5EA', borderRadius: 999, padding: 2, background: '#FFFFFF' }}>
-              {(Object.keys(SETS) as SetKey[]).map((k) => (
+              {(['24 - Large', '16 - Small'] as SetKey[]).map((k) => (
                 <button
                   key={k}
                   onClick={() => changeSet(k)}
@@ -494,11 +509,17 @@ export function IconGallery() {
             onScroll={updateThumb}
             style={{ boxSizing: 'border-box', height: 354, overflowY: 'scroll', padding: '16px 30px 24px 16px' }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 10 }}>
-              {filtered.map((name) => (
-                <IconCell key={name} name={name} url={urlBySize[name]} raw={rawBySize[name]} px={px} copied={copied === name} onCopy={copy} />
-              ))}
-            </div>
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#9AA0AA', fontSize: 13 }}>
+                Loading icons from GitHub...
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 10 }}>
+                {filtered.map((name) => (
+                  <IconCell key={name} name={name} url={urlByCurrentSize[name]} px={px} copied={copied === name} onCopy={copy} />
+                ))}
+              </div>
+            )}
           </div>
 
           <div style={{ position: 'absolute', top: 12, right: 12, bottom: 12, width: 8, borderRadius: 999, background: '#E2E2E8' }}>

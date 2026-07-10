@@ -200,24 +200,6 @@ export function ColorGuidelines() {
         <Lead style={{ margin: 0 }}>Mind the <Med>Don't</Med> examples to keep contrast accessible and color on-brand.</Lead>
       </Hero>
 
-      <SplitRow
-        visual={
-          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-            <div style={{ display: 'flex', height: 48, borderRadius: RADIUS.md, overflow: 'hidden', border: `1px solid ${COLOR.hairline}`, marginBottom: 10 }}>
-              <div style={{ flex: 7, background: COLOR.lilac100 }} />
-              <div style={{ flex: 2, background: COLOR.purple }} />
-              <div style={{ flex: 1, background: COLOR.ink }} />
-            </div>
-            <div style={{ display: 'flex', gap: 20, fontSize: 12, color: COLOR.muted }}>
-              <span>Surfaces &amp; neutrals</span>
-              <span>Purple accent</span>
-              <span>Ink</span>
-            </div>
-          </div>
-        }
-        title="Using color"
-        body="Purple for actions and highlights. Lilac tints for surfaces and fills. Ink for text. Secondary palette for illustration only - never in UI."
-      />
 
       <SplitRow
         visual={
@@ -231,34 +213,6 @@ export function ColorGuidelines() {
         body="A range of purples - from Brand-700 as the core accent to soft lilac tints for surfaces. Click any swatch to copy its hex."
       />
 
-      <SplitRow
-        visual={
-          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div style={{ background: '#242936', borderRadius: RADIUS.lg, padding: 20, display: 'flex', flexDirection: 'column', gap: 10, border: '1px solid #E4E7EC' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#BDBDFF', letterSpacing: 0.5, textTransform: 'uppercase' }}>Developer / Partner</div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: '#FFFFFF', lineHeight: 1.25 }}>Built for pros.</div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {['Developers', 'Partners', 'Accountants'].map((t) => (
-                    <span key={t} style={{ fontSize: 11, fontWeight: 600, color: '#BDBDFF', background: 'rgba(189,189,255,0.12)', borderRadius: 999, padding: '3px 9px' }}>{t}</span>
-                  ))}
-                </div>
-              </div>
-              <div style={{ background: '#3F3F42', borderRadius: RADIUS.lg, padding: 20, display: 'flex', flexDirection: 'column', gap: 10, border: '1px solid #E4E7EC' }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#9874FF', letterSpacing: 0.5, textTransform: 'uppercase' }}>Pro touchpoint, non-pro</div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: '#FFFFFF', lineHeight: 1.25 }}>Pay <span style={{ color: '#9874FF', fontStyle: 'italic' }}>smarter.</span></div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {['Conference signage', 'Roll-ups'].map((t) => (
-                    <span key={t} style={{ fontSize: 11, fontWeight: 600, color: '#9874FF', background: 'rgba(152,116,255,0.12)', borderRadius: 999, padding: '3px 9px' }}>{t}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        }
-        title="Dark mode"
-        body="Black is for pro personas - developers, partners, accountants. Don't use dark backgrounds for other audiences."
-      />
 
       <SplitRow
         visual={
@@ -393,6 +347,12 @@ export function ColorResources() {
 
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Color resources"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Color tokens, palettes, and Figma variables - click any swatch to copy its hex value.</Lead>
+      </Hero>
       {/* Compact color reference */}
       <SectionTitle sub="Click any swatch to copy its hex value.">All colors</SectionTitle>
       {[

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import lottie, { type AnimationItem } from 'lottie-web';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { SETS, ALL_NAMES, type Entry, type SetKey } from './IllustrationGallery';
-import { COLOR } from './brandKit';
+import { FONT, COLOR } from './brandKit';
 
 const PURPLE = COLOR.purple;
 
@@ -262,7 +262,7 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
           cursor: missing ? 'default' : 'pointer',
           opacity: missing ? 0.7 : 1,
           transition: 'background 120ms, border-color 120ms',
-          fontFamily: '"Poppins", sans-serif',
+          fontFamily: FONT,
           position: 'relative',
         }}
         onMouseOver={missing ? undefined : (e) => { if (!menu) e.currentTarget.style.background = '#FAFAFB'; }}
@@ -313,7 +313,7 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
             boxShadow: '0 12px 32px rgba(20,20,40,0.18)',
             padding: 6,
             zIndex: 1000,
-            fontFamily: '"Poppins", sans-serif',
+            fontFamily: FONT,
           }}
         >
           <div style={{ fontSize: 11, color: '#9AA0AA', padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
@@ -478,7 +478,7 @@ export function IllustrationDownloads() {
   };
 
   return (
-    <div style={{ fontFamily: '"Poppins", sans-serif', color: '#1A1A1A' }}>
+    <div style={{ fontFamily: FONT, color: '#1A1A1A' }}>
       <style>{`
         .dl-scroll { scrollbar-width: none; }
         .dl-scroll::-webkit-scrollbar { display: none; }
@@ -660,7 +660,7 @@ export function IllustrationDownloads() {
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 2000,
-              fontFamily: '"Poppins", sans-serif',
+              fontFamily: FONT,
             }}
           >
             <div

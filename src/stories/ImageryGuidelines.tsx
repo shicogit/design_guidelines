@@ -74,7 +74,7 @@ export function ImageryGuidelines() {
         <InfoCard icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />} label="Authentic" text="Real business owners, real moments. No over-styled stock. The people look like they actually run a business." />
         <InfoCard icon={<DsIcon name="light-sun" size={16} style={{ color: COLOR.ink }} />} label="Warm and bright" text="Natural or natural-feeling light. Clean, optimistic, never dark or dramatic. The mood should be calm and forward-looking." />
         <InfoCard icon={<DsIcon name="get-started" size={16} style={{ color: COLOR.ink }} />} label="In context" text="Subjects in their environment - a kitchen, a shop, a home office. The setting tells the story of their business." />
-        <InfoCard icon={<DsIcon name="Document" size={16} style={{ color: COLOR.ink }} />} label="Editorial over posed" text="Candid or near-candid moments over stiff, direct-camera poses. People at work, in motion, in thought." />
+        <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Editorial over posed" text="Candid or near-candid moments over stiff, direct-camera poses. People at work, in motion, in thought." />
         <InfoCard icon={<DsIcon name="info" size={16} style={{ color: COLOR.ink }} />} label="Generous space" text="Clean, uncluttered backgrounds. Give the subject room to breathe. Busy scenes compete with the message." />
         <InfoCard icon={<DsIcon name="shield-check" size={16} style={{ color: COLOR.ink }} />} label="Diverse and inclusive" text="Melio's customers come from every background. Photography should reflect that without stereotyping industry or role." />
       </div>
@@ -476,6 +476,12 @@ export function MelInImages() {
 export function ImageryResources() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Photography resources"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Sourcing guides, brief templates, and contacts for licensed, on-brand photography.</Lead>
+      </Hero>
       <ResourceFooter
         title="Photography sourcing"
         body={<>Melio's photography must be licensed, authentic, and approved before use. Source from stock libraries or commission original photography - always brief against these guidelines. <Med>Contact the design team</Med> before commissioning; they review and approve image selects before delivery.</>}

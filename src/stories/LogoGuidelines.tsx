@@ -83,7 +83,7 @@ function Tile({
         padding: 24,
         borderRadius: RADIUS.lg,
         background: dark ? COLOR.ink : COLOR.panel,
-        border: '1px solid #E4E7EC',
+        border: `1px solid ${COLOR.hairline}`,
         ...style,
       }}
     >
@@ -136,9 +136,9 @@ function ModesSection() {
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
         {(['White', 'Purple', 'Black'] as const).map((c) => {
           const active = color === c;
-          const fill = { White: '#ffffff', Purple: COLOR.purple, Black: '#1A1A1A' }[c];
+          const fill = { White: COLOR.white, Purple: COLOR.purple, Black: COLOR.ink }[c];
           return (
-            <button key={c} onClick={() => setColor(c)} title={c} aria-label={c} style={{ width: 20, height: 20, borderRadius: '50%', border: c === 'White' ? '1.5px solid #D9D9E0' : 'none', cursor: 'pointer', background: fill, padding: 0, flexShrink: 0, outline: active ? `2px solid ${COLOR.purple}` : 'none', outlineOffset: 2, transition: 'outline 0.12s' }} />
+            <button key={c} onClick={() => setColor(c)} title={c} aria-label={c} style={{ width: 20, height: 20, borderRadius: '50%', border: c === 'White' ? `1.5px solid ${COLOR.outline}` : 'none', cursor: 'pointer', background: fill, padding: 0, flexShrink: 0, outline: active ? `2px solid ${COLOR.purple}` : 'none', outlineOffset: 2, transition: 'outline 0.12s' }} />
           );
         })}
       </div>
@@ -154,7 +154,7 @@ function ModeBlock({ mode, desc }: { mode: string; desc: string }) {
   return (
     <div style={{ margin: '0 0 28px' }}>
       <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 2px' }}>{mode}</h3>
-      <p style={{ fontSize: 14, color: '#6B7280', margin: '0 0 12px', lineHeight: 1.6 }}>{desc}</p>
+      <p style={{ fontSize: 14, color: COLOR.muted, margin: '0 0 12px', lineHeight: 1.6 }}>{desc}</p>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${variants.length}, minmax(0, 1fr))`, gap: 20 }}>
         {variants.map((v) => (
           <Swatch key={v.color} v={v} />
@@ -181,35 +181,13 @@ function Rule({
   noPad?: boolean;
 }) {
   return (
-    <div style={{ borderRadius: RADIUS.lg, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.07)', display: 'grid', gridTemplateRows: 'subgrid', gridRow: 'span 2', rowGap: 0 }}>
-      <Tile dark={dark} style={{ ...(noPad ? {} : { minHeight: 130 }), borderRadius: 0, border: 'none', ...(noPad ? { padding: 0 } : {}), ...(bg ? { background: bg } : {}) }}>
+    <div style={{ display: 'grid', gridTemplateRows: 'subgrid', gridRow: 'span 2', rowGap: 8 }}>
+      <Tile dark={dark} style={{ ...(noPad ? {} : { minHeight: 130 }), borderRadius: 0, border: 'none', padding: 0, background: 'transparent', overflow: 'hidden' }}>
         {children}
       </Tile>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '10px 12px',
-        background: ok ? '#F2FAF5' : '#FEF4F4',
-        borderTop: ok ? '1px solid rgba(31,146,84,0.15)' : '1px solid rgba(214,69,69,0.15)',
-      }}>
-        <span
-          aria-hidden
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 18,
-            height: 18,
-            borderRadius: 999,
-            background: ok ? '#E7F6EC' : '#FDE8E8',
-            color: ok ? '#1F9254' : '#D64545',
-            flexShrink: 0,
-          }}
-        >
-          <DsIcon name={ok ? 'checked' : 'close'} size={12} />
-        </span>
-        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4 }}>{label}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+        <DsIcon name={ok ? 'checked' : 'close'} size={12} style={{ color: ok ? '#1F9254' : '#D64545', flexShrink: 0 }} />
+        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
       </div>
     </div>
   );
@@ -246,13 +224,21 @@ export function LogoGuidelines() {
       </Hero>
 
       <SplitRow
-        visual={<img src={staticAsset('before-after.png')} alt="Before and after" style={{ width: '100%', borderRadius: 15 }} />}
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={staticAsset('before-after.png')} alt="Before and after" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
+          </div>
+        }
         title="Before and after"
         body="A bolder, cleaner mark - refined strokes and stronger presence at every size. Always use the updated logo."
       />
 
       <SplitRow
-        visual={<img src={logoGuideUrl('Logo build structure.png')} alt="Logo build structure" style={{ width: '100%', borderRadius: RADIUS.lg, border: '1px solid #E4E7EC' }} />}
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={logoGuideUrl('Logo build structure.png')} alt="Logo build structure" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
+          </div>
+        }
         title="Build structure"
         body="Every element has a fixed proportional relationship - the wordmark, IO mark, and app symbol are all derived from the same grid."
       />
@@ -277,7 +263,7 @@ export function LogoGuidelines() {
               ].map(({ file, label }) => (
                 <div key={file}>
                   <p style={{ fontFamily: FONT, fontSize: 12, color: COLOR.muted, margin: '0 0 6px', textAlign: 'center' }}>{label}</p>
-                  <img src={staticAsset(file)} alt={label} style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: '1px solid #E4E7EC' }} />
+                  <img src={staticAsset(file)} alt={label} style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
                 </div>
               ))}
             </div>
@@ -288,7 +274,11 @@ export function LogoGuidelines() {
       />
 
       <SplitRow
-        visual={<img src={staticAsset('clear-space-spec.png')} alt="Clear space" style={{ width: '100%', borderRadius: RADIUS.lg, border: '1px solid #E4E7EC' }} />}
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={staticAsset('clear-space-spec.png')} alt="Clear space" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
+          </div>
+        }
         title="Clear space"
         body={'The minimum clear space on all sides equals the height of the "o" in the wordmark. No other element may cross into this zone.'}
       />
@@ -298,9 +288,8 @@ export function LogoGuidelines() {
           <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
               {([
-                { file: "Logo don't - low contrast.png",      label: "Low contrast" },
                 { file: "Logo don't - arrow proportions.png", label: "Altered proportions" },
-                { file: "Logo don't - color variations.png",  label: "Custom color variations" },
+                { file: "Logo don't - color variations.png",  label: "Color variations" },
                 { file: "Logo don't - change color.png",      label: "Changed logo color" },
                 { file: "Logo don't - change font.png",       label: "Changed font" },
                 { file: "Logo don't - logotype changes.png",  label: "Altered logotype" },
@@ -308,12 +297,12 @@ export function LogoGuidelines() {
                 { file: "Logo don't - strech.png",            label: "Stretched" },
                 { file: "Logo don't - inside shapes.png",     label: "Inside a shape" },
                 { file: "Logo don't - stroke.png",            label: "Stroke added" },
-                { file: "Logo don't - shadows.png",           label: "Effects or shadows" },
+                { file: "Logo don't - effects.png",           label: "Effects or shadows" },
               ] as const).map(({ file, label }) => {
                 const src = logoGuideUrl(file);
                 return src ? (
                   <Rule key={file} ok={false} noPad label={label}>
-                    <img src={src} alt={label} style={{ width: '100%', display: 'block' }} />
+                    <img src={src} alt={label} style={{ width: '100%', borderRadius: 0, display: 'block' }} />
                   </Rule>
                 ) : null;
               })}
@@ -328,10 +317,10 @@ export function LogoGuidelines() {
         visual={
           <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {(['Logo mockup 01.png', 'Logo mockup 02.png', 'Logo mockup 03.png', 'Logo mockup 04.png'] as const).map((file) => {
+              {(['Logo mockup 01.png', 'Logo mockup 04.png', 'Logo mockup 03.png', 'Logo mockup 02.png'] as const).map((file) => {
                 const src = logoGuideUrl(file);
                 return src ? (
-                  <img key={file} src={src} alt={file.replace(/\.\w+$/, '')} style={{ width: '100%', aspectRatio: '4 / 3', display: 'block', objectFit: 'cover', borderRadius: RADIUS.md, border: '1px solid #E4E7EC' }} />
+                  <img key={file} src={src} alt={file.replace(/\.\w+$/, '')} style={{ width: '100%', aspectRatio: '4 / 3', display: 'block', objectFit: 'cover', borderRadius: RADIUS.md, border: `1px solid ${COLOR.hairline}` }} />
                 ) : null;
               })}
             </div>
@@ -363,7 +352,7 @@ export function LogoCoBranding() {
       <SplitRow
         visual={
           <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-            <img src={staticAsset('cobrand-symbol-formula.png')} alt="Logo + symbol matching formula" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: '1px solid #E4E7EC' }} />
+            <img src={staticAsset('cobrand-symbol-formula.png')} alt="Logo + symbol matching formula" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
           </div>
         }
         title="Logo + symbol"
@@ -373,7 +362,7 @@ export function LogoCoBranding() {
       <SplitRow
         visual={
           <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-            <img src={staticAsset('cobrand-logotype-formula.png')} alt="Logotype matching formula" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: '1px solid #E4E7EC' }} />
+            <img src={staticAsset('cobrand-logotype-formula.png')} alt="Logotype matching formula" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
           </div>
         }
         title="Type-only partners"
@@ -385,16 +374,15 @@ export function LogoCoBranding() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
               <p style={{ fontFamily: FONT, fontSize: 12, color: COLOR.muted, margin: '0 0 6px', textAlign: 'center' }}>Black and white</p>
-              <img src={staticAsset('cobrand-example-bw.png')} alt="Black and white logo matching example" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: '1px solid #E4E7EC' }} />
+              <img src={staticAsset('cobrand-example-bw.png')} alt="Black and white logo matching example" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
             </div>
             <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
               <p style={{ fontFamily: FONT, fontSize: 12, color: COLOR.muted, margin: '0 0 6px', textAlign: 'center' }}>Dimension pairings</p>
-              <img src={staticAsset('cobrand-pairings.png')} alt="Various logo dimension pairings" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: '1px solid #E4E7EC' }} />
+              <img src={staticAsset('cobrand-pairings.png')} alt="Various logo dimension pairings" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', border: `1px solid ${COLOR.hairline}` }} />
             </div>
           </div>
         }
         title="Examples"
-        body="Logo alignment across different partner types and color contexts."
       />
     </div>
   );
@@ -404,8 +392,8 @@ export function LogoCoBranding() {
 
 const CARD_BG: Record<string, string> = {
   White: COLOR.purple,
-  Purple: LILAC_100,
-  Black: LILAC_100,
+  Purple: COLOR.panel,
+  Black: COLOR.panel,
 };
 
 function LogoCard({ v, dlBase, openId, setOpenId }: { v: Variant; dlBase: string; openId: string | null; setOpenId: (id: string | null) => void }) {
@@ -413,7 +401,7 @@ function LogoCard({ v, dlBase, openId, setOpenId }: { v: Variant; dlBase: string
   const open = openId === id;
   const [hovered, setHovered] = useState(false);
   const [copying, setCopying] = useState(false);
-  const imgBg = CARD_BG[v.color] ?? '#EFEFF3';
+  const imgBg = CARD_BG[v.color] ?? COLOR.panel;
 
   return (
     <div
@@ -511,9 +499,16 @@ function LogoCard({ v, dlBase, openId, setOpenId }: { v: Variant; dlBase: string
   );
 }
 
+const MODE_LABELS: Record<string, string> = {
+  'Full Logo': 'Full Logo',
+  'IO': 'IO mark',
+  'App Symbol': 'App symbol',
+};
+
 export function LogoResources() {
   const [allBusy, setAllBusy] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [color, setColor] = useState<'Purple' | 'Black' | 'White'>('Purple');
 
   useEffect(() => {
     if (!openId) return;
@@ -544,32 +539,46 @@ export function LogoResources() {
 
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Download logos"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Each mode comes in Purple, Black, and White - available as SVG and PNG.</Lead>
+      </Hero>
       <DownloadAllBanner
         count={VARIANTS.length}
         busy={allBusy}
         onDownload={downloadAll}
         label="Download all logos"
       />
-      <Body style={{ margin: '0 0 20px' }}>
-        Download a logo file. Each mode comes in Purple, Black, and White.
-      </Body>
-      {MODES.map((m) => {
-        const variants = COLOR_ORDER.map((c) => VARIANTS.find((v) => v.mode === m.mode && v.color === c)).filter(
-          Boolean,
-        ) as Variant[];
-        if (!variants.length) return null;
-        const dlBase = (c: string) => `melio-${m.mode.toLowerCase().replace(/\s+/g, '-')}-${c.toLowerCase()}`;
-        return (
-          <div key={m.mode} style={{ margin: '0 0 24px' }}>
-            <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 10px' }}>{m.mode}</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
-              {variants.map((v) => (
-                <LogoCard key={v.color} v={v} dlBase={dlBase(v.color)} openId={openId} setOpenId={setOpenId} />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      <div style={{ background: COLOR.panel, borderRadius: 15, padding: 20, margin: '0 0 24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+          {MAIN_MODES.map((m) => {
+            const v = VARIANTS.find((vv) => vv.mode === m.mode && vv.color === color);
+            if (!v) return null;
+            const dlBase = `melio-${m.mode.toLowerCase().replace(/\s+/g, '-')}-${color.toLowerCase()}`;
+            return (
+              <div key={m.mode}>
+                <p style={{ fontFamily: FONT, fontSize: 12, color: COLOR.muted, margin: '0 0 8px', textAlign: 'center' }}>
+                  {MODE_LABELS[m.mode] ?? m.mode}
+                </p>
+                <LogoCard v={v} dlBase={dlBase} openId={openId} setOpenId={setOpenId} />
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
+          {(['White', 'Purple', 'Black'] as const).map((c) => {
+            const active = color === c;
+            const fill = { White: COLOR.white, Purple: COLOR.purple, Black: COLOR.ink }[c];
+            return (
+              <button key={c} onClick={() => setColor(c)} title={c} aria-label={c}
+                style={{ width: 20, height: 20, borderRadius: '50%', border: c === 'White' ? `1.5px solid ${COLOR.outline}` : 'none', cursor: 'pointer', background: fill, padding: 0, flexShrink: 0, outline: active ? `2px solid ${COLOR.purple}` : 'none', outlineOffset: 2, transition: 'outline 0.12s' }}
+              />
+            );
+          })}
+        </div>
+      </div>
 
       <ResourceFooter
         title="Need a logo file?"

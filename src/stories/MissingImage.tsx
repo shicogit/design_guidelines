@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { FONT } from './brandKit';
 
 /**
  * Placeholder shown where a Zeroheight image hasn't been migrated.
@@ -32,7 +33,7 @@ export function MissingImage({
         textAlign: 'center',
         padding: 16,
         boxSizing: 'border-box',
-        fontFamily: '"Poppins", -apple-system, sans-serif',
+        fontFamily: FONT,
         ...style,
       }}
     >

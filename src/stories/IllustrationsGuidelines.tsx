@@ -50,22 +50,38 @@ const REQUESTING_ILLUSTRATIONS =
   'https://app.notion.com/p/meliopayments/Requesting-illustrations-1ac66d69640a8075b260c4d967a6cefb?source=copy_link';
 const NOTION_FAVICON = 'https://www.google.com/s2/favicons?domain=notion.so&sz=64';
 
-const illustGuidelineMods = import.meta.glob('../assets/guidelines/illustrations/*.jpg', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const illustGuideUrl = (name: string) => illustGuidelineMods[`../assets/guidelines/illustrations/${name}`];
+const illustGuidelineMods = import.meta.glob('../assets/guidelines/illustrations/*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const illustGuideUrl = (name: string) => {
+  const u = illustGuidelineMods[`../assets/guidelines/illustrations/${name}`];
+  return u ? `${u}?v=2` : undefined;
+};
 
-// Lottie animations used to illustrate the three KitCard points - Melio uses the Mel set,
-// Partners uses the matching twins (which show a placeholder until uploaded).
-const melioMods = import.meta.glob('../assets/illustrations/melio/*.json', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-}) as Record<string, string>;
+// Melio product kit illustrations - fetched directly from the DS S3 (platform-static.meliopayments.com).
+const MELIO_S3 = 'https://platform-static.meliopayments.com/assets/melio';
+export const melioUrl = (name: string) => `${MELIO_S3}/${name}.lottie.json`;
+
+const MELIO_NAMES = [
+  'academy', 'add', 'add-card', 'add-user', 'announce', 'approval-workflows', 'approve',
+  'bank', 'bank-success', 'blocked', 'calendar', 'camera', 'card', 'celebration',
+  'construction', 'create-invoice', 'customer-add', 'customize', 'customize-invoice',
+  'declined', 'discount', 'edit', 'error', 'expired', 'faq', 'fast', 'fun-fact', 'gift',
+  'grow', 'invoice', 'missing', 'mobile', 'money-success', 'network-download', 'network-error',
+  'network-pay', 'new-email', 'no-items', 'notification', 'page-not-found', 'paper-check',
+  'pay', 'payment-link', 'payout-add', 'pending', 'processing', 'processing 2', 'product',
+  'question', 'save-money', 'security', 'sent', 'set-up-account', 'single-use-card',
+  'small-business', 'success', 'sync-accounts', 'sync-user', 'tax-form', 'troubleshooting',
+  'under-review', 'upgrade-plan', 'user-approve', 'user-management', 'vendor-add', 'warning',
+];
+const melioMods: Record<string, string> = Object.fromEntries(
+  MELIO_NAMES.map(name => [`${name}.lottie.json`, melioUrl(name)])
+);
+
+// Partners animations still load from local files (partner twins aren't in S3).
 const partnersMods = import.meta.glob('../assets/illustrations/partners/*.json', {
   eager: true,
   query: '?url',
   import: 'default',
 }) as Record<string, string>;
-export const melioUrl = (name: string) => melioMods[`../assets/illustrations/melio/${name}.json`];
 const partnersUrl = (name: string) => partnersMods[`../assets/illustrations/partners/${name}.json`];
 const POINT_NAMES = { what: 'product', use: 'announce', where: 'faq' } as const;
 const POINT_ANIMS: Record<'Melio' | 'Partners', { what?: string; use?: string; where?: string }> = {
@@ -149,7 +165,7 @@ function KitHeader({ kit, active, onClick }: { kit: Kit; active: boolean; onClic
         padding: '14px 16px',
         border: 'none',
         background: active ? LILAC_200 : '#F1F1F4',
-        fontFamily: 'inherit',
+        fontFamily: FONT,
         fontSize: 16,
         fontWeight: 600,
         color: active ? PURPLE : COLOR.muted,
@@ -159,7 +175,7 @@ function KitHeader({ kit, active, onClick }: { kit: Kit; active: boolean; onClic
         if (!active) e.currentTarget.style.background = '#E9E9EE';
       }}
       onMouseOut={(e) => {
-        if (!active) e.currentTarget.style.background = '#F1F1F4';
+        if (!active) e.currentTarget.style.background = COLOR.hover;
       }}
     >
       {kit.badge}
@@ -192,7 +208,19 @@ const KITS: Record<KitKey, Kit> = {
 };
 
 // A few Mel character poses for the intro strip (from the Melio set).
-const MEL_POSES = ['announce', 'celebration', 'fun-fact', 'grow', 'faq'];
+const MEL_POSES = ['add-card', 'pay', 'bank', 'sent', 'security', 'gift'];
+
+function SplitRow({ visual, title, body, noDivider }: { visual: React.ReactNode; title: string; body: React.ReactNode; noDivider?: boolean }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 36, padding: '36px 0', borderTop: noDivider ? undefined : `1px solid ${COLOR.hairline}`, alignItems: 'start' }}>
+      <div>{visual}</div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>{title}</h3>
+        <div style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65 }}>{body}</div>
+      </div>
+    </div>
+  );
+}
 
 /** "Mel" intro tab - meet the mascot before diving into the kits. */
 export function MelIntro() {
@@ -206,195 +234,230 @@ export function MelIntro() {
         </Lead>
       </Hero>
 
-      <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: '0 0 16px' }}>
-        Mel is a unique character - neither human nor animal and intentionally genderless. With a neutral expression and no mouth or eyebrows, the look is clean and neutral, keeping Mel relatable yet serious across every context.
-      </p>
+      <SplitRow
+        visual={(() => {
+          const url = illustGuideUrl('01_This is Mel.png');
+          return url ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={url} alt="This is Mel" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain' }} />
+            </div>
+          ) : <div />;
+        })()}
+        title="The character"
+        body="A unique, imaginary character - genderless, expressionless, and nearly as recognizable as the logo itself."
+      />
 
-      {/* Image 1 */}
-      {(() => {
-        const url = illustGuideUrl('01_This is Mel.jpg');
+      <SplitRow
+        noDivider
+        visual={(() => {
+          const url = illustGuideUrl('02_This is Mel.png');
+          return url ? (
+            <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+              <img src={url} alt="This is Mel" style={{ width: '100%', borderRadius: RADIUS.md, display: 'block', objectFit: 'contain' }} />
+            </div>
+          ) : <div />;
+        })()}
+        title="The anatomy"
+        body="One black outline, white fill. Color enters through accent elements only - Mel's core form never changes."
+      />
+
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: RADIUS.xl, padding: 18, display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 130px)', gap: 12 }}>
+              {MEL_POSES.map((name) => (
+                <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <MelAnim url={melioUrl(name)} size={130} />
+                </div>
+              ))}
+            </div>
+          </div>
+        }
+        title="Mel in motion"
+        body="Built in After Effects and shipped as Lottie. Can loop continuously or play as a one-time animation."
+      />
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={illustGuideUrl('Groups 04.png')} alt="Mel in product contexts" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+          </div>
+        }
+        title="Audiences"
+        body="Mel shows up everywhere Melio does - product flows, marketing moments, and team touchpoints."
+      />
+      <SplitRow
+        noDivider
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={illustGuideUrl('Groups 05.png')} alt="Mel persona variations" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+          </div>
+        }
+        title="Many faces"
+        body="Mel is genderless at its core. When a specific personality or persona is needed, accessories, hairstyles, and headwear are the right way to express it."
+      />
+      <SplitRow
+        noDivider
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={illustGuideUrl('Groups 07.png')} alt="Mel in professional personas" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+          </div>
+        }
+        title="Personas"
+        body="Mel can dress the part - costumed versions for marketing campaigns, partner contexts, or character-driven moments."
+      />
+
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+              {([
+                { n: 1, label: 'Correct character' },
+                { n: 3, label: 'Brand colors' },
+                { n: 5, label: 'Correct framing' },
+              ] as const).map(({ n, label }) => {
+                const url = illustGuideUrl(`Do’s & Don’ts 0${n}.png`);
+                return url ? (
+                  <div key={n} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <img src={url} alt={label} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+                      <DsIcon name="checked" size={12} style={{ color: '#1F9254', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
+                    </div>
+                  </div>
+                ) : null;
+              })}
+            </div>
+          </div>
+        }
+        title="Do's"
+        body="Use the correct character, brand colors, and proper framing."
+      />
+
+      <SplitRow
+        noDivider
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+              {([
+                { n: 2, label: 'No recoloring' },
+                { n: 4, label: 'No modifications' },
+                { n: 6, label: 'No distortion' },
+              ] as const).map(({ n, label }) => {
+                const url = illustGuideUrl(`Do’s & Don’ts 0${n}.png`);
+                return url ? (
+                  <div key={n} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <img src={url} alt={label} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+                      <DsIcon name="close" size={12} style={{ color: '#D64545', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
+                    </div>
+                  </div>
+                ) : null;
+              })}
+            </div>
+          </div>
+        }
+        title="Don'ts"
+        body="Never recolor, modify, or distort Mel's form."
+      />
+
+      {([
+        { n: 1, title: 'Email signatures', body: 'Mel in employee email signatures and internal digital touchpoints.' },
+        { n: 2, title: 'Books & print', body: 'Branded books and print collateral.' },
+        { n: 3, title: 'Office murals', body: 'Large-scale wall art throughout Melio offices.' },
+        { n: 4, title: 'Events & swag', body: 'Internal events, social campaigns, and branded clothing.' },
+        { n: 5, title: 'Stickers', body: 'Mel on laptop stickers and small-format branded items.' },
+        { n: 6, title: 'Mel in the wild', body: 'Real-world appearances - Mel on office walls and at the office bar.' },
+      ] as const).map(({ n, title, body }, i) => {
+        const url = illustGuideUrl(`Usage 0${n}.png`);
         return url ? (
-          <div style={{ borderRadius: RADIUS.xl, overflow: 'hidden', background: COLOR.panel, margin: '0 0 12px' }}>
-            <img src={url} alt="This is Mel" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-          </div>
+          <SplitRow
+            key={n}
+            noDivider={i > 0}
+            visual={
+              <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+                <img src={url} alt={title} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+              </div>
+            }
+            title={title}
+            body={body}
+          />
         ) : null;
-      })()}
+      })}
 
-      <div style={{ margin: '0 0 16px' }}>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: '0 0 6px' }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Neither human nor animal. </span>
-          A unique, imaginary character - a visual anchor for the brand, almost as recognizable as the logo itself.
-        </p>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Neutral by design. </span>
-          No mouth, no eyebrows. The neutral expression keeps Mel relatable yet serious - never over-acting the moment.
-        </p>
-      </div>
-
-      {/* Image 2 */}
-      {(() => {
-        const url = illustGuideUrl('02_This is Mel.jpg');
+      {([
+        { n: 1, title: 'melio.com', body: 'Mel on the Melio marketing website - illustrating how the product works for prospective users.' },
+        { n: 2, title: 'Empty states', body: 'A friendly presence when there is nothing to show yet - keeps the screen alive.' },
+        { n: 3, title: 'Setup', body: 'Mel guides users through onboarding and setup flows - a friendly presence in empty and first-use states.' },
+        { n: 4, title: 'Email header', body: 'Mel anchors Melio email headers, making transactional messages feel warm and on-brand.' },
+        { n: 5, title: 'Modals', body: 'Mel shows up in key product moments - upgrades, milestones, and important in-product notifications.' },
+      ] as const).map(({ n, title, body }, i) => {
+        const url = illustGuideUrl(`Product 0${n}.png`);
         return url ? (
-          <div style={{ borderRadius: RADIUS.xl, overflow: 'hidden', background: COLOR.panel, margin: '0 0 16px' }}>
-            <img src={url} alt="This is Mel" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-          </div>
+          <SplitRow
+            key={n}
+            noDivider={i > 0}
+            visual={
+              <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+                <img src={url} alt={title} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+              </div>
+            }
+            title={title}
+            body={body}
+          />
         ) : null;
-      })()}
+      })}
 
-      <div style={{ margin: '0 0 16px' }}>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: '0 0 6px' }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>One outline, white fill. </span>
-          A consistent black outline with a white or transparent fill. Other elements can appear in color when needed - Mel's core look stays the same.
-        </p>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: '0 0 6px' }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Intentionally genderless. </span>
-          The name "Mel" is a gender-neutral choice inspired directly by the brand name - approachable and inclusive by design.
-        </p>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Dresses the part. </span>
-          Occasionally, Mel takes on accessories or costumes to convey a specific message or tell a story - adding versatility without shifting the core identity.
-        </p>
-      </div>
-
-
-      {/* Pose strip */}
-      <SubTitle style={{ margin: '0 0 10px' }}>Mel in motion</SubTitle>
-      <p style={{ fontSize: 14, color: COLOR.body, margin: '0 0 12px', lineHeight: 1.6 }}>
-        Every Mel illustration is animated in After Effects and shipped as Lottie - always looping, always alive.
-      </p>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: 12,
-          background: LILAC_100,
-          borderRadius: RADIUS.xl,
-          padding: 18,
-          margin: '0 0 12px',
-        }}
-      >
-        {MEL_POSES.map((name) => (
-          <div
-            key={name}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            <MelAnim url={melioUrl(name)} size={130} />
+      <SplitRow
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+              {[1, 2, 3, 4, 5, 6, 7].map((n) => {
+                const url = illustGuideUrl(`Compositions 0${n}.png`);
+                return url ? (
+                  <img key={n} src={url} alt={`Composition example ${n}`} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+                ) : null;
+              })}
+            </div>
           </div>
-        ))}
-      </div>
+        }
+        title="Compositions"
+        body="Full-body, upper torso, and contextual prop arrangements - how Mel is framed within a layout."
+      />
 
-      {/* Last two traits - after the pose strip */}
-      <div style={{ margin: '0 0 28px' }}>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: '0 0 6px' }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Always animated. </span>
-          Built in After Effects and shipped as Lottie. The design is versatile - Mel appears in different poses and situations, creating a cohesive yet varied visual language.
-        </p>
-        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>
-          <span style={{ fontWeight: 600, color: COLOR.ink }}>Simple, modern, and delightful. </span>
-          Developed as part of Melio's rebrand, Mel harmonizes with the brand's other visual elements - appearing across product, marketing, and the team's internal communications.
-        </p>
-      </div>
+      {([
+        { n: 1, title: 'Marketing site', body: 'Mel illustrations used across the Melio marketing site.' },
+        { n: 3, title: 'Props', body: 'Mel holding objects to communicate specific messages - icons, symbols, and seasonal items that add context.' },
+        { n: 8, title: 'Levels', body: 'Mel in three experience states - Baby, Pro, and Legend.' },
+      ] as const).map(({ n, title, body }, i) => {
+        const url = illustGuideUrl(`Groups 0${n}.png`);
+        return url ? (
+          <SplitRow
+            key={n}
+            noDivider={i > 0}
+            visual={
+              <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+                <img src={url} alt={title} style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+              </div>
+            }
+            title={title}
+            body={body}
+          />
+        ) : null;
+      })}
 
-      {/* Where Mel shows up */}
-      <div style={{ background: LILAC_100, borderRadius: RADIUS.md, padding: '16px 18px', margin: '0 0 28px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <DsIcon name="Location" size={16} style={{ color: COLOR.ink }} />
-          <div style={{ fontSize: 14, fontWeight: 600, color: COLOR.ink }}>Where Mel shows up</div>
-        </div>
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: COLOR.body }}>
-          Three audiences: <Med>current Melio users</Med>, <Med>potential customers</Med>, and{' '}
-          <Med>Melio employees</Med>. In product, Mel represents the user's experience - not a Melio employee - keeping the focus on customer needs.
-        </p>
-      </div>
-
-      {/* Do's & Don'ts - separated into Do and Don't groups */}
-      <SubTitle style={{ margin: '4px 0 10px' }}>Do's &amp; Don'ts</SubTitle>
-      <p style={{ fontSize: 13, fontWeight: 600, color: '#1F9254', margin: '0 0 10px', letterSpacing: 0.2 }}>Do</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, margin: '0 0 20px' }}>
-        {[1, 3, 5].map((n) => {
-          const url = illustGuideUrl(`Do's & Don'ts 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt="Do example" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
-      <p style={{ fontSize: 13, fontWeight: 600, color: '#D64545', margin: '0 0 10px', letterSpacing: 0.2 }}>Don't</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, margin: '0 0 28px' }}>
-        {[2, 4, 6].map((n) => {
-          const url = illustGuideUrl(`Do's & Don'ts 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt="Don't example" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
-
-      {/* Real-world usage examples */}
-      <SubTitle style={{ margin: '4px 0 10px' }}>Mel everywhere</SubTitle>
-      <p style={{ fontSize: 14, color: COLOR.body, margin: '0 0 12px', lineHeight: 1.6 }}>
-        Beyond product and marketing, Mel appears in office murals, GIF animations, WhatsApp stickers, MacBook stickers, and company swag - adding a personal touch to team communication and reinforcing the brand identity for the internal team too.
-      </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, margin: '0 0 28px' }}>
-        {[1, 2, 3, 4, 5, 6].map((n) => {
-          const url = illustGuideUrl(`Usage 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt={`Usage example ${n}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
-
-      {/* Product usage examples */}
-      <SubTitle style={{ margin: '4px 0 10px' }}>In product</SubTitle>
-      <p style={{ fontSize: 14, color: COLOR.body, margin: '0 0 12px', lineHeight: 1.6 }}>
-        Mel in real product surfaces - onboarding, empty states, success moments, and error handling.
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, margin: '0 0 28px' }}>
-        {[1, 2, 3, 4, 5, 6].map((n) => {
-          const url = illustGuideUrl(`Product 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt={`Product usage example ${n}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
-
-      {/* Compositions */}
-      <SubTitle style={{ margin: '4px 0 10px' }}>Compositions</SubTitle>
-      <p style={{ fontSize: 14, color: COLOR.body, margin: '0 0 12px', lineHeight: 1.6 }}>
-        How Mel is framed and cropped within a layout - full-body, upper torso, and contextual prop arrangements.
-      </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, margin: '0 0 28px' }}>
-        {[1, 2, 3, 4, 5, 6, 7].map((n) => {
-          const url = illustGuideUrl(`Compositions 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt={`Composition example ${n}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
-
-      {/* Groups */}
-      <SubTitle style={{ margin: '4px 0 10px' }}>Groups</SubTitle>
-      <p style={{ fontSize: 14, color: COLOR.body, margin: '0 0 12px', lineHeight: 1.6 }}>
-        Multiple Mels together - how to compose group scenes without losing individual character clarity.
-      </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12, margin: '0 0 28px' }}>
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => {
-          const url = illustGuideUrl(`Groups 0${n}.jpg`);
-          return url ? (
-            <div key={n} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt={`Group example ${n}`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-            </div>
-          ) : null;
-        })}
-      </div>
+      <SplitRow
+        noDivider
+        visual={
+          <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+            <img src={illustGuideUrl('Groups 06.png')} alt="Mel WhatsApp stickers" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: RADIUS.md }} />
+          </div>
+        }
+        title="Internal comms"
+        body="Mel also lives in team chats - a set of expressive WhatsApp stickers for internal Melio use."
+      />
 
       {/* Agent Mel callout */}
       <div style={{
@@ -409,7 +472,7 @@ export function MelIntro() {
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <DsIcon name="ai Type=Outline" size={16} style={{ color: PURPLE }} />
+            <DsIcon name="ai-outline" size={16} style={{ color: PURPLE }} />
             <div style={{ fontSize: 15, fontWeight: 600, color: PURPLE }}>Agent Mel</div>
           </div>
           <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: COLOR.body }}>
@@ -435,15 +498,15 @@ function ComingSoon({ title, desc }: { title: string; desc: string }) {
   return (
     <div
       style={{
-        border: '1.5px dashed #D1D5DB',
+        border: `1.5px dashed ${COLOR.outline}`,
         borderRadius: RADIUS.lg,
         padding: '40px 24px',
         textAlign: 'center',
-        background: '#FCFCFD',
+        background: COLOR.panel,
       }}
     >
       <div style={{ fontSize: 16, fontWeight: 600, color: COLOR.ink, marginBottom: 6 }}>{title}</div>
-      <p style={{ margin: '0 auto', maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: '#8A8A99' }}>{desc}</p>
+      <p style={{ margin: '0 auto', maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: COLOR.muted }}>{desc}</p>
     </div>
   );
 }
@@ -506,31 +569,17 @@ export function ProductGuidelines() {
       </SectionTitle>
       <div
         style={{
-          border: '1.5px dashed #D1D5DB',
+          border: `1.5px dashed ${COLOR.outline}`,
           borderRadius: RADIUS.lg,
           padding: '40px 24px',
           textAlign: 'center',
-          background: '#FCFCFD',
+          background: COLOR.panel,
           marginBottom: 16,
         }}
       >
         <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, marginBottom: 6 }}>Images coming soon</div>
-        <p style={{ margin: '0 auto', maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: '#8A8A99' }}>
+        <p style={{ margin: '0 auto', maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: COLOR.muted }}>
           Upload product usage screenshots to the guidelines folder and they'll appear here automatically.
-        </p>
-      </div>
-      <div
-        style={{
-          border: '1.5px dashed #D1D5DB',
-          borderRadius: RADIUS.lg,
-          padding: '40px 24px',
-          textAlign: 'center',
-          background: '#FCFCFD',
-        }}
-      >
-        <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, marginBottom: 6 }}>Videos coming soon</div>
-        <p style={{ margin: '0 auto', maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: '#8A8A99' }}>
-          Upload walkthrough videos to the guidelines folder and they'll play inline here.
         </p>
       </div>
     </div>
@@ -717,7 +766,7 @@ function IllustrationKitCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, opacity: 0.45 }}>
           <DownloadIcon size={11} />
           <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
-          {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: '#8A8A99', background: '#F1F1F4', borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
+          {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: COLOR.muted, background: COLOR.hover, borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
         </div>
       ) : (
         <div style={{ position: 'relative' }}>
@@ -728,7 +777,7 @@ function IllustrationKitCard({
           >
             <DownloadIcon size={11} />
             <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{busy ? 'Zipping...' : label}</span>
-            {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: '#8A8A99', background: '#F1F1F4', borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
+            {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: COLOR.muted, background: COLOR.hover, borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
           </button>
 
             {isOpen && (
@@ -755,7 +804,7 @@ function IllustrationKitCard({
                   <span
                     style={{
                       fontSize: 10,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       color: COLOR.faint,
                       letterSpacing: 0.6,
                       textTransform: 'uppercase',
@@ -842,6 +891,12 @@ export function IllustrationsResources() {
 
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+      <Hero
+        title="Download illustrations"
+        visual={<DsIcon name="download" size={144} style={{ color: COLOR.purple }} />}
+      >
+        <Lead style={{ margin: 0 }}>Full illustration kits for Melio and partner surfaces - available as Lottie JSON.</Lead>
+      </Hero>
       <DownloadAllBanner
         count={melioCount + partnersCount}
         busy={allBusy}
@@ -861,7 +916,26 @@ export function IllustrationsResources() {
           setOpenId={setOpenId}
         />
       </div>
-      <p style={{ fontSize: 11, fontWeight: 700, color: COLOR.muted, letterSpacing: 0.7, textTransform: 'uppercase', margin: '20px 0 10px', fontFamily: FONT }}>Product kit</p>
+      <SectionTitle sub="Every illustration plays on loop. Click to download (SVG, PNG, JPEG, GIF, or Lottie JSON) or copy. Switch kits with the toggle; on Partners, pick a brand to recolor.">
+        The library
+      </SectionTitle>
+      <IllustrationGallery set={libSet} onSetChange={setLibSet} />
+      <div
+        style={{
+          background: COLOR.panel,
+          borderRadius: RADIUS.md,
+          padding: '14px 18px',
+          margin: '16px 0 28px',
+          fontSize: 14,
+          lineHeight: 1.6,
+          color: COLOR.body,
+        }}
+      >
+        <span style={{ fontWeight: 500, fontSize: 'inherit', lineHeight: 'inherit', color: COLOR.ink }}>Rule of thumb:</span> if it's a Melio surface, use the{' '}
+        <Med>Melio Kit</Med> (with Mel). If it lives on a partner's surface, use the <Med>Partners Kit</Med>{' '}
+        (recolored to their brand).
+      </div>
+      <p style={{ fontSize: 11, fontWeight: 600, color: COLOR.muted, letterSpacing: 0.7, textTransform: 'uppercase', margin: '20px 0 10px', fontFamily: FONT }}>Product kit</p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
         <IllustrationKitCard
           id="melio"
@@ -886,32 +960,13 @@ export function IllustrationsResources() {
           setOpenId={setOpenId}
         />
       </div>
-      <SectionTitle sub="Every illustration plays on loop. Click to download (SVG, PNG, JPEG, GIF, or Lottie JSON) or copy. Switch kits with the toggle; on Partners, pick a brand to recolor.">
-        The library
-      </SectionTitle>
-      <IllustrationGallery set={libSet} onSetChange={setLibSet} />
-      <div
-        style={{
-          background: COLOR.panel,
-          borderRadius: RADIUS.md,
-          padding: '14px 18px',
-          margin: '16px 0 28px',
-          fontSize: 14,
-          lineHeight: 1.6,
-          color: COLOR.body,
-        }}
-      >
-        <span style={{ fontWeight: 500, fontSize: 'inherit', lineHeight: 'inherit', color: COLOR.ink }}>Rule of thumb:</span> if it's a Melio surface, use the{' '}
-        <Med>Melio Kit</Med> (with Mel). If it lives on a partner's surface, use the <Med>Partners Kit</Med>{' '}
-        (recolored to their brand).
-      </div>
 
       <ResourceFooter
         title="Need an illustration?"
         body={<>First, check the illustration library above or in <a href="https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>DS Foundations</a> - search before requesting. If it doesn't exist, go to <a href="https://app.notion.com/p/meliopayments/Requesting-illustrations-1ac66d69640a8075b260c4d967a6cefb?source=copy_link" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>Notion</a> to add a request. Still got questions? Reach out to the design team - but please don't Slack or email before checking + adding to the list.</>}
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
-          { label: 'Request an illustration', href: 'https://app.notion.com/p/meliopayments/Requesting-illustrations-1ac66d69640a8075b260c4d967a6cefb?source=copy_link' },
+          { label: 'Request an illustration', href: 'https://app.notion.com/p/meliopayments/Requesting-illustrations-1ac66d69640a8075b260c4d967a6cefb?source=copy_link', icon: <img src={NOTION_FAVICON} alt="" width={16} height={16} style={{ flexShrink: 0, objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} /> },
         ]}
         contacts={[
           { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
