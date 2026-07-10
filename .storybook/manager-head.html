@@ -176,6 +176,57 @@
     setInterval(tagBottomItems, 400);
     setTimeout(tagBottomItems, 1000);
 
+    /* Force Writing section to look identical to Identity. Emotion runtime CSS
+       wins over static !important rules; inline style.setProperty beats both. */
+    function styleWritingHeader() {
+      var writing = document.getElementById('writing');
+      if (!writing) return;
+
+      /* Container: full-width band with top + bottom divider, same as #identity */
+      writing.style.setProperty('display', 'block', 'important');
+      writing.style.setProperty('width', 'calc(100% + 12px)', 'important');
+      writing.style.setProperty('margin', '0', 'important');
+      writing.style.setProperty('border-top', '1px solid #D8DCE9', 'important');
+      writing.style.setProperty('border-bottom', '1px solid #D8DCE9', 'important');
+
+      /* Hide the expand-all button */
+      var expandBtn = writing.querySelector('button[data-action="expand-all"]');
+      if (expandBtn) expandBtn.style.setProperty('display', 'none', 'important');
+
+      var btn = writing.querySelector('button[data-action="collapse-root"]');
+      if (!btn || btn.dataset.melioWritingStyled) return;
+      btn.dataset.melioWritingStyled = '1';
+
+      /* Identity-level button geometry */
+      ['display:flex', 'align-items:center', 'justify-content:flex-start',
+       'text-align:left', 'gap:0', 'box-sizing:border-box', 'position:relative',
+       'width:100%', 'min-height:45px', 'margin:0', 'padding:12px 14px 12px 22px',
+       'border:none', 'border-radius:0', 'background:transparent', 'color:#1A1A1A',
+       'font-size:15px', 'font-weight:400', 'font-family:Poppins,sans-serif',
+       'line-height:1.4', 'text-transform:none', 'letter-spacing:normal',
+       'white-space:nowrap', 'cursor:pointer'
+      ].forEach(function(rule) {
+        var parts = rule.split(':');
+        btn.style.setProperty(parts[0], parts.slice(1).join(':'), 'important');
+      });
+
+      /* Hide Storybook's native SVG arrow (we use a CSS ::after chevron instead) */
+      var innerDiv = btn.querySelector('div');
+      if (innerDiv) innerDiv.style.setProperty('display', 'none', 'important');
+
+      /* Hover: light grey, same as Identity */
+      btn.addEventListener('mouseenter', function() {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.style.setProperty('background', isOpen ? 'white' : '#EBEFF2', 'important');
+      });
+      btn.addEventListener('mouseleave', function() {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.style.setProperty('background', isOpen ? 'white' : 'transparent', 'important');
+      });
+    }
+    setInterval(styleWritingHeader, 400);
+    setTimeout(styleWritingHeader, 800);
+
     setInterval(updateDrawerState, 400);
     setTimeout(updateDrawerState, 1000);
   })();
