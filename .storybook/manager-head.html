@@ -182,10 +182,17 @@
       var writing = document.getElementById('writing');
       if (!writing) return;
 
-      /* Container: full-width band with top + bottom divider, same as #identity */
+      /* Container: full-width band with top + bottom divider, same as #identity.
+         The -12px left margin + 12px left padding + (100%+12px) width is what
+         makes the band span edge-to-edge and align the text with Identity. */
       writing.style.setProperty('display', 'block', 'important');
       writing.style.setProperty('width', 'calc(100% + 12px)', 'important');
-      writing.style.setProperty('margin', '0', 'important');
+      writing.style.setProperty('margin-top', '0', 'important');
+      writing.style.setProperty('margin-bottom', '0', 'important');
+      writing.style.setProperty('margin-left', '-12px', 'important');
+      writing.style.setProperty('padding-top', '0', 'important');
+      writing.style.setProperty('padding-bottom', '0', 'important');
+      writing.style.setProperty('padding-left', '12px', 'important');
       writing.style.setProperty('border-top', '1px solid #D8DCE9', 'important');
       writing.style.setProperty('border-bottom', '1px solid #D8DCE9', 'important');
 
