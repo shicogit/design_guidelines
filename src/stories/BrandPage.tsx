@@ -295,7 +295,8 @@ export function BrandPage({ title, crumbs, intro, guidelines, resources, develop
     return (
       <div style={{ fontFamily: FONT, color: '#1A1A1A' }}>
         <Breadcrumb crumbs={crumbs} current={title} />
-        <h1 style={{ fontSize: 40, fontWeight: 600, margin: '0 0 8px' }}>{title}</h1>
+        {/* No intro: keep the same title-to-first-section gap the intro used to provide (8 + ~27 + 36 ≈ 71px). */}
+        <h1 style={{ fontSize: 40, fontWeight: 600, margin: intro ? '0 0 8px' : '0 0 71px' }}>{title}</h1>
         {intro && <p style={{ fontSize: 17, lineHeight: 1.6, color: '#4B4B57', margin: '0 0 36px' }}>{intro}</p>}
 
         <div>

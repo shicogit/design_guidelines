@@ -11,7 +11,7 @@ function Section({ heading, left, children }: { heading: string; left: ReactNode
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(220px, 300px) 1fr',
+        gridTemplateColumns: 'minmax(180px, 260px) 1fr',
         gap: 48,
         alignItems: 'start',
       }}
@@ -51,6 +51,16 @@ function Block({ heading, children }: { heading: string; children: ReactNode }) 
 // A plain narrative paragraph inside a panel.
 function P({ children }: { children: ReactNode }) {
   return <p style={{ fontSize: 15, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>{children}</p>;
+}
+
+// A personality trait: name on the left, description on the right.
+function Trait({ name, children }: { name: string; children: ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 28, alignItems: 'start' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, lineHeight: 1.5 }}>{name}</div>
+      <p style={{ fontSize: 15, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>{children}</p>
+    </div>
+  );
 }
 
 export function Principles() {
@@ -126,6 +136,40 @@ export function MelioDifference() {
         And we <Med>never stand still.</Med> Our team is always shipping new ways to pay and get paid, so the
         platform keeps getting simpler as your business grows.
       </P>
+    </Section>
+  );
+}
+
+export function BrandPersonality() {
+  return (
+    <Section
+      heading="Brand Personality"
+      left={
+        <p style={{ fontSize: 16, lineHeight: 1.7, color: COLOR.body, margin: 0 }}>
+          How we want the world to see us.
+        </p>
+      }
+    >
+      <Trait name="Warm">
+        We sound like a helpful teammate, not a bank or a manual. Friendly, human, and on first-name terms - we meet
+        small-business owners where they are and talk to them like people.
+      </Trait>
+      <Trait name="Clear">
+        We'd rather be understood than admired. Plain words, one obvious next step, and nothing to decode. When
+        money is involved, clarity is kindness.
+      </Trait>
+      <Trait name="Confident">
+        We know our stuff, so we stay calm and steady - especially on the hard moments. Reassuring, never flashy or
+        pushy. We lower the temperature instead of raising it.
+      </Trait>
+      <Trait name="On your side">
+        We're always rooting for the owner. We design for fewer steps and helpful defaults, and we never make anyone
+        feel behind. Your win is the whole point.
+      </Trait>
+      <Trait name="Human">
+        Craft lives in the details - a well-timed animation, a friendly Mel, a tidy edge. We sweat the small things
+        that make the ordinary feel cared for, so the brand feels like us even when no one can see the logo.
+      </Trait>
     </Section>
   );
 }
