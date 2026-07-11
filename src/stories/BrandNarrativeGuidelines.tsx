@@ -63,6 +63,16 @@ function Trait({ name, children }: { name: string; children: ReactNode }) {
   );
 }
 
+// A messaging sample: label on the left, one or more example lines on the right.
+function Sample({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: 32, alignItems: 'start' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, lineHeight: 1.5 }}>{label}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{children}</div>
+    </div>
+  );
+}
+
 export function Principles() {
   return (
     <Section
@@ -170,6 +180,72 @@ export function BrandPersonality() {
         Craft lives in the details - a well-timed animation, a friendly Mel, a tidy edge. We sweat the small things
         that make the ordinary feel cared for, so the brand feels like us even when no one can see the logo.
       </Trait>
+    </Section>
+  );
+}
+
+export function SampleMessaging() {
+  return (
+    <Section
+      heading="Sample Messaging"
+      left={
+        <p style={{ fontSize: 16, lineHeight: 1.7, color: COLOR.body, margin: 0 }}>
+          Our writing is short and clear. We use words everyone understands - it's how we keep things honest and
+          human.
+        </p>
+      }
+    >
+      <Sample label="Tagline">
+        <P>Business, made simpler.</P>
+      </Sample>
+
+      <Sample label="Short CTAs">
+        <P>Pay any bill, any way.</P>
+        <P>Get started - it's free.</P>
+        <P>Pay smarter with Melio.</P>
+      </Sample>
+
+      <Sample label="1-sentence description">
+        <P>Melio is the simple way for small businesses to pay bills and get paid.</P>
+      </Sample>
+
+      <Sample label="1-sentence CTA">
+        <P>Pay any business bill by card or bank transfer and stay on top of cash flow - with Melio.</P>
+      </Sample>
+
+      <Sample label="Longer description">
+        <P>
+          Melio is the easy way to manage business payments. Pay any bill by card or bank transfer - even when your
+          vendor only takes a check - and get paid the way you want, all in one place.
+        </P>
+        <P>
+          Small businesses have enough to juggle. Melio takes the stress out of paying and getting paid, so owners
+          can protect their cash flow and get back to the work that matters.
+        </P>
+      </Sample>
+
+      <Sample label="Even longer description">
+        <P>
+          Running a business means staying on top of the money - bills to pay, invoices to send, cash flow to
+          protect. Melio brings it all into one simple place. Pay any business bill by card or bank transfer,
+          schedule payments so nothing slips, and put big expenses on a card to earn rewards and hold onto cash
+          longer. It syncs with the tools you already use, like QuickBooks and Xero, so your books stay tidy. Paying
+          and getting paid, made simple - so you can focus on staying in business.
+        </P>
+      </Sample>
+
+      <Sample label="Press boilerplate">
+        <P>
+          Melio is a B2B payments platform that makes it simple for small businesses to pay and get paid. Founded in
+          [year] and headquartered in [city], Melio lets businesses pay any bill by card or bank transfer - even to
+          vendors who only accept checks - while keeping cash flow in view. Melio integrates with leading accounting
+          software including QuickBooks and Xero, and works with [partners] to bring B2B payments to [X] small
+          businesses. Learn more at melio.com.
+        </P>
+        <p style={{ fontSize: 13, lineHeight: 1.6, color: COLOR.faint, margin: 0 }}>
+          Replace the bracketed placeholders with the latest approved figures before use.
+        </p>
+      </Sample>
     </Section>
   );
 }
