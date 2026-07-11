@@ -214,6 +214,7 @@ addons.register('melio/wip-labels', () => {
    Add a page here to give it sidebar sub-tabs. */
 addons.register('melio/section-subtabs', (api) => {
   const PAGES: { id: string; sections: string[] }[] = [
+    { id: 'writing-brand-narrative--docs',                sections: ['Principles', 'The Melio Difference'] },
     { id: 'identity-logo--docs',                          sections: ['melio', 'Co-Branding', 'Resources'] },
     { id: 'identity-color--docs',                         sections: ['Guidelines', 'Resources'] },
     { id: 'identity-typography--docs',                    sections: ['Guidelines', 'Resources'] },
