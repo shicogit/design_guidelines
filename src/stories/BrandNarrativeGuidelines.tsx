@@ -73,6 +73,19 @@ function Sample({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+// An audience: label on the left, a short headline + a paragraph on the right.
+function Audience({ label, headline, children }: { label: string; headline: string; children: ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 32, alignItems: 'start' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, lineHeight: 1.5 }}>{label}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <p style={{ fontSize: 15, lineHeight: 1.5, color: COLOR.ink, fontWeight: 500, margin: 0 }}>{headline}</p>
+        <p style={{ fontSize: 15, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>{children}</p>
+      </div>
+    </div>
+  );
+}
+
 export function Principles() {
   return (
     <Section
@@ -246,6 +259,51 @@ export function SampleMessaging() {
           Replace the bracketed placeholders with the latest approved figures before use.
         </p>
       </Sample>
+    </Section>
+  );
+}
+
+export function MessagesByAudience() {
+  return (
+    <Section
+      heading="Messages By Audience"
+      left={
+        <p style={{ fontSize: 16, lineHeight: 1.7, color: COLOR.body, margin: 0 }}>
+          Melio serves people across a business, so the message sometimes changes. Same Melio voice every time - we
+          just match it to the audience and what they care about.
+        </p>
+      }
+    >
+      <Audience label="Small-business owners" headline="Paying and getting paid, made simple.">
+        You've got a business to run - the last thing you need is payments eating your day. Melio lets you pay any
+        bill by card or bank transfer, get paid the way you want, and keep cash flow in view, all in one place.
+        Fewer steps, no stress, more time for the work that matters.
+      </Audience>
+
+      <Audience label="Accountants & bookkeepers" headline="Every client's payments, in one place.">
+        Managing payments across a book of clients shouldn't mean a dozen logins and endless chasing. With Melio you
+        handle bills and approvals for all your clients from one dashboard, sync straight to QuickBooks and Xero,
+        and keep everything tidy at month-end. Less data entry, more time advising the businesses that rely on you.
+      </Audience>
+
+      <Audience label="Vendors getting paid" headline="Get paid the way you want.">
+        When a customer pays you through Melio, the money arrives however suits you - direct to your bank account, no
+        new software, no sign-up required. Faster, clearer, and free to receive. Getting paid should be the easy
+        part, and with Melio it is.
+      </Audience>
+
+      <Audience label="Platforms & partners" headline="Add B2B payments to your platform.">
+        Bring the power of Melio to your own customers. Our partner platform lets you embed bill pay and get-paid
+        features under your brand, so the businesses you serve can manage payments without ever leaving your
+        product. We handle the payment rails and compliance; you keep the relationship.
+      </Audience>
+
+      <Audience label="Prospective employees" headline="Help keep small businesses in business.">
+        Why join Melio? We could talk about the team, the pace, and the problems worth solving. But the real reason
+        is the mission: small businesses are the backbone of the economy, and we're building the simplest way for
+        them to pay and get paid. When money stops being a source of stress, owners get to focus on what they love.
+        Come help make that real.
+      </Audience>
     </Section>
   );
 }
