@@ -25,7 +25,7 @@ const ENTRIES: Entry[] = [
     items: [
       'New top-level "Writing" section in the sidebar, styled like Identity.',
       'Voice & Tone moved into Writing.',
-      'New "Brand Narrative" page with sidebar sub-tabs: Principles (mission + why/what/how), The Melio Difference, and Brand Personality.',
+      'New "Brand Narrative" page with sidebar sub-tabs: Principles (mission + why/what/how), The Melio Difference, and Brand Personality (traits + an "If Melio Were A..." set).',
     ],
   },
   {
