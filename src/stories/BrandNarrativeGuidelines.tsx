@@ -6,17 +6,7 @@ import { FONT, COLOR, RADIUS, Med } from './brandKit';
    emphasis in medium weight (never bold in body), and a regular hyphen, never an em dash. */
 
 // Shared two-column section: heading + left copy, grey narrative panel on the right.
-function Section({
-  heading,
-  eyebrow,
-  left,
-  children,
-}: {
-  heading: string;
-  eyebrow?: string;
-  left: ReactNode;
-  children: ReactNode;
-}) {
+function Section({ heading, left, children }: { heading: string; left: ReactNode; children: ReactNode }) {
   return (
     <div
       style={{
@@ -27,20 +17,6 @@ function Section({
       }}
     >
       <div>
-        {eyebrow && (
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: 0.8,
-              textTransform: 'uppercase',
-              color: COLOR.faint,
-              margin: '0 0 10px',
-            }}
-          >
-            {eyebrow}
-          </div>
-        )}
         <div style={{ fontSize: 26, fontWeight: 600, color: COLOR.ink, lineHeight: 1.3, margin: '0 0 20px' }}>
           {heading}
         </div>
@@ -83,36 +59,6 @@ function Trait({ name, children }: { name: string; children: ReactNode }) {
     <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 28, alignItems: 'start' }}>
       <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, lineHeight: 1.5 }}>{name}</div>
       <p style={{ fontSize: 15, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>{children}</p>
-    </div>
-  );
-}
-
-// A cultural touchstone: category label on the left, a visual card + description on the right.
-// The emoji is a placeholder for a custom Melio illustration.
-function Touchstone({ label, emoji, children }: { label: string; emoji: string; children: ReactNode }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 28, alignItems: 'start' }}>
-      <div style={{ fontSize: 15, fontWeight: 600, color: COLOR.ink, lineHeight: 1.5 }}>{label}</div>
-      <div>
-        <div
-          style={{
-            background: COLOR.white,
-            border: `1px solid ${COLOR.hairline}`,
-            borderRadius: RADIUS.lg,
-            height: 150,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 64,
-            lineHeight: 1,
-            marginBottom: 14,
-          }}
-          aria-hidden
-        >
-          {emoji}
-        </div>
-        <p style={{ fontSize: 15, lineHeight: 1.75, color: COLOR.body, margin: 0 }}>{children}</p>
-      </div>
     </div>
   );
 }
@@ -196,7 +142,6 @@ export function MelioDifference() {
 
 export function BrandPersonality() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 72 }}>
     <Section
       heading="Brand Personality"
       left={
@@ -226,29 +171,5 @@ export function BrandPersonality() {
         that make the ordinary feel cared for, so the brand feels like us even when no one can see the logo.
       </Trait>
     </Section>
-
-    <Section
-      eyebrow="Brand Personality"
-      heading="If Melio Were A..."
-      left={
-        <p style={{ fontSize: 16, lineHeight: 1.7, color: COLOR.body, margin: 0 }}>
-          Melio has a few kindred spirits. Think of these cultural touchstones to get into a Melio state of mind.
-        </p>
-      }
-    >
-      <Touchstone label="Celebrity" emoji="🌟">
-        <Med>Tom Hanks.</Med> The person everyone trusts - warm, steady, and easy to understand. He makes you feel
-        like you're in good hands, which is exactly how we want small businesses to feel about their money.
-      </Touchstone>
-      <Touchstone label="Vehicle" emoji="🚚">
-        The <Med>pickup truck.</Med> The small-business workhorse - dependable, no-nonsense, and built to get the job
-        done. It shows up every day and never lets you down. So does Melio.
-      </Touchstone>
-      <Touchstone label="Song" emoji="🎵">
-        Bill Withers' <Med>"Lovely Day."</Med> Warm, easy, and quietly confident - the feeling of a weight lifted.
-        That's the Melio feeling: money handled, so today can just be a lovely day.
-      </Touchstone>
-    </Section>
-    </div>
   );
 }
