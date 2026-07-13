@@ -104,8 +104,12 @@ addons.register('melio/accordion', () => {
 });
 
 /* Accordion, part 2: a standalone bottom page (Marketing, Overview) isn't in any group,
-   so selecting it must collapse every open group - otherwise a group drawer (e.g. Writing)
-   stays open while a bottom page is active. Watch the selection and enforce it. */
+   so navigating TO it must collapse every open group - otherwise a group drawer (e.g. Writing)
+   stays open while a bottom page is active.
+   IMPORTANT: only react to the SELECTION changing (data-selected), never to aria-expanded.
+   Watching aria-expanded would re-collapse a group the moment the user expands it while a
+   bottom page is still selected (before section-navigate moves the selection into the group),
+   making the section headers feel unclickable. */
 addons.register('melio/accordion-bottom', () => {
   const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
   const BOTTOM = ['overview--docs', 'marketing--docs'];
@@ -123,7 +127,7 @@ addons.register('melio/accordion-bottom', () => {
   setTimeout(() => {
     const tree = document.getElementById('storybook-explorer-tree') || document.body;
     new MutationObserver(enforce).observe(tree, {
-      attributes: true, subtree: true, childList: true, attributeFilter: ['data-selected', 'aria-expanded'],
+      attributes: true, subtree: true, attributeFilter: ['data-selected'],
     });
     enforce();
   }, 800);
