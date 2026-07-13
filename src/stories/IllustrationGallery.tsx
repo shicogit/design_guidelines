@@ -80,7 +80,6 @@ const PURPLE = COLOR.purple; // Melio's accent - the single customizable color i
 // color, while the dark stroke (#212124) and white fill stay put. Real partner brand colors:
 const PARTNERS: { name: string; color: string; domain?: string }[] = [
   { name: 'Default', color: PURPLE },
-  { name: 'Xero', color: '#0078C8', domain: 'xero.com' },
   { name: 'CFC', color: '#00508D' }, // domain unconfirmed - add to show its logo
   { name: 'Capital One', color: '#0276B1', domain: 'capitalone.com' },
   { name: 'PayPal', color: '#0551B5', domain: 'paypal.com' },
