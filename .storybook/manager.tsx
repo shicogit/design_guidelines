@@ -59,10 +59,11 @@ addons.register('melio/section-navigate', () => {
     const groupEl = btn.parentElement as HTMLElement | null;
     const groupId = groupEl?.getAttribute('data-item-id') ?? '';
     if (!GROUPS.includes(groupId)) return;
-    // Only act when expanding (was collapsed before this click)
-    if (btn.getAttribute('aria-expanded') !== 'false') return;
-    // Retry until children appear in DOM (they render asynchronously after expand)
+    // Navigate to the first child only if the group ended up OPEN after this click.
+    // (Checked inside the timeout, not at click time: Storybook flips aria-expanded
+    // in its own handler before our listener runs, so a click-time check is unreliable.)
     const tryClick = (attemptsLeft: number) => {
+      if (btn.getAttribute('aria-expanded') !== 'true') return; // it collapsed — don't navigate
       let sib = groupEl!.nextElementSibling as HTMLElement | null;
       while (sib) {
         if (sib.classList.contains('sidebar-item')) {

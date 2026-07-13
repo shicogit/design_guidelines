@@ -207,14 +207,19 @@
       /* border-bottom matches Identity: lighter #E2E8F0 when open (drawer divider),
          darker #D8DCE9 when collapsed (section divider). */
       var wOpen = writing.classList.contains('melio-open');
-      writing.style.setProperty('border-bottom', '1px solid ' + (wOpen ? '#E2E8F0' : '#D8DCE9'), 'important');
+      writing.style.setProperty('border-bottom', '2px solid ' + (wOpen ? '#E2E8F0' : '#D8DCE9'), 'important');
 
       /* Hide the expand-all button */
       var expandBtn = writing.querySelector('button[data-action="expand-all"]');
       if (expandBtn) expandBtn.style.setProperty('display', 'none', 'important');
 
       var btn = writing.querySelector('button[data-action="collapse-root"]');
-      if (!btn || btn.dataset.melioWritingStyled) return;
+      if (!btn) return;
+      /* Open drawer: header text goes medium weight + primary purple (runs every
+         tick so it tracks open/close). Inline style beats the emotion cascade. */
+      btn.style.setProperty('color', wOpen ? '#7849FF' : '#1A1A1A', 'important');
+      btn.style.setProperty('font-weight', wOpen ? '500' : '400', 'important');
+      if (btn.dataset.melioWritingStyled) return;
       btn.dataset.melioWritingStyled = '1';
 
       /* Identity-level button geometry */
@@ -528,8 +533,8 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #D8DCE9 !important;
-    border-bottom: 1px solid #D8DCE9 !important;
+    border-top: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
   .sidebar-item[data-item-id="marketing--docs"] {
     margin-top: 0 !important;
@@ -537,7 +542,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 1px solid #D8DCE9 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
 
   /* ---- Settings gear: DS icon ---- */
@@ -668,7 +673,7 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #D8DCE9 !important;
+    border-top: 2px solid #D8DCE9 !important;
   }
   /* Writing stacks under Identity: NO border-top (Identity's border-bottom is the
      single divider between them), border-bottom only - like Collaborators/Changelog. */
@@ -678,7 +683,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 1px solid #D8DCE9 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
   /* Writing container: full width like Identity */
   #writing {
@@ -749,15 +754,19 @@
   #identity.melio-open,
   #foundations.melio-open,
   #writing.melio-open {
-    border-bottom: 1px solid #E2E8F0 !important;
+    border-bottom: 2px solid #E2E8F0 !important;
     margin-bottom: 0 !important;
   }
 
-  /* Open section header button: white (the grey section is below it) */
+  /* Open section header button: white bg (the grey section is below it),
+     text in medium weight + primary purple to mark the open section. */
   #identity.melio-open > button[data-action="collapse-root"],
   #foundations.melio-open > button[data-action="collapse-root"],
+  #standards.melio-open > button[data-action="collapse-root"],
   #writing.melio-open > button[data-action="collapse-root"] {
     background: white !important;
+    color: #7849FF !important;
+    font-weight: 500 !important;
   }
 
   /* Writing: child page open → text goes purple */
@@ -772,7 +781,7 @@
   /* Closing outline at the bottom of an open drawer - marks where the grey drawer ends.
      Applied by updateDrawerState() to the last row of the open group. */
   .melio-child-last {
-    border-bottom: 1px solid #E2E8F0 !important;
+    border-bottom: 2px solid #E2E8F0 !important;
   }
   /* Page title rows within the drawer: transparent on the grey, aligned with main headers.
      9px vertical padding gives drawer rows breathing room (esp. a single-child drawer
