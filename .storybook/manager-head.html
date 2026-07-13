@@ -125,13 +125,16 @@
         var expanded = !!(btn && btn.getAttribute('aria-expanded') === 'true');
         group.classList.toggle('melio-open', expanded);
         var sib = group.nextElementSibling;
+        var lastChild = null; // last row of the open drawer - gets the closing bottom outline
         while (sib) {
           if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'standards' || sib.id === 'writing') break;
           var itemId = sib.getAttribute('data-item-id') || '';
           if (BOTTOM.indexOf(itemId) !== -1) break;
-          if (sib.classList.contains('sidebar-item')) sib.classList.toggle('melio-child', expanded);
+          sib.classList.remove('melio-child-last');
+          if (sib.classList.contains('sidebar-item')) { sib.classList.toggle('melio-child', expanded); lastChild = sib; }
           if (sib.id && sib.id.indexOf('melio-subtabs-') === 0) {
             sib.classList.toggle('melio-child-subtabs', expanded);
+            lastChild = sib;
             if (expanded) {
               sib.style.setProperty('width', '100%', 'important');
               sib.style.setProperty('margin-left', '0', 'important');
@@ -146,6 +149,8 @@
           }
           sib = sib.nextElementSibling;
         }
+        // Close the open drawer with a bottom outline below its last row.
+        if (expanded && lastChild) lastChild.classList.add('melio-child-last');
       });
     }
     /* Hover bg on page title rows (melio-child items) - inline style beats emotion cascade */
@@ -763,6 +768,11 @@
   /* Items in open drawer: grey section background */
   .sidebar-item.melio-child {
     background: #F8FAFC !important;
+  }
+  /* Closing outline at the bottom of an open drawer - marks where the grey drawer ends.
+     Applied by updateDrawerState() to the last row of the open group. */
+  .melio-child-last {
+    border-bottom: 1px solid #E2E8F0 !important;
   }
   /* Page title rows within the drawer: transparent on the grey, aligned with main headers.
      9px vertical padding gives drawer rows breathing room (esp. a single-child drawer
