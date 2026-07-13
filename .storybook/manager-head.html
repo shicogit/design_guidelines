@@ -117,7 +117,7 @@
     /* Drawer state: mark open group header + its children for CSS drawer styling */
     function updateDrawerState() {
       var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
-      var BOTTOM = ['overview--docs', 'marketing--docs', 'changelog--docs'];
+      var BOTTOM = ['overview--docs', 'marketing--docs'];
       GROUPS.forEach(function(id) {
         var group = document.getElementById(id);
         if (!group) return;
@@ -167,7 +167,7 @@
     setTimeout(applyChildHoverListeners, 1000);
 
     /* Tag standalone bottom items so future entries just need adding to this array */
-    var FULL_WIDTH_BOTTOM = ['marketing--docs', 'changelog--docs'];
+    var FULL_WIDTH_BOTTOM = ['marketing--docs'];
     function tagBottomItems() {
       FULL_WIDTH_BOTTOM.forEach(function(id) {
         var el = document.querySelector('.sidebar-item[data-item-id="' + id + '"]');
@@ -329,7 +329,6 @@
   .sidebar-item[data-item-id="overview--docs"] { display: none !important; }
 
   .sidebar-item[data-item-id="marketing--docs"],
-  .sidebar-item[data-item-id="changelog--docs"],
   .sidebar-item.melio-bottom {
     display: block !important;
     width: calc(100% + 12px) !important;
@@ -348,7 +347,6 @@
 
   #overview--docs,
   #marketing--docs,
-  #changelog--docs,
   #identity > button[data-action="collapse-root"],
   #writing > button[data-action="collapse-root"] {
     display: flex !important;
@@ -377,7 +375,6 @@
   /* main-title hover (when NOT the active section): transparent -> very light grey */
   #overview--docs:hover,
   #marketing--docs:hover,
-  #changelog--docs:hover,
   #identity > button[data-action="collapse-root"]:hover,
   #writing > button[data-action="collapse-root"]:hover {
     background: #EBEFF2 !important;
@@ -400,9 +397,7 @@
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs,
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs:hover,
   .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs,
-  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs:hover,
-  .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs,
-  .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs:hover {
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs:hover {
     color: #7849FF !important;
     background: #F4F4F6 !important;
     font-weight: 400 !important;
@@ -410,8 +405,7 @@
   }
   /* force the icon purple too (masked ::before doesn't always inherit currentColor) */
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
-  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before,
-  .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs::before {
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before {
     background-color: #7849FF !important;
   }
 
@@ -419,7 +413,6 @@
      clean DS icon as ::before, so <a> and <button> render identically ---- */
   #overview--docs > div:first-child,
   #marketing--docs > div:first-child,
-  #changelog--docs > div:first-child,
   #identity > button[data-action="collapse-root"] > div:first-child,
   #identity-visual-assets > div:first-child {
     display: none !important;
@@ -427,7 +420,6 @@
   #identity-visual-assets svg { display: none !important; }
   #overview--docs::before,
   #marketing--docs::before,
-  #changelog--docs::before,
   #identity > button[data-action="collapse-root"]::before {
     content: '' !important;
     display: block !important;
@@ -439,10 +431,6 @@
   #overview--docs::before {
     -webkit-mask: url('/sb-icons/home.svg') center / 18px 18px no-repeat;
     mask: url('/sb-icons/home.svg') center / 18px 18px no-repeat;
-  }
-  #changelog--docs::before {
-    -webkit-mask: url('/sb-icons/book.svg') center / 18px 18px no-repeat;
-    mask: url('/sb-icons/book.svg') center / 18px 18px no-repeat;
   }
   #marketing--docs::before {
     -webkit-mask: url('/sb-icons/emoji-outline.svg') center / 18px 18px no-repeat;
@@ -538,8 +526,7 @@
     border-top: 1px solid #D8DCE9 !important;
     border-bottom: 1px solid #D8DCE9 !important;
   }
-  .sidebar-item[data-item-id="marketing--docs"],
-  .sidebar-item[data-item-id="changelog--docs"] {
+  .sidebar-item[data-item-id="marketing--docs"] {
     margin-top: 0 !important;
     padding-top: 0 !important;
     margin-left: -12px !important;
@@ -610,6 +597,11 @@
 
   /* Hide the "Create a new story" (+) toolbar button */
   button[aria-label="Create a new story"] { display: none !important; }
+
+  /* Hide Storybook's "new stories" review UI: the "Review new stories" banner
+     button and the per-item ✦ new-status badges in the sidebar. */
+  button[aria-label="Review new stories"],
+  button[data-testid="tree-change-status-button"] { display: none !important; }
 
   /* Hide the Expand / Collapse tooltip on sidebar section headers */
   [role="tooltip"] { display: none !important; }
@@ -722,7 +714,6 @@
      ========================================================= */
   #overview--docs::before,
   #marketing--docs::before,
-  #changelog--docs::before,
   #identity > button[data-action="collapse-root"]::before,
   #identity > button[data-action="collapse-root"][data-melio-section]::before,
   #identity > button[data-action="collapse-root"][data-melio-active]::before,
@@ -730,15 +721,13 @@
   #standards > button[data-action="collapse-root"]::before,
   #writing > button[data-action="collapse-root"]::before,
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
-  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before,
-  .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs::before {
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before {
     display: none !important;
   }
 
   /* Add Poppins to section header buttons for visual consistency */
   #overview--docs,
   #marketing--docs,
-  #changelog--docs,
   #identity > button[data-action="collapse-root"],
   #foundations > button[data-action="collapse-root"],
   #standards > button[data-action="collapse-root"],

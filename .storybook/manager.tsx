@@ -145,13 +145,13 @@ addons.register('melio/active-section', (api) => {
   }, 800);
 });
 
-/* Move the standalone reference pages ("Marketing", then "Changelog") to the very bottom of the
+/* Move the standalone reference page ("Marketing") to the very bottom of the
    sidebar. Storybook hoists single-doc roots above grouped roots, so storySort alone can't push
    them below "Identity" — we re-append them after Identity once the tree renders.
    Order in the array = final order at the bottom. Defensive: only acts when an item shares the
    Identity container, so it can never break the tree layout. */
 addons.register('melio/move-bottom-pages', () => {
-  const BOTTOM = ['marketing--docs', 'changelog--docs'];
+  const BOTTOM = ['marketing--docs'];
   const moveLast = () => {
     const be = document.getElementById('identity');
     if (!be || !be.parentElement) return;

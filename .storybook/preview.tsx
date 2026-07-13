@@ -20,7 +20,6 @@ const preview: Preview = {
           'Standards',
           ['Spacing & Layout', 'Accessibility', 'Data Visualization'],
           'Marketing',
-          'Changelog',
         ],
       },
     },
