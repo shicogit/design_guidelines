@@ -117,7 +117,7 @@
     /* Drawer state: mark open group header + its children for CSS drawer styling */
     function updateDrawerState() {
       var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
-      var BOTTOM = ['overview--docs', 'collaborators--docs', 'changelog--docs'];
+      var BOTTOM = ['overview--docs', 'marketing--docs', 'changelog--docs'];
       GROUPS.forEach(function(id) {
         var group = document.getElementById(id);
         if (!group) return;
@@ -167,7 +167,7 @@
     setTimeout(applyChildHoverListeners, 1000);
 
     /* Tag standalone bottom items so future entries just need adding to this array */
-    var FULL_WIDTH_BOTTOM = ['collaborators--docs', 'changelog--docs'];
+    var FULL_WIDTH_BOTTOM = ['marketing--docs', 'changelog--docs'];
     function tagBottomItems() {
       FULL_WIDTH_BOTTOM.forEach(function(id) {
         var el = document.querySelector('.sidebar-item[data-item-id="' + id + '"]');
@@ -328,7 +328,7 @@
   /* Overview is accessible via the logo — hide it from the menu */
   .sidebar-item[data-item-id="overview--docs"] { display: none !important; }
 
-  .sidebar-item[data-item-id="collaborators--docs"],
+  .sidebar-item[data-item-id="marketing--docs"],
   .sidebar-item[data-item-id="changelog--docs"],
   .sidebar-item.melio-bottom {
     display: block !important;
@@ -347,7 +347,7 @@
   }
 
   #overview--docs,
-  #collaborators--docs,
+  #marketing--docs,
   #changelog--docs,
   #identity > button[data-action="collapse-root"],
   #writing > button[data-action="collapse-root"] {
@@ -376,7 +376,7 @@
 
   /* main-title hover (when NOT the active section): transparent -> very light grey */
   #overview--docs:hover,
-  #collaborators--docs:hover,
+  #marketing--docs:hover,
   #changelog--docs:hover,
   #identity > button[data-action="collapse-root"]:hover,
   #writing > button[data-action="collapse-root"]:hover {
@@ -399,8 +399,8 @@
      Selector includes #overview--docs so it outranks the band's #overview--docs color. */
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs,
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs:hover,
-  .sidebar-item[data-item-id="collaborators--docs"][data-selected="true"] #collaborators--docs,
-  .sidebar-item[data-item-id="collaborators--docs"][data-selected="true"] #collaborators--docs:hover,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs:hover,
   .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs,
   .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs:hover {
     color: #7849FF !important;
@@ -410,7 +410,7 @@
   }
   /* force the icon purple too (masked ::before doesn't always inherit currentColor) */
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
-  .sidebar-item[data-item-id="collaborators--docs"][data-selected="true"] #collaborators--docs::before,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before,
   .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs::before {
     background-color: #7849FF !important;
   }
@@ -418,7 +418,7 @@
   /* ---- Main-title icons: hide the original icon/chevron wrapper and paint a
      clean DS icon as ::before, so <a> and <button> render identically ---- */
   #overview--docs > div:first-child,
-  #collaborators--docs > div:first-child,
+  #marketing--docs > div:first-child,
   #changelog--docs > div:first-child,
   #identity > button[data-action="collapse-root"] > div:first-child,
   #identity-visual-assets > div:first-child {
@@ -426,7 +426,7 @@
   }
   #identity-visual-assets svg { display: none !important; }
   #overview--docs::before,
-  #collaborators--docs::before,
+  #marketing--docs::before,
   #changelog--docs::before,
   #identity > button[data-action="collapse-root"]::before {
     content: '' !important;
@@ -444,7 +444,7 @@
     -webkit-mask: url('/sb-icons/book.svg') center / 18px 18px no-repeat;
     mask: url('/sb-icons/book.svg') center / 18px 18px no-repeat;
   }
-  #collaborators--docs::before {
+  #marketing--docs::before {
     -webkit-mask: url('/sb-icons/emoji-outline.svg') center / 18px 18px no-repeat;
     mask: url('/sb-icons/emoji-outline.svg') center / 18px 18px no-repeat;
   }
@@ -538,7 +538,7 @@
     border-top: 1px solid #D8DCE9 !important;
     border-bottom: 1px solid #D8DCE9 !important;
   }
-  .sidebar-item[data-item-id="collaborators--docs"],
+  .sidebar-item[data-item-id="marketing--docs"],
   .sidebar-item[data-item-id="changelog--docs"] {
     margin-top: 0 !important;
     padding-top: 0 !important;
@@ -721,7 +721,7 @@
      Remove icons from all main section headers
      ========================================================= */
   #overview--docs::before,
-  #collaborators--docs::before,
+  #marketing--docs::before,
   #changelog--docs::before,
   #identity > button[data-action="collapse-root"]::before,
   #identity > button[data-action="collapse-root"][data-melio-section]::before,
@@ -730,14 +730,14 @@
   #standards > button[data-action="collapse-root"]::before,
   #writing > button[data-action="collapse-root"]::before,
   .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
-  .sidebar-item[data-item-id="collaborators--docs"][data-selected="true"] #collaborators--docs::before,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before,
   .sidebar-item[data-item-id="changelog--docs"][data-selected="true"] #changelog--docs::before {
     display: none !important;
   }
 
   /* Add Poppins to section header buttons for visual consistency */
   #overview--docs,
-  #collaborators--docs,
+  #marketing--docs,
   #changelog--docs,
   #identity > button[data-action="collapse-root"],
   #foundations > button[data-action="collapse-root"],

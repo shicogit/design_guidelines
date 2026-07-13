@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { FONT, COLOR, RADIUS, Med, Lead, Body, SectionTitle, InfoCard, Hero, DsIcon, ResourceFooter, SubTitle, DownloadIcon } from './brandKit';
+import { useState, useEffect, type ReactNode } from 'react';
+import { FONT, COLOR, RADIUS, Med, Lead, Body, InfoCard, Hero, DsIcon, ResourceFooter, SubTitle, DownloadIcon } from './brandKit';
 import { triggerDownload } from './downloadUtils';
 
 /* Imagery - art direction and photography for the Melio brand. Guidelines cover subject,
@@ -43,6 +43,20 @@ function Rule({ ok, label, detail }: { ok: boolean; label: string; detail?: stri
   );
 }
 
+// Section row: rich visual content on the left, section title + short description on the right.
+// borderTop marks a section boundary; pass noDivider for rows that belong to the same group.
+function SplitRow({ visual, title, body, noDivider = false }: { visual: ReactNode; title: string; body: ReactNode; noDivider?: boolean }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 36, padding: '36px 0', borderTop: noDivider ? undefined : `1px solid ${COLOR.hairline}`, alignItems: 'start' }}>
+      <div>{visual}</div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>{title}</h3>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65, margin: 0 }}>{body}</p>
+      </div>
+    </div>
+  );
+}
+
 function ImageryHero() {
   return (
     <div style={{ width: 236, height: 236, borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.lilac100, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 4, padding: 12, boxSizing: 'border-box' }}>
@@ -69,130 +83,180 @@ export function ImageryGuidelines() {
         </Lead>
       </Hero>
 
-      <SectionTitle sub="The qualities every Melio image should have.">Art direction principles</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-        <InfoCard icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />} label="Authentic" text="Real business owners, real moments. No over-styled stock. The people look like they actually run a business." />
-        <InfoCard icon={<DsIcon name="light-sun" size={16} style={{ color: COLOR.ink }} />} label="Warm and bright" text="Natural or natural-feeling light. Clean, optimistic, never dark or dramatic. The mood should be calm and forward-looking." />
-        <InfoCard icon={<DsIcon name="get-started" size={16} style={{ color: COLOR.ink }} />} label="In context" text="Subjects in their environment - a kitchen, a shop, a home office. The setting tells the story of their business." />
-        <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Editorial over posed" text="Candid or near-candid moments over stiff, direct-camera poses. People at work, in motion, in thought." />
-        <InfoCard icon={<DsIcon name="info" size={16} style={{ color: COLOR.ink }} />} label="Generous space" text="Clean, uncluttered backgrounds. Give the subject room to breathe. Busy scenes compete with the message." />
-        <InfoCard icon={<DsIcon name="shield-check" size={16} style={{ color: COLOR.ink }} />} label="Diverse and inclusive" text="Melio's customers come from every background. Photography should reflect that without stereotyping industry or role." />
-      </div>
+      <SplitRow
+        title="Art direction principles"
+        body="The qualities every Melio image should have."
+        visual={
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+            <InfoCard icon={<DsIcon name="chat" size={16} style={{ color: COLOR.ink }} />} label="Authentic" text="Real business owners, real moments. No over-styled stock. The people look like they actually run a business." />
+            <InfoCard icon={<DsIcon name="light-sun" size={16} style={{ color: COLOR.ink }} />} label="Warm and bright" text="Natural or natural-feeling light. Clean, optimistic, never dark or dramatic. The mood should be calm and forward-looking." />
+            <InfoCard icon={<DsIcon name="get-started" size={16} style={{ color: COLOR.ink }} />} label="In context" text="Subjects in their environment - a kitchen, a shop, a home office. The setting tells the story of their business." />
+            <InfoCard icon={<DsIcon name="file" size={16} style={{ color: COLOR.ink }} />} label="Editorial over posed" text="Candid or near-candid moments over stiff, direct-camera poses. People at work, in motion, in thought." />
+            <InfoCard icon={<DsIcon name="info" size={16} style={{ color: COLOR.ink }} />} label="Generous space" text="Clean, uncluttered backgrounds. Give the subject room to breathe. Busy scenes compete with the message." />
+            <InfoCard icon={<DsIcon name="shield-check" size={16} style={{ color: COLOR.ink }} />} label="Diverse and inclusive" text="Melio's customers come from every background. Photography should reflect that without stereotyping industry or role." />
+          </div>
+        }
+      />
 
-      <SectionTitle sub="The settings and subjects that feel on-brand.">Subject and environment</SectionTitle>
-      <Body>
-        Melio is for small businesses of all kinds. Photography should cover a range of industries - <Med>restaurants,
-        retail, professional services, tradespeople, freelancers</Med> - and show them as equally valid. The common
-        thread is a real person doing real work.
-      </Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16, margin: '4px 0 8px' }}>
-        <ImgOrPlaceholder file="subject-restaurant.jpg" alt="Restaurant owner in kitchen" />
-        <ImgOrPlaceholder file="subject-retail.jpg" alt="Retail shop owner" />
-        <ImgOrPlaceholder file="subject-office.jpg" alt="Professional in home office" />
-        <ImgOrPlaceholder file="subject-trade.jpg" alt="Tradesperson on the job" />
-      </div>
-      <Body style={{ fontSize: 13, color: COLOR.faint }}>
-        Image placeholders - drop in licensed photography once available. Source from authentic stock libraries (e.g. Unsplash, Getty Editorial) or commission original photography.
-      </Body>
+      <SplitRow
+        title="Subject and environment"
+        body="The settings and subjects that feel on-brand."
+        visual={
+          <>
+            <Body style={{ marginTop: 0 }}>
+              Melio is for small businesses of all kinds. Photography should cover a range of industries -{' '}
+              <Med>restaurants, retail, professional services, tradespeople, freelancers</Med> - and show them as
+              equally valid. The common thread is a real person doing real work.
+            </Body>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, margin: '4px 0 8px' }}>
+              <ImgOrPlaceholder file="subject-restaurant.jpg" alt="Restaurant owner in kitchen" />
+              <ImgOrPlaceholder file="subject-retail.jpg" alt="Retail shop owner" />
+              <ImgOrPlaceholder file="subject-office.jpg" alt="Professional in home office" />
+              <ImgOrPlaceholder file="subject-trade.jpg" alt="Tradesperson on the job" />
+            </div>
+            <Body style={{ fontSize: 13, color: COLOR.faint, margin: 0 }}>
+              Image placeholders - drop in licensed photography once available. Source from authentic stock libraries (e.g. Unsplash, Getty Editorial) or commission original photography.
+            </Body>
+          </>
+        }
+      />
 
-      <SectionTitle sub="Color treatment - keep it natural and warm.">Color and treatment</SectionTitle>
-      <Body>
-        Prefer <Med>natural color grading</Med>: balanced exposure, warm whites, and no heavy saturation. The photos
-        should feel like the moment looked - not like a filter was applied. Avoid desaturating to grey/black-and-white
-        or adding a strong color wash.
-      </Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-        <Rule ok label="Natural warm tones, balanced exposure" detail="Feels like daylight. Clean and approachable." />
-        <Rule ok label="Soft, diffused shadows" detail="No harsh directional flash. Light feels ambient." />
-        <Rule ok={false} label="Heavy color grade or preset" detail="Mood filters, duotones, or teal-and-orange looks." />
-        <Rule ok={false} label="Dark or low-key photography" detail="Reserved for developer / pro-persona content only." />
-      </div>
+      <SplitRow
+        title="Color and treatment"
+        body="Keep it natural and warm."
+        visual={
+          <>
+            <Body style={{ marginTop: 0 }}>
+              Prefer <Med>natural color grading</Med>: balanced exposure, warm whites, and no heavy saturation. The
+              photos should feel like the moment looked - not like a filter was applied. Avoid desaturating to
+              grey/black-and-white or adding a strong color wash.
+            </Body>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+              <Rule ok label="Natural warm tones, balanced exposure" detail="Feels like daylight. Clean and approachable." />
+              <Rule ok label="Soft, diffused shadows" detail="No harsh directional flash. Light feels ambient." />
+              <Rule ok={false} label="Heavy color grade or preset" detail="Mood filters, duotones, or teal-and-orange looks." />
+              <Rule ok={false} label="Dark or low-key photography" detail="Reserved for developer / pro-persona content only." />
+            </div>
+          </>
+        }
+      />
 
-      <SectionTitle sub="What never to do with Melio imagery.">What to avoid</SectionTitle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Rule ok={false} label="Generic stock cliches" detail="Handshakes, people staring at laptops with exaggerated smiles, diverse teams around a whiteboard - anything that feels like a stock search result." />
-        <Rule ok={false} label="Busy or cluttered scenes" detail="Too much going on in the background. The subject should own the frame." />
-        <Rule ok={false} label="Adding text directly onto photography" detail="Place text on a solid or gradient overlay, not straight onto a photo - contrast breaks down on busy shots." />
-        <Rule ok={false} label="Lifestyle photography that ignores the business" detail="Beach sunsets and general 'living your best life' imagery. Melio is for work - show the work." />
-        <Rule ok={false} label="Logos or products from competitors" detail="No competitor brand marks or clearly identifiable competitor interfaces visible in any shot." />
-      </div>
+      <SplitRow
+        title="What to avoid"
+        body="What never to do with Melio imagery."
+        visual={
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Rule ok={false} label="Generic stock cliches" detail="Handshakes, people staring at laptops with exaggerated smiles, diverse teams around a whiteboard - anything that feels like a stock search result." />
+            <Rule ok={false} label="Busy or cluttered scenes" detail="Too much going on in the background. The subject should own the frame." />
+            <Rule ok={false} label="Adding text directly onto photography" detail="Place text on a solid or gradient overlay, not straight onto a photo - contrast breaks down on busy shots." />
+            <Rule ok={false} label="Lifestyle photography that ignores the business" detail="Beach sunsets and general 'living your best life' imagery. Melio is for work - show the work." />
+            <Rule ok={false} label="Logos or products from competitors" detail="No competitor brand marks or clearly identifiable competitor interfaces visible in any shot." />
+          </div>
+        }
+      />
 
-      <SectionTitle sub="How photography and illustration coexist.">Photography and illustration together</SectionTitle>
-      <Body>
-        Photography and Mel-based illustration can coexist in a layout, but <Med>not in the same frame</Med> - keep
-        them in separate zones or separate assets. When a layout needs both, use a clear spatial separation (e.g. image
-        on one side, illustration on the other, with a neutral background between them).
-      </Body>
+      <SplitRow
+        title="Photography and illustration together"
+        body="How photography and illustration coexist."
+        visual={
+          <Body style={{ margin: 0 }}>
+            Photography and Mel-based illustration can coexist in a layout, but <Med>not in the same frame</Med> - keep
+            them in separate zones or separate assets. When a layout needs both, use a clear spatial separation (e.g.
+            image on one side, illustration on the other, with a neutral background between them).
+          </Body>
+        }
+      />
 
-      <SectionTitle sub="Technical rules for placing vendor thumbnails and SMB images together.">Vendor and SMB image composition</SectionTitle>
-      <Body>
-        The proportion between the vendor thumbnail and the SMB primary image is <Med>1:3 (width)</Med> and{' '}
-        <Med>1:4 (height)</Med>. Never place a thumbnail at the top or bottom of the SMB image's vertical axis safe zone.
-        When placing two vendor thumbnails, stagger them at different heights to create a balanced composition.
-      </Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
-        {(['do-08.jpg', 'dont-08.jpg', 'do-09.jpg', 'dont-09.jpg'] as const).map((file) => {
-          const url = imgUrl(file);
-          const isOk = file.startsWith('do');
-          return (
-            <div key={file} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              {url
-                ? <img src={url} alt={`${isOk ? 'Do' : "Don't"}: vendor thumbnail composition`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
-                : <div style={{ aspectRatio: '4 / 3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 6 }}>
-                    <DsIcon name="image-add" size={28} style={{ color: COLOR.faint }} />
-                    <span style={{ fontSize: 12, color: COLOR.faint }}>{isOk ? 'Do' : "Don't"} example</span>
+      <SplitRow
+        title="Vendor and SMB image composition"
+        body="Technical rules for placing vendor thumbnails and SMB images together."
+        visual={
+          <>
+            <Body style={{ marginTop: 0 }}>
+              The proportion between the vendor thumbnail and the SMB primary image is <Med>1:3 (width)</Med> and{' '}
+              <Med>1:4 (height)</Med>. Never place a thumbnail at the top or bottom of the SMB image's vertical axis safe
+              zone. When placing two vendor thumbnails, stagger them at different heights to create a balanced composition.
+            </Body>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
+              {(['do-08.jpg', 'dont-08.jpg', 'do-09.jpg', 'dont-09.jpg'] as const).map((file) => {
+                const url = imgUrl(file);
+                const isOk = file.startsWith('do');
+                return (
+                  <div key={file} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
+                    {url
+                      ? <img src={url} alt={`${isOk ? 'Do' : "Don't"}: vendor thumbnail composition`} style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+                      : <div style={{ aspectRatio: '4 / 3', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 6 }}>
+                          <DsIcon name="image-add" size={28} style={{ color: COLOR.faint }} />
+                          <span style={{ fontSize: 12, color: COLOR.faint }}>{isOk ? 'Do' : "Don't"} example</span>
+                        </div>
+                    }
                   </div>
-              }
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
-        <Rule ok label="Vendor thumbnail at 1/3 the width of the primary SMB image" detail="The size proportion anchors the hierarchy - vendor is supporting, SMB is primary." />
-        <Rule ok={false} label="Vendor thumbnails without their rounded frame" detail="Always show the thumbnail inside its frame - never bare." />
-        <Rule ok={false} label="Frame around primary SMB images" detail="Primary SMB images never get a container frame - only vendor thumbnails use frames." />
-        <Rule ok={false} label="Vendor thumbnail floating without border intersection" detail="The thumbnail must overlap the primary image edge; never float separately beside it." />
-      </div>
-
-      <SectionTitle sub="How to combine photography with simplified UI (Mini Mock) overlays.">Images and simplified UI</SectionTitle>
-      <Body>
-        When combining a simplified UI with a landscape image, its <Med>width should be 1/3 of the primary image's
-        width</Med>. Place the mini-mock on any side except the top. Two simplified UIs on a single image should sit on
-        opposing vertical edges at different heights for visual balance - never on the same edge.
-      </Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
-        {(['image-with-mock.png', 'image-with-mock-1.png', 'image-with-mock-2.png', 'image-with-mock-3.png', 'image-with-2-mocks.png'] as const).map((file) => {
-          const url = imgUrl(file);
-          return url ? (
-            <div key={file} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
-              <img src={url} alt="Image with simplified UI overlay" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
+              <Rule ok label="Vendor thumbnail at 1/3 the width of the primary SMB image" detail="The size proportion anchors the hierarchy - vendor is supporting, SMB is primary." />
+              <Rule ok={false} label="Vendor thumbnails without their rounded frame" detail="Always show the thumbnail inside its frame - never bare." />
+              <Rule ok={false} label="Frame around primary SMB images" detail="Primary SMB images never get a container frame - only vendor thumbnails use frames." />
+              <Rule ok={false} label="Vendor thumbnail floating without border intersection" detail="The thumbnail must overlap the primary image edge; never float separately beside it." />
             </div>
-          ) : null;
-        })}
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
-        <Rule ok label="Mini-mock at 1/3 the width of the primary image" />
-        <Rule ok label="Place on any side of the image except the top edge" />
-        <Rule ok={false} label="Don't center the simplified UI on the image" />
-        <Rule ok={false} label="Don't place two simplified UIs on the same edge" detail="Use opposing edges at different heights for visual balance." />
-      </div>
+          </>
+        }
+      />
 
-      <SectionTitle sub="Accompanies every real Melio customer image in marketing, product, or internal uses.">SMB Badge</SectionTitle>
-      <Body>
-        The <Med>SMB Badge</Med> states the business name, owner name, and the year they joined Melio. It accompanies
-        any image of a real Melio customer - marketing, product, or internal - as a promise to keep small business in
-        business.
-      </Body>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
-        <ImgOrPlaceholder file="smb-badge.png" alt="SMB Badge dimensions and edge positioning" ratio="4 / 3" />
-        <ImgOrPlaceholder file="smb-badge-positioning.png" alt="SMB Badge on-image positioning" ratio="4 / 3" />
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
-        <Rule ok label="Place the SMB Badge within the specified positioning zone" detail="Follow the on-image positioning diagram for correct placement." />
-        <Rule ok={false} label="Don't place an SMB Badge outside its defined positioning zone" />
-      </div>
+      <SplitRow
+        title="Images and simplified UI"
+        body="How to combine photography with simplified UI (Mini Mock) overlays."
+        visual={
+          <>
+            <Body style={{ marginTop: 0 }}>
+              When combining a simplified UI with a landscape image, its <Med>width should be 1/3 of the primary image's
+              width</Med>. Place the mini-mock on any side except the top. Two simplified UIs on a single image should sit
+              on opposing vertical edges at different heights for visual balance - never on the same edge.
+            </Body>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
+              {(['image-with-mock.png', 'image-with-mock-1.png', 'image-with-mock-2.png', 'image-with-mock-3.png', 'image-with-2-mocks.png'] as const).map((file) => {
+                const url = imgUrl(file);
+                return url ? (
+                  <div key={file} style={{ borderRadius: RADIUS.lg, overflow: 'hidden', background: COLOR.panel }}>
+                    <img src={url} alt="Image with simplified UI overlay" style={{ width: '100%', display: 'block', objectFit: 'contain' }} />
+                  </div>
+                ) : null;
+              })}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
+              <Rule ok label="Mini-mock at 1/3 the width of the primary image" />
+              <Rule ok label="Place on any side of the image except the top edge" />
+              <Rule ok={false} label="Don't center the simplified UI on the image" />
+              <Rule ok={false} label="Don't place two simplified UIs on the same edge" detail="Use opposing edges at different heights for visual balance." />
+            </div>
+          </>
+        }
+      />
 
-      <div style={{ background: COLOR.lilac100, border: `1px solid ${COLOR.lilac300}`, borderRadius: RADIUS.md, padding: '14px 16px' }}>
+      <SplitRow
+        title="SMB Badge"
+        body="Accompanies every real Melio customer image in marketing, product, or internal uses."
+        visual={
+          <>
+            <Body style={{ marginTop: 0 }}>
+              The <Med>SMB Badge</Med> states the business name, owner name, and the year they joined Melio. It
+              accompanies any image of a real Melio customer - marketing, product, or internal - as a promise to keep
+              small business in business.
+            </Body>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, margin: '4px 0 8px' }}>
+              <ImgOrPlaceholder file="smb-badge.png" alt="SMB Badge dimensions and edge positioning" ratio="4 / 3" />
+              <ImgOrPlaceholder file="smb-badge-positioning.png" alt="SMB Badge on-image positioning" ratio="4 / 3" />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '4px 0 8px' }}>
+              <Rule ok label="Place the SMB Badge within the specified positioning zone" detail="Follow the on-image positioning diagram for correct placement." />
+              <Rule ok={false} label="Don't place an SMB Badge outside its defined positioning zone" />
+            </div>
+          </>
+        }
+      />
+
+      <div style={{ background: COLOR.lilac100, border: `1px solid ${COLOR.lilac300}`, borderRadius: RADIUS.md, padding: '14px 16px', marginTop: 36 }}>
         <Body style={{ margin: 0 }}>
           <Med>Art direction questions?</Med> Contact the design team before commissioning new photography.
           They can brief the photographer on these guidelines and approve selects before delivery.

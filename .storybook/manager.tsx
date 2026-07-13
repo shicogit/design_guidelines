@@ -151,7 +151,7 @@ addons.register('melio/active-section', (api) => {
    Order in the array = final order at the bottom. Defensive: only acts when an item shares the
    Identity container, so it can never break the tree layout. */
 addons.register('melio/move-bottom-pages', () => {
-  const BOTTOM = ['collaborators--docs', 'changelog--docs'];
+  const BOTTOM = ['marketing--docs', 'changelog--docs'];
   const moveLast = () => {
     const be = document.getElementById('identity');
     if (!be || !be.parentElement) return;

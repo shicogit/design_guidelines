@@ -19,6 +19,17 @@ const TAG_STYLE: Record<Entry['tag'], { c: string; b: string }> = {
 
 const ENTRIES: Entry[] = [
   {
+    date: 'July 13, 2026',
+    title: 'Marketing rename and Imagery layout',
+    tag: 'Update',
+    items: [
+      'Renamed the "Collaborators" section to "Marketing".',
+      'Imagery page now uses the split-row layout (visual left, title and description right) to match the Logo page.',
+      'Removed the temporary Penny Test page.',
+      'Removed Xero from the illustration partner picker (it doesn\'t use the Partners kit).',
+    ],
+  },
+  {
     date: 'July 10, 2026',
     title: 'New "Writing" section',
     tag: 'New',
@@ -134,7 +145,7 @@ export function ChangelogGuidelines() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0 28px', fontSize: 13, color: COLOR.muted }}>
         <DsIcon name="refresh-circle-outline" size={15} style={{ color: COLOR.muted }} />
         <span>
-          Reviewed daily. Last updated <Med>July 10, 2026</Med>.
+          Reviewed daily. Last updated <Med>July 13, 2026</Med>.
         </span>
       </div>
 
