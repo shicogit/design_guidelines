@@ -117,7 +117,7 @@
     /* Drawer state: mark open group header + its children for CSS drawer styling */
     function updateDrawerState() {
       var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
-      var BOTTOM = ['overview--docs', 'collaborators--docs', 'changelog--docs', 'penny-test--docs'];
+      var BOTTOM = ['overview--docs', 'collaborators--docs', 'changelog--docs'];
       GROUPS.forEach(function(id) {
         var group = document.getElementById(id);
         if (!group) return;
@@ -546,29 +546,6 @@
     padding-left: 12px !important;
     border-top: none !important;
     border-bottom: 1px solid #D8DCE9 !important;
-  }
-
-  /* Penny Test: visually distinct "temporary/WIP" item at the very bottom */
-  .sidebar-item[data-item-id="penny-test--docs"] {
-    margin-top: 10px !important;
-    padding-top: 10px !important;
-    border-top: 1px solid #ECECF1 !important;
-  }
-  .sidebar-item[data-item-id="penny-test--docs"] > a {
-    color: #9CA3AF !important;
-    font-style: italic !important;
-    border: 1px dashed #D1D5DB !important;
-    background: transparent !important;
-  }
-  .sidebar-item[data-item-id="penny-test--docs"] > a:hover {
-    background: #EBEFF2 !important;
-  }
-  .sidebar-item[data-item-id="penny-test--docs"][data-selected="true"] > a,
-  .sidebar-item[data-item-id="penny-test--docs"][data-selected="true"] > a:hover {
-    color: #7849FF !important;
-    background: #F4F4F6 !important;
-    border-color: #C4B5FD !important;
-    border-style: dashed !important;
   }
 
   /* ---- Settings gear: DS icon ---- */
