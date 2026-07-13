@@ -103,6 +103,32 @@ addons.register('melio/accordion', () => {
   });
 });
 
+/* Accordion, part 2: a standalone bottom page (Marketing, Overview) isn't in any group,
+   so selecting it must collapse every open group - otherwise a group drawer (e.g. Writing)
+   stays open while a bottom page is active. Watch the selection and enforce it. */
+addons.register('melio/accordion-bottom', () => {
+  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+  const BOTTOM = ['overview--docs', 'marketing--docs'];
+  const enforce = () => {
+    const selected = document.querySelector('.sidebar-item[data-selected="true"]');
+    const selId = selected?.getAttribute('data-item-id') ?? '';
+    if (!BOTTOM.includes(selId)) return; // only when a standalone bottom page is active
+    GROUPS.forEach((id) => {
+      const ob = document.getElementById(id)?.querySelector(
+        'button[data-action="collapse-root"]',
+      ) as HTMLElement | null;
+      if (ob && ob.getAttribute('aria-expanded') === 'true') ob.click();
+    });
+  };
+  setTimeout(() => {
+    const tree = document.getElementById('storybook-explorer-tree') || document.body;
+    new MutationObserver(enforce).observe(tree, {
+      attributes: true, subtree: true, childList: true, attributeFilter: ['data-selected', 'aria-expanded'],
+    });
+    enforce();
+  }, 800);
+});
+
 /* Mark a section title as "pressed" (data-melio-active) while its Overview
    page is the open one — so CSS can turn its text/icon purple. */
 addons.register('melio/active-section', (api) => {

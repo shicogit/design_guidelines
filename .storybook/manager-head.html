@@ -140,7 +140,7 @@
               sib.style.setProperty('margin-left', '0', 'important');
               sib.style.setProperty('border-left', 'none', 'important');
               sib.style.setProperty('box-sizing', 'border-box', 'important');
-              sib.style.setProperty('background', 'linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 0 / 2px 100%, #F0F3F7', 'important');
+              sib.style.setProperty('background', 'linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA', 'important');
               sib.style.setProperty('padding', '2px 0', 'important');
               sib.style.setProperty('display', 'block', 'important');
             } else {
@@ -207,7 +207,7 @@
       /* border-bottom matches Identity: lighter #E2E8F0 when open (drawer divider),
          darker #D8DCE9 when collapsed (section divider). */
       var wOpen = writing.classList.contains('melio-open');
-      writing.style.setProperty('border-bottom', '1px solid #ECECF1', 'important');
+      writing.style.setProperty('border-bottom', '2px solid #D8DCE9', 'important');
 
       /* Hide the expand-all button */
       var expandBtn = writing.querySelector('button[data-action="expand-all"]');
@@ -225,7 +225,7 @@
       /* Identity-level button geometry */
       ['display:flex', 'align-items:center', 'justify-content:flex-start',
        'text-align:left', 'gap:0', 'box-sizing:border-box', 'position:relative',
-       'width:100%', 'min-height:45px', 'margin:0', 'padding:12px 14px 12px 22px',
+       'width:100%', 'min-height:56px', 'margin:0', 'padding:18px 14px 18px 22px',
        'border:none', 'border-radius:0', 'background:transparent', 'color:#1A1A1A',
        'font-size:15px', 'font-weight:400', 'font-family:Poppins,sans-serif',
        'line-height:1.4', 'text-transform:none', 'letter-spacing:normal',
@@ -367,9 +367,9 @@
     box-sizing: border-box !important;
     position: relative !important;
     width: 100% !important;
-    min-height: 45px !important;
+    min-height: 56px !important;
     margin: 0 !important;
-    padding: 12px 14px 12px 22px !important;
+    padding: 18px 14px 18px 22px !important;
     border: none !important;
     border-radius: 0 !important;
     background: transparent !important;
@@ -410,7 +410,7 @@
   .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs:hover {
     color: #7849FF !important;
     background: #F4F4F6 !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important;
     box-shadow: none !important;
   }
   /* force the icon purple too (masked ::before doesn't always inherit currentColor) */
@@ -533,8 +533,8 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #ECECF1 !important;
-    border-bottom: 1px solid #ECECF1 !important;
+    border-top: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
   .sidebar-item[data-item-id="marketing--docs"] {
     margin-top: 0 !important;
@@ -542,7 +542,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 1px solid #ECECF1 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
 
   /* ---- Settings gear: DS icon ---- */
@@ -673,7 +673,7 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 1px solid #ECECF1 !important;
+    border-top: 2px solid #D8DCE9 !important;
   }
   /* Writing stacks under Identity: NO border-top (Identity's border-bottom is the
      single divider between them), border-bottom only - like Collaborators/Changelog. */
@@ -683,7 +683,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 1px solid #ECECF1 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
   /* Writing container: full width like Identity */
   #writing {
@@ -754,7 +754,7 @@
   #identity.melio-open,
   #foundations.melio-open,
   #writing.melio-open {
-    border-bottom: 1px solid #ECECF1 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
     margin-bottom: 0 !important;
   }
 
@@ -776,12 +776,12 @@
 
   /* Items in open drawer: grey section background */
   .sidebar-item.melio-child {
-    background: #F0F3F7 !important;
+    background: #F4F6FA !important;
   }
   /* Closing outline at the bottom of an open drawer - marks where the grey drawer ends.
      Applied by updateDrawerState() to the last row of the open group. */
   .melio-child-last {
-    border-bottom: 1px solid #ECECF1 !important;
+    border-bottom: 2px solid #D8DCE9 !important;
   }
   /* Page title rows within the drawer: transparent on the grey, aligned with main headers.
      9px vertical padding gives drawer rows breathing room (esp. a single-child drawer
@@ -807,7 +807,7 @@
   .melio-child-subtabs {
     display: block !important;
     width: 100% !important;
-    background: linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 0 / 2px 100%, #F0F3F7 !important;
+    background: linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA !important;
     margin-left: 0 !important;
     border-left: none !important;
     padding: 2px 0 !important;
