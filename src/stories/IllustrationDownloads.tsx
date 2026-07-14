@@ -3,11 +3,13 @@ import lottie, { type AnimationItem } from 'lottie-web';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { SETS, ALL_NAMES, type Entry, type SetKey } from './IllustrationGallery';
 import { FONT, COLOR } from './brandKit';
+import { DOWNLOADS_ENABLED } from './downloadUtils';
 
 const PURPLE = COLOR.purple;
 
 // ---------- download helpers ----------
 function triggerDownload(blob: Blob, filename: string) {
+  if (!DOWNLOADS_ENABLED) return;
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -247,9 +249,9 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
     <>
       <button
         ref={btnRef}
-        onClick={missing ? undefined : openMenu}
+        onClick={missing || !DOWNLOADS_ENABLED ? undefined : openMenu}
         disabled={missing}
-        title={missing ? `No version of “${name}” in this set` : `Download “${name}”`}
+        title={missing ? `No version of “${name}” in this set` : DOWNLOADS_ENABLED ? `Download “${name}”` : name}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -259,14 +261,14 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
           border: missing ? '1.5px dashed #CFCFD8' : menu ? `1px solid ${PURPLE}` : '1px solid #ECECF1',
           borderRadius: 14,
           background: missing ? '#F1F1F4' : '#FFFFFF',
-          cursor: missing ? 'default' : 'pointer',
+          cursor: missing || !DOWNLOADS_ENABLED ? 'default' : 'pointer',
           opacity: missing ? 0.7 : 1,
           transition: 'background 120ms, border-color 120ms',
           fontFamily: FONT,
           position: 'relative',
         }}
-        onMouseOver={missing ? undefined : (e) => { if (!menu) e.currentTarget.style.background = '#FAFAFB'; }}
-        onMouseOut={missing ? undefined : (e) => { e.currentTarget.style.background = '#FFFFFF'; }}
+        onMouseOver={missing || !DOWNLOADS_ENABLED ? undefined : (e) => { if (!menu) e.currentTarget.style.background = '#FAFAFB'; }}
+        onMouseOut={missing || !DOWNLOADS_ENABLED ? undefined : (e) => { e.currentTarget.style.background = '#FFFFFF'; }}
       >
         {missing ? (
           <div key="ph" style={{ width: 96, height: 96, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -289,7 +291,7 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
 
         <span style={{ fontSize: 12, color: '#6B7280', wordBreak: 'break-word', textAlign: 'center', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
           {/* download glyph */}
-          {!missing && (
+          {!missing && DOWNLOADS_ENABLED && (
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 2v8m0 0 3-3m-3 3L5 7" stroke="#9AA0AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M3 12.5h10" stroke="#9AA0AA" strokeWidth="1.5" strokeLinecap="round" />
@@ -299,7 +301,7 @@ function DownloadCell({ name, entry }: { name: string; entry?: Entry }) {
         </span>
       </button>
 
-      {menu && (
+      {DOWNLOADS_ENABLED && menu && (
         <div
           ref={menuRef}
           style={{
@@ -518,6 +520,7 @@ export function IllustrationDownloads() {
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           {/* Download all → zip the current set into a folder */}
+          {DOWNLOADS_ENABLED && (
           <div ref={allWrap} style={{ position: 'relative' }}>
             <button
               onClick={() => (progress ? null : setAllMenu((o) => !o))}
@@ -598,6 +601,7 @@ export function IllustrationDownloads() {
               </div>
             )}
           </div>
+          )}
 
           <div style={{ display: 'inline-flex', border: '1px solid #E5E5EA', borderRadius: 999, padding: 2, background: '#FFFFFF' }}>
             {(Object.keys(SETS) as SetKey[]).map((k) => (

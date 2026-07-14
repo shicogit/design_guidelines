@@ -5,7 +5,7 @@ export function WelcomeHome() {
   return (
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
       {/* Cover - full-bleed, flush to the top */}
-      <img src="/cover.png" alt="Melio Brand Guidelines" style={{ width: '100%', display: 'block' }} />
+      <img src="cover.png" alt="Melio Brand Guidelines" style={{ width: '100%', display: 'block' }} />
 
       {/* Padded content area */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 32px 64px' }}>

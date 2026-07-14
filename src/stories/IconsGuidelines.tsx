@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { IconGallery } from './IconGallery';
 import { ColorChip } from './ColorChip';
 import { MissingImage } from './MissingImage';
-import { FONT, COLOR, RADIUS, Med, Lead, Body, Hero, DsIcon, SlackIcon } from './brandKit';
+import { FONT, COLOR, RADIUS, Med, Lead, Body, Hero, DsIcon } from './brandKit';
 
 const FIGMA_FOUNDATIONS =
   'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/%F0%9F%A4%8D-DS-Foundations-%F0%9F%A4%8D';
@@ -148,10 +148,6 @@ function SplitRow({ visual, title, body, noDivider }: { visual: React.ReactNode;
   );
 }
 
-const ICON_CONTACTS = [
-  { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-  { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
-];
 
 function NeedIcon() {
   const Btn = ({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) => (
@@ -201,35 +197,6 @@ function NeedIcon() {
         >
           Adding icons to Penny
         </Btn>
-      </div>
-      <div style={{ marginTop: 12 }}>
-        <div style={{ background: COLOR.white, borderTop: `1px solid ${COLOR.lilac300}`, borderRadius: '0 0 13px 13px', padding: '12px 20px 16px', marginLeft: -20, marginRight: -20, marginBottom: -18 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: COLOR.faint, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8, marginTop: 4 }}>Design team</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, width: 'fit-content' }}>
-            {ICON_CONTACTS.map(({ name, role, slack, image }) => {
-              const initials = name.split(' ').map((p) => p[0]).join('').slice(0, 2);
-              return (
-                <a key={name} href={slack} target="_blank" rel="noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, background: COLOR.white, border: `1px solid ${COLOR.hairline}`, borderRadius: 8, padding: '8px 12px', textDecoration: 'none' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; const svg = e.currentTarget.querySelector('svg'); if (svg) (svg as HTMLElement).style.opacity = '1'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = COLOR.white; const svg = e.currentTarget.querySelector('svg'); if (svg) (svg as HTMLElement).style.opacity = '0'; }}
-                >
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: COLOR.lilac200 }}>
-                    {image
-                      ? <img src={image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: COLOR.purple }}>{initials}</div>
-                    }
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, lineHeight: 1.3 }}>{name}</span>
-                    <span style={{ fontSize: 11, color: COLOR.faint, lineHeight: 1.3 }}>{role}</span>
-                  </div>
-                  <SlackIcon size={16} />
-                </a>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </div>
   );

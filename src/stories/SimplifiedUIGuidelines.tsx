@@ -111,10 +111,6 @@ export function SimplifiedUIResources() {
           { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
           { label: 'Component request', href: 'https://docs.google.com/forms/d/e/1FAIpQLSd7sLkMrJMjOITz0-Dw5-WBa_8l0sVWVInP-8WMuh0AUEoYNQ/viewform?pli=1' },
         ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
-        ]}
       />
     </div>
   );

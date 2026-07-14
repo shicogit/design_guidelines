@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { FONT, COLOR, RADIUS, Med, Lead, Body, InfoCard, Hero, DsIcon, ResourceFooter, SubTitle, DownloadIcon } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 
 /* Imagery - art direction and photography for the Melio brand. Guidelines cover subject,
    environment, tone, color, and common mistakes - images are shown as placeholders since
@@ -343,7 +343,13 @@ function MelImageCard({
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : id); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        // Downloads disabled: the tile becomes a view-only trigger - open the
+        // preview lightbox instead of the download/copy menu.
+        if (!DOWNLOADS_ENABLED) { onPreview(); return; }
+        setOpenId(isOpen ? null : id);
+      }}
       style={{ position: 'relative', cursor: 'pointer' }}
     >
       {/* Image + hover overlay (clipped together) */}
@@ -370,8 +376,9 @@ function MelImageCard({
         </div>
       </div>
 
-      {/* Dropdown - outside overflow:hidden so it isn't clipped */}
-      {isOpen && (
+      {/* Dropdown - outside overflow:hidden so it isn't clipped.
+          Not rendered while downloads are disabled, so no download/copy path exists. */}
+      {DOWNLOADS_ENABLED && isOpen && (
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -552,10 +559,6 @@ export function ImageryResources() {
         links={[
           { label: 'Stock library', disabled: true },
           { label: 'Photo brief template', disabled: true },
-        ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
         ]}
       />
     </div>

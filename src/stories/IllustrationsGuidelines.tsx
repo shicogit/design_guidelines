@@ -36,7 +36,7 @@ function VideoClip({ src, style }: { src?: string; style?: CSSProperties }) {
 }
 import { IllustrationGallery, entryToBlob, SETS, type SetKey } from './IllustrationGallery';
 import { FONT, COLOR, RADIUS, Med, Lead, Body, SubTitle, Hero, DsIcon, SectionTitle, DownloadIcon, DownloadAllBanner, ResourceFooter } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 
 // Aliases onto the shared palette - single source of truth lives in brandKit.
 const LILAC_100 = COLOR.lilac100; // background tints + brand banners
@@ -680,6 +680,8 @@ function IllustrationKitCard({
   const [svgBusy, setSvgBusy] = useState(false);
   const [hovered, setHovered] = useState(false);
   const isOpen = openId === id;
+  // Published site: keep the preview, but neutralize every download affordance.
+  const downloadsOff = !DOWNLOADS_ENABLED;
 
   const downloadZip = async () => {
     if (busy) return;
@@ -728,15 +730,15 @@ function IllustrationKitCard({
 
   return (
     <div
-      onMouseEnter={() => { if (!disabled) setHovered(true); }}
+      onMouseEnter={() => { if (!disabled && !downloadsOff) setHovered(true); }}
       onMouseLeave={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); if (!disabled && !busy && !svgBusy) setOpenId(isOpen ? null : id); }}
+      onClick={(e) => { e.stopPropagation(); if (!disabled && !downloadsOff && !busy && !svgBusy) setOpenId(isOpen ? null : id); }}
       style={{
         borderRadius: RADIUS.lg,
-        border: `1px solid ${hovered && !disabled ? COLOR.outline : COLOR.hairline}`,
+        border: `1px solid ${hovered && !disabled && !downloadsOff ? COLOR.outline : COLOR.hairline}`,
         position: 'relative',
         opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? 'default' : 'pointer',
+        cursor: disabled || downloadsOff ? 'default' : 'pointer',
         transition: 'border-color 120ms',
       }}
     >
@@ -764,6 +766,12 @@ function IllustrationKitCard({
 
       {disabled ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, opacity: 0.45 }}>
+          <DownloadIcon size={11} />
+          <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
+          {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: COLOR.muted, background: COLOR.hover, borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
+        </div>
+      ) : downloadsOff ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, boxSizing: 'border-box' }}>
           <DownloadIcon size={11} />
           <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
           {count > 1 && <span style={{ fontSize: 11, fontWeight: 500, color: COLOR.muted, background: COLOR.hover, borderRadius: 999, padding: '2px 7px', lineHeight: 1.5, flexShrink: 0 }}>{count}</span>}
@@ -967,10 +975,6 @@ export function IllustrationsResources() {
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
           { label: 'Request an illustration', href: 'https://app.notion.com/p/meliopayments/Requesting-illustrations-1ac66d69640a8075b260c4d967a6cefb?source=copy_link', icon: <img src={NOTION_FAVICON} alt="" width={16} height={16} style={{ flexShrink: 0, objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} /> },
-        ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
         ]}
       />
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
+import { DOWNLOADS_ENABLED, triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
 import { FONT, COLOR, DownloadIcon, DsIcon } from './brandKit';
 
 // Icons are loaded at runtime from melio/penny on GitHub via the Vite dev-server
@@ -43,6 +43,8 @@ function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: strin
   const [busy, setBusy] = useState<FmtKey | null>(null);
   const [hovered, setHovered] = useState(false);
   const missing = !url;
+  // Downloads are disabled on the public site: tiles stay visible but are display-only.
+  const interactive = DOWNLOADS_ENABLED && !missing;
 
   useEffect(() => {
     if (!menu) return;
@@ -91,7 +93,7 @@ function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: strin
   };
 
   const openMenu = () => {
-    if (missing || !btnRef.current) return;
+    if (!interactive || !btnRef.current) return;
     const r = btnRef.current.getBoundingClientRect();
     setMenu({ x: Math.min(r.left, window.innerWidth - 200), y: r.bottom + 6 });
   };
@@ -100,9 +102,9 @@ function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: strin
     <>
       <button
         ref={btnRef}
-        onClick={missing ? undefined : openMenu}
-        disabled={missing}
-        title={missing ? `"${name}" has no ${px}px version` : `Download or copy "${name}"`}
+        onClick={interactive ? openMenu : undefined}
+        disabled={!interactive}
+        title={missing ? `"${name}" has no ${px}px version` : interactive ? `Download or copy "${name}"` : name}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -112,26 +114,26 @@ function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: strin
           border: menu ? `1px solid ${PURPLE}` : '1px solid #ECECF1',
           borderRadius: 12,
           background: copied ? '#F4F1FF' : '#FFFFFF',
-          cursor: missing ? 'default' : 'pointer',
+          cursor: interactive ? 'pointer' : 'default',
           opacity: missing ? 0.45 : 1,
           transition: 'background 120ms, border-color 120ms',
           fontFamily: 'inherit',
           position: 'relative',
         }}
         onMouseEnter={(e) => {
-          if (missing || menu) return;
+          if (!interactive || menu) return;
           setHovered(true);
           e.currentTarget.style.background = '#FAFAFB';
           e.currentTarget.style.borderColor = '#D9D9E0';
         }}
         onMouseLeave={(e) => {
-          if (missing) return;
+          if (!interactive) return;
           setHovered(false);
           e.currentTarget.style.background = copied ? '#F4F1FF' : '#FFFFFF';
           e.currentTarget.style.borderColor = menu ? PURPLE : '#ECECF1';
         }}
       >
-        {hovered && !missing && !menu && (
+        {hovered && interactive && !menu && (
           <span style={{
             position: 'absolute',
             top: 6,
@@ -158,7 +160,7 @@ function IconCell({ name, url, px, copied, onCopy }: { name: string; url?: strin
         </span>
       </button>
 
-      {menu && (
+      {DOWNLOADS_ENABLED && menu && (
         <div
           ref={menuRef}
           style={{
@@ -439,6 +441,7 @@ export function IconGallery() {
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             {/* Download all */}
+            {DOWNLOADS_ENABLED && (
             <div ref={allWrap} style={{ position: 'relative' }}>
               <button
                 onClick={() => (progress ? null : setAllMenu((o) => !o))}
@@ -475,6 +478,7 @@ export function IconGallery() {
                 </div>
               )}
             </div>
+            )}
 
             {/* Icon size toggle */}
             <div style={{ display: 'inline-flex', border: '1px solid #E5E5EA', borderRadius: 999, padding: 2, background: '#FFFFFF' }}>

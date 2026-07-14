@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import lottie, { type AnimationItem } from 'lottie-web';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
-import { triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
+import { DOWNLOADS_ENABLED, triggerDownload, normalizeSvg, svgToRaster } from './downloadUtils';
 import { ColorChip } from './ColorChip';
 import { FONT, COLOR, DownloadIcon, DsIcon } from './brandKit';
 
@@ -250,6 +250,8 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
   const [copied, setCopied] = useState(false);
   const [hovered, setHovered] = useState(false);
   const missing = !entry;
+  // Downloads are off on the public site: tiles are display-only (no menu, no copy, no download).
+  const interactive = !missing && DOWNLOADS_ENABLED;
   const lottieUrl = entry?.kind === 'lottie' ? entry.url : undefined;
 
   useEffect(() => {
@@ -323,9 +325,9 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
     <>
     <button
       ref={btnRef}
-      onClick={missing ? undefined : openMenu}
+      onClick={interactive ? openMenu : undefined}
       disabled={missing}
-      title={missing ? `No Partners version of “${name}” yet` : `Download or copy “${name}”`}
+      title={missing ? `No Partners version of “${name}” yet` : interactive ? `Download or copy “${name}”` : undefined}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -335,14 +337,14 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
         border: missing ? '1.5px dashed #CFCFD8' : menu ? '1px solid #7849FF' : '1px solid #ECECF1',
         borderRadius: 14,
         background: missing ? '#F1F1F4' : '#FFFFFF',
-        cursor: missing ? 'default' : 'pointer',
+        cursor: interactive ? 'pointer' : 'default',
         opacity: missing ? 0.7 : 1,
         transition: 'background 120ms, border-color 120ms',
         fontFamily: FONT,
         position: 'relative',
       }}
       onMouseOver={
-        missing
+        !interactive
           ? undefined
           : (e) => {
               if (menu) return;
@@ -351,15 +353,15 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
             }
       }
       onMouseOut={
-        missing
+        !interactive
           ? undefined
           : (e) => {
               e.currentTarget.style.background = '#FFFFFF';
               e.currentTarget.style.borderColor = menu ? '#7849FF' : '#ECECF1';
             }
       }
-      onMouseEnter={missing ? undefined : () => setHovered(true)}
-      onMouseLeave={missing ? undefined : () => setHovered(false)}
+      onMouseEnter={!interactive ? undefined : () => setHovered(true)}
+      onMouseLeave={!interactive ? undefined : () => setHovered(false)}
     >
       {missing ? (
         // Distinct key + separate node from the lottie container: lottie's destroy() clears its
@@ -385,7 +387,7 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
       ) : (
         <div key="anim" ref={box} style={{ width: 112, height: 112 }} />
       )}
-      {hovered && !missing && !menu && (
+      {hovered && interactive && !menu && (
         <span style={{
           position: 'absolute', top: 8, right: 8, width: 22, height: 22,
           borderRadius: 7, background: '#FFFFFF', border: '1px solid #E0E0E8',
@@ -400,7 +402,7 @@ function Cell({ name, entry, color, gate }: { name: string; entry?: Entry; color
       </span>
     </button>
 
-    {menu && entry && (
+    {DOWNLOADS_ENABLED && menu && entry && (
       <div
         ref={menuRef}
         style={{ position: 'fixed', left: menu.x, top: menu.y, minWidth: 188, background: '#FFFFFF', borderRadius: 12, border: '1px solid #ECECF1', boxShadow: '0 12px 32px rgba(20,20,40,0.18)', padding: 6, zIndex: 1000, fontFamily: FONT }}
@@ -740,6 +742,7 @@ export function IllustrationGallery({
             </div>
 
             {/* Download all → zip the current set in the active color */}
+            {DOWNLOADS_ENABLED && (
             <div ref={dlWrap} style={{ position: 'relative' }}>
               <button
                 onClick={() => (progress ? null : setDlMenu((o) => !o))}
@@ -776,6 +779,7 @@ export function IllustrationGallery({
                 </div>
               )}
             </div>
+            )}
           </div>
         </div>
 

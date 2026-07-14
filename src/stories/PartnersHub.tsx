@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { FONT, COLOR, RADIUS, Body, Med, Lead, SectionTitle, InfoCard, Hero, DsIcon, DownloadIcon } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 import { MelAnim, melioUrl } from './IllustrationsGuidelines';
 
 /* For Partners - a starting point for freelancers & agencies working with the Melio
@@ -12,6 +12,9 @@ import { MelAnim, melioUrl } from './IllustrationsGuidelines';
 const melioIllustMods = import.meta.glob('../assets/illustrations/melio/*.json', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 // Partners illustration Lottie files.
 const partnersIllustMods = import.meta.glob('../assets/illustrations/partners/*.json', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+// "This is Mel" preview still (bundled so it resolves in the production build).
+const melPreviewMods = import.meta.glob('../assets/guidelines/illustrations/01_This is Mel.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const melPreviewUrl = Object.values(melPreviewMods)[0];
 
 // Agent Mel MOV alpha files (for card button).
 const agentMelMovMods = import.meta.glob('../assets/agent-mel/*.mov', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
@@ -234,7 +237,13 @@ function MiniDownloadCard({
   onClick?: () => void; href?: string; download?: string; disabled?: boolean; dark?: boolean;
 }) {
   const [hov, setHov] = useState(false);
-  const borderColor = hov && !disabled ? COLOR.outline : COLOR.cardBorder;
+  // While downloads are off, cards that pull our own files become non-interactive
+  // preview tiles (no action, no download icon). External resource links (e.g. Poppins
+  // on Google Fonts) stay clickable since they don't hand out our assets.
+  const isExternalLink = !!href && !dl;
+  const asDownload = DOWNLOADS_ENABLED || isExternalLink;
+  const interactive = asDownload && (!!onClick || !!href) && !disabled;
+  const borderColor = hov && interactive ? COLOR.outline : COLOR.cardBorder;
   const inner = (
     <>
       <div style={{
@@ -251,7 +260,7 @@ function MiniDownloadCard({
         borderTop: `1px solid ${COLOR.cardBorder}`,
         background: COLOR.white,
       }}>
-        <DsIcon name="download" size={13} style={{ color: COLOR.ink, flexShrink: 0 }} />
+        {asDownload && <DsIcon name="download" size={13} style={{ color: COLOR.ink, flexShrink: 0 }} />}
         <span style={{ fontSize: 11, fontWeight: 500, flex: 1, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {label}
         </span>
@@ -261,14 +270,14 @@ function MiniDownloadCard({
   );
   const base: React.CSSProperties = {
     borderRadius: 10, border: `1px solid ${borderColor}`, overflow: 'hidden',
-    cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
+    cursor: interactive ? 'pointer' : 'default', opacity: disabled ? 0.5 : 1,
     transition: 'border-color 120ms', display: 'block', textDecoration: 'none',
     color: 'inherit', fontFamily: FONT, background: 'none', padding: 0,
     width: '100%', textAlign: 'left' as const,
   };
   const evts = { onMouseEnter: () => setHov(true), onMouseLeave: () => setHov(false) };
-  if (onClick) return <button style={base as any} onClick={disabled ? undefined : onClick} {...evts}>{inner}</button>;
-  if (href) return <a href={href} download={dl} style={base} {...evts}>{inner}</a>;
+  if (asDownload && onClick) return <button style={base as any} onClick={disabled ? undefined : onClick} {...evts}>{inner}</button>;
+  if (asDownload && href) return <a href={href} download={dl} style={base} {...evts}>{inner}</a>;
   return <div style={{ ...base, cursor: 'default' }}>{inner}</div>;
 }
 
@@ -516,31 +525,33 @@ export function PartnersHub() {
       <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '18px 18px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12 }}>
           <span style={{ fontSize: 13, color: COLOR.muted }}>Fonts, logos, color tokens, icons &amp; illustrations</span>
-          <button
-            onClick={downloadStarterKit}
-            disabled={kitState === 'busy'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '8px 16px',
-              borderRadius: 999,
-              border: `1px solid ${COLOR.outline}`,
-              background: COLOR.white,
-              color: COLOR.ink,
-              fontSize: 13,
-              fontWeight: 600,
-              fontFamily: FONT,
-              cursor: kitState === 'busy' ? 'default' : 'pointer',
-              opacity: kitState === 'busy' ? 0.7 : 1,
-              flexShrink: 0,
-            }}
-          >
-            <DownloadIcon />
-            {kitState === 'busy' ? 'Zipping...' : kitState === 'error' ? 'Try again' : 'Download all'}
-          </button>
+          {DOWNLOADS_ENABLED && (
+            <button
+              onClick={downloadStarterKit}
+              disabled={kitState === 'busy'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 16px',
+                borderRadius: 999,
+                border: `1px solid ${COLOR.outline}`,
+                background: COLOR.white,
+                color: COLOR.ink,
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: FONT,
+                cursor: kitState === 'busy' ? 'default' : 'pointer',
+                opacity: kitState === 'busy' ? 0.7 : 1,
+                flexShrink: 0,
+              }}
+            >
+              <DownloadIcon />
+              {kitState === 'busy' ? 'Zipping...' : kitState === 'error' ? 'Try again' : 'Download all'}
+            </button>
+          )}
         </div>
-        {kitState === 'error' && (
+        {DOWNLOADS_ENABLED && kitState === 'error' && (
           <p style={{ fontSize: 12, color: COLOR.muted, margin: '-8px 2px 14px' }}>
             Couldn't build the zip just now - you can still grab each file from the sections below.
           </p>
@@ -679,7 +690,7 @@ export function PartnersHub() {
             <MiniDownloadCard
               label="Mel illustrations"
               disabled
-              visual={<img src="/src/assets/guidelines/illustrations/01_This%20is%20Mel.png" alt="Mel" style={{ height: 68, objectFit: 'contain' }} />}
+              visual={<img src={melPreviewUrl} alt="Mel" style={{ height: 68, objectFit: 'contain' }} />}
             />
           </div>
           <PageLink id={PAGES.illustrations}>Open the illustration kit</PageLink>

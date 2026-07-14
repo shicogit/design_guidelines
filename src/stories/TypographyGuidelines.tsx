@@ -1,6 +1,6 @@
 import { useState, useEffect, type CSSProperties } from 'react';
 import { FONT, COLOR, RADIUS, Med, SectionTitle, Lead, Hero, DownloadIcon, DsIcon, DownloadAllBanner, FigmaLogo, ResourceFooter } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 
 function GoogleFontsIcon({ size = 13 }: { size?: number }) {
   return (
@@ -323,6 +323,8 @@ function FontResourceCard({ name, family, italic = true, files, style, openId, s
   };
   const [zipBusy, setZipBusy] = useState(false);
   const isExternal = files[0]?.ext === 'external';
+  // Only external cards (real published links) stay interactive while downloads are off.
+  const interactive = isExternal || DOWNLOADS_ENABLED;
 
   const wt = (label: string) =>
     /Bulky/.test(label) ? 700 : /Median/.test(label) ? 500 : /Neutral/.test(label) ? 400 : 300;
@@ -349,10 +351,10 @@ function FontResourceCard({ name, family, italic = true, files, style, openId, s
 
   return (
     <div
-      style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: 'pointer', transition: 'border-color 120ms', ...style }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLOR.outline; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLOR.hairline; }}
-      onClick={(e) => { e.stopPropagation(); if (isExternal) window.open(files[0].href, '_blank', 'noreferrer'); else setOpen((o) => !o); }}
+      style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: interactive ? 'pointer' : 'default', transition: 'border-color 120ms', ...style }}
+      onMouseEnter={interactive ? (e) => { e.currentTarget.style.borderColor = COLOR.outline; } : undefined}
+      onMouseLeave={interactive ? (e) => { e.currentTarget.style.borderColor = COLOR.hairline; } : undefined}
+      onClick={(e) => { e.stopPropagation(); if (isExternal) window.open(files[0].href, '_blank', 'noreferrer'); else if (DOWNLOADS_ENABLED) setOpen((o) => !o); }}
     >
       <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLOR.lilac100, borderRadius: `${RADIUS.lg}px ${RADIUS.lg}px 0 0`, overflow: 'hidden' }}>
         <span style={{ fontFamily: family, fontWeight: 500, fontStyle: italic ? 'italic' : 'normal', fontSize: 56, color: COLOR.purple, lineHeight: 1 }}>Aa</span>
@@ -373,7 +375,7 @@ function FontResourceCard({ name, family, italic = true, files, style, openId, s
             <GoogleFontsIcon size={13} /> Get
           </a>
         </div>
-      ) : (
+      ) : DOWNLOADS_ENABLED ? (
         <div style={{ position: 'relative' }}>
           <button
             onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
@@ -434,6 +436,10 @@ function FontResourceCard({ name, family, italic = true, files, style, openId, s
                   </button>
                 </div>
               )}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px` }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{name}</span>
           </div>
         )}
     </div>
@@ -520,12 +526,14 @@ export function TypographyResources() {
       >
         <Lead style={{ margin: 0 }}>PolySans (licensed) and Poppins (free via Google Fonts) - ready to use in any project.</Lead>
       </Hero>
-      <DownloadAllBanner
-        count={allFontFiles.length}
-        busy={allBusy}
-        onDownload={downloadAll}
-        label="Download all fonts"
-      />
+      {DOWNLOADS_ENABLED && (
+        <DownloadAllBanner
+          count={allFontFiles.length}
+          busy={allBusy}
+          onDownload={downloadAll}
+          label="Download all fonts"
+        />
+      )}
 
       <GroupHeader icon="promote" title="PolySans" context="Marketing" desc="Brand typeface - website, decks, social, ads, campaigns." style={{ marginBottom: 12 }} />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
@@ -549,10 +557,6 @@ export function TypographyResources() {
         body="Typography styles and PolySans font settings live in the BD Foundations Figma file. For licensing questions or new type applications, reach out to the design team."
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },
-        ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
         ]}
       />
     </div>

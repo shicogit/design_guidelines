@@ -1,6 +1,13 @@
 // Shared client-side download helpers (used by the icon + illustration galleries).
 
+// Master switch for asset downloads on the published site.
+// While false, all download controls are hidden and triggerDownload is a no-op,
+// so no raw asset can be pulled from the site. Flip back to true (and wire the
+// employee-only drive links) when downloads are re-enabled.
+export const DOWNLOADS_ENABLED = false;
+
 export function triggerDownload(blob: Blob, filename: string) {
+  if (!DOWNLOADS_ENABLED) return;
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

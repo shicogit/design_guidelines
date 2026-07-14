@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FONT, COLOR, RADIUS, Med, SectionTitle, Body, Lead, SubTitle, Hero, DownloadIcon, DsIcon, DownloadAllBanner, FigmaLogo, ResourceFooter } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { DOWNLOADS_ENABLED, triggerDownload } from './downloadUtils';
 
 // Aliases onto the shared palette - single source of truth lives in brandKit.
 const LILAC_100 = COLOR.lilac100;
@@ -407,8 +407,8 @@ function LogoCard({ v, dlBase, openId, setOpenId }: { v: Variant; dlBase: string
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={(e) => { e.stopPropagation(); setOpenId(open ? null : id); }}
-      style={{ borderRadius: RADIUS.lg, border: `1px solid ${hovered ? COLOR.outline : COLOR.hairline}`, position: 'relative', cursor: 'pointer', transition: 'border-color 120ms' }}
+      onClick={DOWNLOADS_ENABLED ? (e) => { e.stopPropagation(); setOpenId(open ? null : id); } : undefined}
+      style={{ borderRadius: RADIUS.lg, border: `1px solid ${DOWNLOADS_ENABLED && hovered ? COLOR.outline : COLOR.hairline}`, position: 'relative', cursor: DOWNLOADS_ENABLED ? 'pointer' : 'default', transition: 'border-color 120ms' }}
     >
       {/* Image */}
       <div style={{
@@ -423,77 +423,92 @@ function LogoCard({ v, dlBase, openId, setOpenId }: { v: Variant; dlBase: string
 
       {/* Inner strip: name + download */}
       <div style={{ position: 'relative' }}>
-        <button
-          onClick={(e) => { e.stopPropagation(); setOpenId(open ? null : id); }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6, width: '100%',
-            padding: '10px 12px',
-            background: hovered ? COLOR.hover : COLOR.white,
-            border: 'none',
-            borderTop: `1px solid ${COLOR.hairline}`,
-            borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`,
-            cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box',
-            transition: 'background 120ms',
-          }}
-        >
-          <DownloadIcon size={11} />
-          <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{v.mode} - {v.color}</span>
-        </button>
+        {DOWNLOADS_ENABLED ? (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); setOpenId(open ? null : id); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6, width: '100%',
+                padding: '10px 12px',
+                background: hovered ? COLOR.hover : COLOR.white,
+                border: 'none',
+                borderTop: `1px solid ${COLOR.hairline}`,
+                borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`,
+                cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box',
+                transition: 'background 120ms',
+              }}
+            >
+              <DownloadIcon size={11} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{v.mode} - {v.color}</span>
+            </button>
 
-          {open && (
-            <div style={{
-              position: 'absolute', right: 0, top: 'calc(100% + 6px)',
-              background: COLOR.white, border: `1px solid ${COLOR.hairline}`,
-              borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)',
-              minWidth: 180, zIndex: 200, padding: 6,
-            }}>
-              <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                Download {v.color}
-              </div>
-              {[
-                { href: v.svgUrl, name: `${dlBase}.svg`, label: 'SVG', desc: 'vector' },
-                { href: v.pngUrl, name: `${dlBase}.png`, label: 'PNG', desc: 'raster' },
-              ].map(({ href, name, label, desc }) => (
-                <a
-                  key={label}
-                  href={href}
-                  download={name}
-                  onClick={() => setOpenId(null)}
-                  style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
-                    padding: '9px 10px', borderRadius: 8,
-                    fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', background: 'transparent',
+            {open && (
+              <div style={{
+                position: 'absolute', right: 0, top: 'calc(100% + 6px)',
+                background: COLOR.white, border: `1px solid ${COLOR.hairline}`,
+                borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)',
+                minWidth: 180, zIndex: 200, padding: 6,
+              }}>
+                <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                  Download {v.color}
+                </div>
+                {[
+                  { href: v.svgUrl, name: `${dlBase}.svg`, label: 'SVG', desc: 'vector' },
+                  { href: v.pngUrl, name: `${dlBase}.png`, label: 'PNG', desc: 'raster' },
+                ].map(({ href, name, label, desc }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    download={name}
+                    onClick={() => setOpenId(null)}
+                    style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
+                      padding: '9px 10px', borderRadius: 8,
+                      fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', background: 'transparent',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    {label}
+                    <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>{desc}</span>
+                  </a>
+                ))}
+                <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
+                <div
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (copying) return;
+                    setOpenId(null);
+                    setCopying(true);
+                    try {
+                      const res = await fetch(v.pngUrl);
+                      const blob = await res.blob();
+                      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                    } catch { /* clipboard denied */ }
+                    finally { setCopying(false); }
                   }}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', borderRadius: 8, fontSize: 14, fontWeight: 500, color: COLOR.ink, cursor: 'pointer', background: 'transparent' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                 >
-                  {label}
-                  <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>{desc}</span>
-                </a>
-              ))}
-              <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
-              <div
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  if (copying) return;
-                  setOpenId(null);
-                  setCopying(true);
-                  try {
-                    const res = await fetch(v.pngUrl);
-                    const blob = await res.blob();
-                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-                  } catch { /* clipboard denied */ }
-                  finally { setCopying(false); }
-                }}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', borderRadius: 8, fontSize: 14, fontWeight: 500, color: COLOR.ink, cursor: 'pointer', background: 'transparent' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-              >
-                <span>{copying ? 'Copied!' : 'Copy'}</span>
-                <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
+                  <span>{copying ? 'Copied!' : 'Copy'}</span>
+                  <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </>
+        ) : (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6, width: '100%',
+            padding: '10px 12px',
+            background: COLOR.white,
+            borderTop: `1px solid ${COLOR.hairline}`,
+            borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`,
+            textAlign: 'left', boxSizing: 'border-box',
+          }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{v.mode} - {v.color}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -545,12 +560,14 @@ export function LogoResources() {
       >
         <Lead style={{ margin: 0 }}>Each mode comes in Purple, Black, and White - available as SVG and PNG.</Lead>
       </Hero>
-      <DownloadAllBanner
-        count={VARIANTS.length}
-        busy={allBusy}
-        onDownload={downloadAll}
-        label="Download all logos"
-      />
+      {DOWNLOADS_ENABLED && (
+        <DownloadAllBanner
+          count={VARIANTS.length}
+          busy={allBusy}
+          onDownload={downloadAll}
+          label="Download all logos"
+        />
+      )}
       <div style={{ background: COLOR.panel, borderRadius: 15, padding: 20, margin: '0 0 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
           {MAIN_MODES.map((m) => {
@@ -586,10 +603,6 @@ export function LogoResources() {
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },
           { label: 'Brand toolkit', disabled: true },
-        ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
         ]}
       />
     </div>

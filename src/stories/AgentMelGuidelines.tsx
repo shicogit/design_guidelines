@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react';
 import lottie from 'lottie-web';
 import { FONT, COLOR, RADIUS, Body, Med, Lead, SectionTitle, InfoCard, Hero, DsIcon, DownloadAllBanner, FigmaLogo, ResourceFooter } from './brandKit';
-import { triggerDownload } from './downloadUtils';
+import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 /* Agent Mel is an ICON system (an animated app icon), kept separate from the illustration
    set - its assets live in src/assets/agent-mel and load through this local player.
    Rule on this page: never mix icons, illustrations, and product mocks in one container. */
@@ -501,66 +501,74 @@ export function AgentMelResources() {
           const isOpen = openId === name;
           const busy = pngBusy[name];
           return (
-            <div key={name} style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: 'pointer', transition: 'border-color 120ms' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLOR.outline; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLOR.hairline; }} onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : name); }}>
+            <div key={name} style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: DOWNLOADS_ENABLED ? 'pointer' : 'default', transition: 'border-color 120ms' }} onMouseEnter={DOWNLOADS_ENABLED ? (e) => { e.currentTarget.style.borderColor = COLOR.outline; } : undefined} onMouseLeave={DOWNLOADS_ENABLED ? (e) => { e.currentTarget.style.borderColor = COLOR.hairline; } : undefined} onClick={DOWNLOADS_ENABLED ? (e) => { e.stopPropagation(); setOpenId(isOpen ? null : name); } : undefined}>
               <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLOR.lilac100, borderRadius: `${RADIUS.lg}px ${RADIUS.lg}px 0 0`, overflow: 'hidden' }}>
                 <AgentAnim url={src} size={72} />
               </div>
               <div style={{ position: 'relative' }}>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : name); }}
-                  disabled={busy}
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '10px 12px', background: busy ? COLOR.hover : COLOR.white, border: 'none', borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, cursor: busy ? 'default' : 'pointer', textAlign: 'left', boxSizing: 'border-box', opacity: busy ? 0.6 : 1 }}
-                  onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = COLOR.hover; }}
-                  onMouseLeave={(e) => { if (!busy) e.currentTarget.style.background = COLOR.white; }}
-                >
-                  <DownloadIcon size={11} />
-                  <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{busy ? 'Exporting...' : label}</span>
-                </button>
-                  {isOpen && (
-                    <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', background: COLOR.white, border: `1px solid ${COLOR.hairline}`, borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)', minWidth: 200, zIndex: 200, padding: 6 }}>
-                      <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                        Download {label}
+                {DOWNLOADS_ENABLED ? (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : name); }}
+                      disabled={busy}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '10px 12px', background: busy ? COLOR.hover : COLOR.white, border: 'none', borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, cursor: busy ? 'default' : 'pointer', textAlign: 'left', boxSizing: 'border-box', opacity: busy ? 0.6 : 1 }}
+                      onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = COLOR.hover; }}
+                      onMouseLeave={(e) => { if (!busy) e.currentTarget.style.background = COLOR.white; }}
+                    >
+                      <DownloadIcon size={11} />
+                      <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{busy ? 'Exporting...' : label}</span>
+                    </button>
+                    {isOpen && (
+                      <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', background: COLOR.white, border: `1px solid ${COLOR.hairline}`, borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)', minWidth: 200, zIndex: 200, padding: 6 }}>
+                        <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                          Download {label}
+                        </div>
+                        <a
+                          href={src}
+                          download={`agent-mel-${name}.json`}
+                          onClick={() => setOpenId(null)}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', borderRadius: 8, background: 'transparent' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          JSON
+                          <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>Lottie</span>
+                        </a>
+                        <button
+                          onClick={() => handlePng(src, name)}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          PNG
+                          <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>first frame</span>
+                        </button>
+                        <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
+                        <button
+                          onClick={() => handleCopy(src, name)}
+                          disabled={!!cpBusy[name]}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: cpBusy[name] ? 'default' : 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
+                          onMouseEnter={(e) => { if (!cpBusy[name]) e.currentTarget.style.background = COLOR.hover; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          {cpBusy[name] ? 'Copied!' : 'Copy'}
+                          <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
+                        </button>
+                        <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
+                          GIF <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
+                          MOV alpha <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
+                        </div>
                       </div>
-                      <a
-                        href={src}
-                        download={`agent-mel-${name}.json`}
-                        onClick={() => setOpenId(null)}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', borderRadius: 8, background: 'transparent' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        JSON
-                        <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>Lottie</span>
-                      </a>
-                      <button
-                        onClick={() => handlePng(src, name)}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        PNG
-                        <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>first frame</span>
-                      </button>
-                      <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
-                      <button
-                        onClick={() => handleCopy(src, name)}
-                        disabled={!!cpBusy[name]}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: cpBusy[name] ? 'default' : 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
-                        onMouseEnter={(e) => { if (!cpBusy[name]) e.currentTarget.style.background = COLOR.hover; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                      >
-                        {cpBusy[name] ? 'Copied!' : 'Copy'}
-                        <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
-                      </button>
-                      <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
-                        GIF <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
-                        MOV alpha <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, boxSizing: 'border-box' }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink }}>{label}</span>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -582,64 +590,72 @@ export function AgentMelResources() {
             const isOpen = openId === `icon-${name}`;
             const busy = pngBusy[`icon-${name}`];
             return (
-              <div key={name} style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: 'pointer', transition: 'border-color 120ms' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLOR.outline; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLOR.hairline; }} onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : `icon-${name}`); }}>
+              <div key={name} style={{ borderRadius: RADIUS.lg, border: `1px solid ${COLOR.hairline}`, position: 'relative', cursor: DOWNLOADS_ENABLED ? 'pointer' : 'default', transition: 'border-color 120ms' }} onMouseEnter={DOWNLOADS_ENABLED ? (e) => { e.currentTarget.style.borderColor = COLOR.outline; } : undefined} onMouseLeave={DOWNLOADS_ENABLED ? (e) => { e.currentTarget.style.borderColor = COLOR.hairline; } : undefined} onClick={DOWNLOADS_ENABLED ? (e) => { e.stopPropagation(); setOpenId(isOpen ? null : `icon-${name}`); } : undefined}>
                 <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLOR.lilac100, borderRadius: `${RADIUS.lg}px ${RADIUS.lg}px 0 0`, overflow: 'hidden' }}>
                   <AgentAnim url={src} size={72} />
                 </div>
                 <div style={{ position: 'relative' }}>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : `icon-${name}`); }}
-                    disabled={busy}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '10px 12px', background: busy ? COLOR.hover : COLOR.white, border: 'none', borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, cursor: busy ? 'default' : 'pointer', textAlign: 'left', boxSizing: 'border-box', opacity: busy ? 0.6 : 1 }}
-                    onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = COLOR.hover; }}
-                    onMouseLeave={(e) => { if (!busy) e.currentTarget.style.background = COLOR.white; }}
-                  >
-                    <DownloadIcon size={11} />
-                    <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{busy ? 'Exporting...' : label}</span>
-                  </button>
-                    {isOpen && (
-                      <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', background: COLOR.white, border: `1px solid ${COLOR.hairline}`, borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)', minWidth: 200, zIndex: 200, padding: 6 }}>
-                        <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                          Download {label}
+                  {DOWNLOADS_ENABLED ? (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : `icon-${name}`); }}
+                        disabled={busy}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '10px 12px', background: busy ? COLOR.hover : COLOR.white, border: 'none', borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, cursor: busy ? 'default' : 'pointer', textAlign: 'left', boxSizing: 'border-box', opacity: busy ? 0.6 : 1 }}
+                        onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = COLOR.hover; }}
+                        onMouseLeave={(e) => { if (!busy) e.currentTarget.style.background = COLOR.white; }}
+                      >
+                        <DownloadIcon size={11} />
+                        <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{busy ? 'Exporting...' : label}</span>
+                      </button>
+                      {isOpen && (
+                        <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', background: COLOR.white, border: `1px solid ${COLOR.hairline}`, borderRadius: RADIUS.md, boxShadow: '0 12px 32px rgba(20,20,40,0.18)', minWidth: 200, zIndex: 200, padding: 6 }}>
+                          <div style={{ fontSize: 11, color: COLOR.faint, padding: '6px 10px 4px', textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                            Download {label}
+                          </div>
+                          <a
+                            href={src}
+                            download={`agent-mel-${name}.json`}
+                            onClick={() => setOpenId(null)}
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', borderRadius: 8, background: 'transparent' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            JSON <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>Lottie</span>
+                          </a>
+                          <button
+                            onClick={() => handlePng(src, `icon-${name}`)}
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            PNG <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>first frame</span>
+                          </button>
+                          <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
+                          <button
+                            onClick={() => handleCopy(src, `icon-${name}`)}
+                            disabled={!!cpBusy[`icon-${name}`]}
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: cpBusy[`icon-${name}`] ? 'default' : 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
+                            onMouseEnter={(e) => { if (!cpBusy[`icon-${name}`]) e.currentTarget.style.background = COLOR.hover; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            {cpBusy[`icon-${name}`] ? 'Copied!' : 'Copy'}
+                            <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
+                          </button>
+                          <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
+                            GIF <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
+                            MOV alpha <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
+                          </div>
                         </div>
-                        <a
-                          href={src}
-                          download={`agent-mel-${name}.json`}
-                          onClick={() => setOpenId(null)}
-                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, textDecoration: 'none', borderRadius: 8, background: 'transparent' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                        >
-                          JSON <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>Lottie</span>
-                        </a>
-                        <button
-                          onClick={() => handlePng(src, `icon-${name}`)}
-                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = COLOR.hover; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                        >
-                          PNG <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>first frame</span>
-                        </button>
-                        <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
-                        <button
-                          onClick={() => handleCopy(src, `icon-${name}`)}
-                          disabled={!!cpBusy[`icon-${name}`]}
-                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.ink, background: 'transparent', border: 'none', cursor: cpBusy[`icon-${name}`] ? 'default' : 'pointer', textAlign: 'left', borderRadius: 8, boxSizing: 'border-box' }}
-                          onMouseEnter={(e) => { if (!cpBusy[`icon-${name}`]) e.currentTarget.style.background = COLOR.hover; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                        >
-                          {cpBusy[`icon-${name}`] ? 'Copied!' : 'Copy'}
-                          <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 400 }}>to clipboard</span>
-                        </button>
-                        <div style={{ height: 1, background: COLOR.hairline, margin: '4px 0' }} />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
-                          GIF <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '9px 10px', fontSize: 14, fontWeight: 500, color: COLOR.faint, borderRadius: 8, cursor: 'not-allowed' }}>
-                          MOV alpha <span style={{ fontSize: 11, color: COLOR.faint, fontWeight: 500, background: '#F1F1F4', borderRadius: 999, padding: '2px 7px' }}>soon</span>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '10px 12px', background: COLOR.white, borderTop: `1px solid ${COLOR.hairline}`, borderRadius: `0 0 ${RADIUS.lg}px ${RADIUS.lg}px`, boxSizing: 'border-box' }}>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: COLOR.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -654,10 +670,6 @@ export function AgentMelResources() {
         links={[
           { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
           { label: 'Animation brief', disabled: true },
-        ]}
-        contacts={[
-          { name: 'Shira Giladi', role: 'Interaction Design', slack: 'https://xero.enterprise.slack.com/team/U037ZDWL2MA', image: '/contacts/shira.png' },
-          { name: 'Isaac Sheptovitsky', role: 'Design System', slack: 'https://xero.enterprise.slack.com/team/U07UQDS31FV', image: '/contacts/isaac.png' },
         ]}
       />
     </div>

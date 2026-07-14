@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { DOWNLOADS_ENABLED } from './downloadUtils';
 
 /**
  * Shared design tokens + primitives for the brand-guidelines pages.
@@ -301,6 +302,7 @@ export function DownloadAllBanner({
   onDownload: () => void;
   label?: string;
 }) {
+  if (!DOWNLOADS_ENABLED) return null;
   return (
     <div
       onClick={!busy ? onDownload : undefined}
