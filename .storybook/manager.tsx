@@ -187,20 +187,25 @@ addons.register('melio/move-bottom-pages', () => {
     const be = document.getElementById('identity');
     if (!be || !be.parentElement) return;
     const parent = be.parentElement;
-    // Collect the bottom items, in desired order, only if all share the Identity container.
-    const items: Element[] = [];
+    // Desired final order: each bottom item immediately followed by its injected
+    // sub-tabs wrapper (if the page is selected). Including the wrapper here keeps it
+    // pinned under its item at the bottom - otherwise the wrapper is orphaned up top
+    // when we move the item down.
+    const seq: Element[] = [];
     for (const id of BOTTOM) {
       const item = document.querySelector(`.sidebar-item[data-item-id="${id}"]`);
       if (!item || item.parentElement !== parent) return; // not all present in the shared container yet
-      items.push(item);
+      seq.push(item);
+      const wrap = document.getElementById(`melio-subtabs-${id}`);
+      if (wrap && wrap.parentElement === parent) seq.push(wrap);
     }
     // Idempotency guard: if they already sit, in order, as the final children, do nothing.
-    // (Appending unconditionally each tick would make the two items swap "last" forever -> a
+    // (Appending unconditionally each tick would make elements swap "last" forever -> a
     //  MutationObserver loop that hangs the manager and blanks the whole UI.)
-    const tail = Array.prototype.slice.call(parent.children, -items.length);
-    const alreadyOrdered = items.every((it, i) => tail[i] === it);
+    const tail = Array.prototype.slice.call(parent.children, -seq.length);
+    const alreadyOrdered = seq.every((el, i) => tail[i] === el);
     if (alreadyOrdered) return;
-    items.forEach((it) => parent.appendChild(it));
+    seq.forEach((el) => parent.appendChild(el));
   };
   setTimeout(() => {
     const tree = document.getElementById('storybook-explorer-tree') || document.body;
@@ -246,6 +251,7 @@ addons.register('melio/wip-labels', () => {
 addons.register('melio/section-subtabs', (api) => {
   const PAGES: { id: string; sections: string[] }[] = [
     { id: 'writing-brand-narrative--docs',                sections: ['Principles', 'The Melio Difference', 'Brand Personality', 'Samples', 'Audiences'] },
+    { id: 'marketing--docs',                              sections: ['How we work', 'Assets'] },
     { id: 'identity-logo--docs',                          sections: ['melio', 'Co-Branding', 'Resources'] },
     { id: 'identity-color--docs',                         sections: ['Guidelines', 'Resources'] },
     { id: 'identity-typography--docs',                    sections: ['Guidelines', 'Resources'] },

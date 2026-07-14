@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { FONT, COLOR, RADIUS, Body, Med, Lead, SectionTitle, InfoCard, Hero, DsIcon, DownloadIcon } from './brandKit';
 import { triggerDownload } from './downloadUtils';
 import { MelAnim, melioUrl } from './IllustrationsGuidelines';
@@ -341,6 +341,33 @@ export function PartnersHub() {
       .catch(console.error);
   }, []);
 
+  // ---- Sidebar sub-tabs: "How we work" + "Assets" ----
+  // This page doesn't use BrandPage, so it wires its own scroll-spy + section
+  // messaging (same protocol the manager sub-tabs use for BrandPage sections).
+  const SECTIONS = ['How we work', 'Assets'];
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  useEffect(() => {
+    const onScroll = () => {
+      const threshold = window.scrollY + 160;
+      let next = 0;
+      sectionRefs.current.forEach((el, i) => { if (el && el.offsetTop <= threshold) next = i; });
+      try { window.parent?.postMessage({ type: 'melio:sectionchanged', sec: SECTIONS[next] }, '*'); } catch { /* cross-origin */ }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e?.data?.type !== 'melio:setsection') return;
+      const i = SECTIONS.findIndex((s) => s.toLowerCase() === String(e.data.sec).toLowerCase());
+      const el = i >= 0 ? sectionRefs.current[i] : null;
+      if (el) window.scrollTo({ top: Math.max(0, el.offsetTop - 24), behavior: 'smooth' });
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const downloadFontZip = async (id: string, zipName: string, files: FontFile[]) => {
     setFontZipState((s) => ({ ...s, [id]: 'busy' }));
     try {
@@ -463,6 +490,7 @@ export function PartnersHub() {
       </Hero>
 
       {/* How we work */}
+      <section ref={(el) => { sectionRefs.current[0] = el; }} aria-label="How we work">
       <SectionTitle sub="A few principles that keep partner work unmistakably Melio.">How we work</SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
         {([
@@ -477,10 +505,12 @@ export function PartnersHub() {
           </div>
         ))}
       </div>
+      </section>
 
-      {/* Downloads hub */}
+      {/* Assets */}
+      <section ref={(el) => { sectionRefs.current[1] = el; }} aria-label="Assets">
       <SectionTitle sub="Every file you'll need, grouped by type. Bulk sets (all illustrations, all icons) live on their own pages - linked below.">
-        Files to download
+        Assets
       </SectionTitle>
 
       <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '18px 18px 20px' }}>
@@ -719,6 +749,7 @@ export function PartnersHub() {
         </Card>
         </div>
       </div>
+      </section>
 
     </div>
   );

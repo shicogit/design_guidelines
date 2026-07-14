@@ -52,6 +52,7 @@
     /* Section sub-tabs */
     var PAGES = [
       { id: 'writing-brand-narrative--docs',              sections: ['Principles', 'The Melio Difference', 'Brand Personality', 'Samples', 'Audiences'] },
+      { id: 'marketing--docs',                            sections: ['How we work', 'Assets'] },
       { id: 'identity-logo--docs',                        sections: ['melio', 'Co-Branding', 'Resources'] },
       { id: 'identity-color--docs',                       sections: ['Guidelines', 'Resources'] },
       { id: 'identity-typography--docs',                  sections: ['Guidelines', 'Resources'] },
@@ -140,7 +141,7 @@
               sib.style.setProperty('margin-left', '0', 'important');
               sib.style.setProperty('border-left', 'none', 'important');
               sib.style.setProperty('box-sizing', 'border-box', 'important');
-              sib.style.setProperty('background', 'linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA', 'important');
+              sib.style.setProperty('background', 'linear-gradient(#ECECF1, #ECECF1) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA', 'important');
               sib.style.setProperty('padding', '2px 0', 'important');
               sib.style.setProperty('display', 'block', 'important');
             } else {
@@ -204,10 +205,9 @@
          stack with Identity's border-bottom into a 2px "double divider".
          (Same reason Collaborators/Changelog use border-top: none.) */
       writing.style.setProperty('border-top', 'none', 'important');
-      /* border-bottom matches Identity: lighter #E2E8F0 when open (drawer divider),
-         darker #D8DCE9 when collapsed (section divider). */
+      /* border-bottom matches the other dividers: #ECECF1 (same color as the sidebar edge). */
       var wOpen = writing.classList.contains('melio-open');
-      writing.style.setProperty('border-bottom', '2px solid #D8DCE9', 'important');
+      writing.style.setProperty('border-bottom', '2px solid #ECECF1', 'important');
 
       /* Hide the expand-all button */
       var expandBtn = writing.querySelector('button[data-action="expand-all"]');
@@ -533,8 +533,8 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 2px solid #D8DCE9 !important;
-    border-bottom: 2px solid #D8DCE9 !important;
+    border-top: 2px solid #ECECF1 !important;
+    border-bottom: 2px solid #ECECF1 !important;
   }
   .sidebar-item[data-item-id="marketing--docs"] {
     margin-top: 0 !important;
@@ -542,7 +542,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #ECECF1 !important;
   }
 
   /* ---- Settings gear: DS icon ---- */
@@ -673,7 +673,7 @@
     padding-top: 0 !important;
     margin-left: -12px !important;
     padding-left: 12px !important;
-    border-top: 2px solid #D8DCE9 !important;
+    border-top: 2px solid #ECECF1 !important;
   }
   /* Writing stacks under Identity: NO border-top (Identity's border-bottom is the
      single divider between them), border-bottom only - like Collaborators/Changelog. */
@@ -683,7 +683,7 @@
     margin-left: -12px !important;
     padding-left: 12px !important;
     border-top: none !important;
-    border-bottom: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #ECECF1 !important;
   }
   /* Writing container: full width like Identity */
   #writing {
@@ -754,7 +754,7 @@
   #identity.melio-open,
   #foundations.melio-open,
   #writing.melio-open {
-    border-bottom: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #ECECF1 !important;
     margin-bottom: 0 !important;
   }
 
@@ -781,7 +781,7 @@
   /* Closing outline at the bottom of an open drawer - marks where the grey drawer ends.
      Applied by updateDrawerState() to the last row of the open group. */
   .melio-child-last {
-    border-bottom: 2px solid #D8DCE9 !important;
+    border-bottom: 2px solid #ECECF1 !important;
   }
   /* Page title rows within the drawer: transparent on the grey, aligned with main headers.
      9px vertical padding gives drawer rows breathing room (esp. a single-child drawer
@@ -807,7 +807,7 @@
   .melio-child-subtabs {
     display: block !important;
     width: 100% !important;
-    background: linear-gradient(#D8DCE9, #D8DCE9) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA !important;
+    background: linear-gradient(#ECECF1, #ECECF1) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA !important;
     margin-left: 0 !important;
     border-left: none !important;
     padding: 2px 0 !important;
