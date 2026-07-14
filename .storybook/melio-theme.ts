@@ -6,7 +6,7 @@ export default create({
   // Brand
   brandTitle: 'Melio Brand Design Guidelines',
   brandUrl: '/',
-  brandImage: '/melio-logo-purple.png',
+  brandImage: 'melio-logo-purple.png',
   brandTarget: '_self',
 
   // Colors — sampled from the Melio product UI

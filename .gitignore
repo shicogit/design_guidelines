@@ -36,3 +36,6 @@ figma-fetch.sh
 *.jpeg
 *.mp4
 *.psd
+
+# Generated icon snapshot (run scripts/snapshot-penny-icons.mjs)
+public/penny-gh/

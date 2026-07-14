@@ -355,7 +355,7 @@ addons.register('melio/empty-state-animation', () => {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      path: '/illustrations/missing.json',
+      path: 'illustrations/missing.json',
     });
   };
 

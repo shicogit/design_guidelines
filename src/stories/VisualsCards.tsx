@@ -10,37 +10,37 @@ const CARDS = [
     title: 'Illustrations',
     desc: "Mel, Melio's illustrated brand mascot, and the illustration kits.",
     href: docs('identity-visual-assets-illustrations--docs'),
-    thumb: '/thumbs/illustration.png',
+    thumb: 'thumbs/illustration.png',
   },
   {
     title: 'Icons',
     desc: "Melio's 300+ custom pixel-perfect icons, on 16px and 24px grids.",
     href: docs('identity-visual-assets-icons--docs'),
-    thumb: '/thumbs/icons.png',
+    thumb: 'thumbs/icons.png',
   },
   {
     title: 'Simplified UI',
     desc: 'Simplified interfaces, reduced to support a given product message.',
     href: docs('identity-visual-assets-simplified-ui--docs'),
-    thumb: '/thumbs/simplified-ui.png',
+    thumb: 'thumbs/simplified-ui.png',
   },
   {
     title: 'Imagery',
     desc: 'Art direction and photography across the Melio brand.',
     href: docs('identity-visual-assets-imagery--docs'),
-    thumb: '/thumbs/art-direction.png',
+    thumb: 'thumbs/art-direction.png',
   },
   {
     title: 'Mel in images',
     desc: 'Mel alongside real photography - in cities, offices, and branded environments.',
     href: docs('identity-visual-assets-imagery--docs') + '&sec=Mel+in+images',
-    thumb: '/thumbs/mel-in-images.png',
+    thumb: 'thumbs/mel-in-images.png',
   },
   {
     title: 'Agent Mel',
     desc: "Melio's AI - Agent Mel's visual language.",
     href: docs('identity-visual-assets-agent-mel--docs'),
-    thumb: '/thumbs/agent-mel.png',
+    thumb: 'thumbs/agent-mel.png',
   },
 ];
 

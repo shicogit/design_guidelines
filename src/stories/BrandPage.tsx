@@ -22,16 +22,16 @@ const setDeepParams = (updates: Record<string, string | null>) => {
 };
 
 const SUGGESTION_THUMBS: Record<string, string> = {
-  'identity-logo--docs': '/thumbs/logo.png',
-  'identity-color--docs': '/thumbs/color.png',
-  'identity-typography--docs': '/thumbs/type.png',
-  'identity-visual-assets-motion--docs': '/thumbs/motion.png',
-  'identity-visual-assets-illustrations--docs': '/thumbs/illustration.png',
-  'identity-visual-assets-icons--docs': '/thumbs/icons.png',
-  'identity-visual-assets-imagery--docs': '/thumbs/art-direction.png',
-  'identity-visual-assets-simplified-ui--docs': '/thumbs/simplified-ui.png',
-  'identity-visual-assets-agent-mel--docs': '/thumbs/agent-mel.png',
-  'foundations-voice-tone--docs': '/thumbs/voice-tone.png',
+  'identity-logo--docs': 'thumbs/logo.png',
+  'identity-color--docs': 'thumbs/color.png',
+  'identity-typography--docs': 'thumbs/type.png',
+  'identity-visual-assets-motion--docs': 'thumbs/motion.png',
+  'identity-visual-assets-illustrations--docs': 'thumbs/illustration.png',
+  'identity-visual-assets-icons--docs': 'thumbs/icons.png',
+  'identity-visual-assets-imagery--docs': 'thumbs/art-direction.png',
+  'identity-visual-assets-simplified-ui--docs': 'thumbs/simplified-ui.png',
+  'identity-visual-assets-agent-mel--docs': 'thumbs/agent-mel.png',
+  'foundations-voice-tone--docs': 'thumbs/voice-tone.png',
 };
 
 const SUGGESTION_DESC: Record<string, string> = {
