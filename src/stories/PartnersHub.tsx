@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
-import { FONT, COLOR, RADIUS, Body, Med, Lead, SectionTitle, InfoCard, Hero, DsIcon, DownloadIcon } from './brandKit';
+import { FONT, COLOR, RADIUS, Body, Med, Lead, InfoCard, Hero, DsIcon, DownloadIcon } from './brandKit';
 import { triggerDownload, DOWNLOADS_ENABLED } from './downloadUtils';
 import { MelAnim, melioUrl } from './IllustrationsGuidelines';
 
@@ -323,6 +323,20 @@ const COLOR_TOKENS: { name: string; hex: string }[] = [
   { name: 'Ink', hex: COLOR.ink },
 ];
 
+// Section row: content on the left, short title + description on the right
+// (matches the SplitRow pattern used on the other brand pages).
+function SplitRow({ visual, title, body }: { visual: ReactNode; title: string; body: ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 36, padding: '36px 0', borderTop: `1px solid ${COLOR.hairline}`, alignItems: 'start' }}>
+      <div>{visual}</div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>{title}</h3>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65, margin: 0 }}>{body}</p>
+      </div>
+    </div>
+  );
+}
+
 export function PartnersHub() {
   const [kitState, setKitState] = useState<'idle' | 'busy' | 'error'>('idle');
   const [fontZipState, setFontZipState] = useState<Record<string, 'idle' | 'busy'>>({});
@@ -500,29 +514,34 @@ export function PartnersHub() {
 
       {/* How we work */}
       <section ref={(el) => { sectionRefs.current[0] = el; }} aria-label="How we work">
-      <SectionTitle sub="A few principles that keep partner work unmistakably Melio.">How we work</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-        {([
-          { n: '1', label: "Use what's here", text: "Use the provided assets and tokens. Don't recreate from scratch." },
-          { n: '2', label: 'Keep assets as-is', text: 'Never redraw, recolor, or resize. Use the files exactly as supplied.' },
-          { n: '3', label: 'Match type & color', text: 'PolySans for marketing, Poppins for product. Use the exact hex tokens.' },
-        ] as const).map(({ n, label, text }) => (
-          <div key={n} style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '16px 18px' }}>
-            <div style={{ fontSize: 28, fontWeight: 600, color: COLOR.purple, fontFamily: FONT, lineHeight: 1, marginBottom: 8 }}>{n}</div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: COLOR.ink, fontFamily: FONT, marginBottom: 4 }}>{label}</div>
-            <p style={{ fontSize: 13, color: COLOR.muted, fontFamily: FONT, margin: 0, lineHeight: 1.5 }}>{text}</p>
+      <SplitRow
+        title="How we work"
+        body="A few principles that keep partner work unmistakably Melio."
+        visual={
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+            {([
+              { n: '1', label: "Use what's here", text: "Use the provided assets and tokens. Don't recreate from scratch." },
+              { n: '2', label: 'Keep assets as-is', text: 'Never redraw, recolor, or resize. Use the files exactly as supplied.' },
+              { n: '3', label: 'Match type & color', text: 'PolySans for marketing, Poppins for product. Use the exact hex tokens.' },
+            ] as const).map(({ n, label, text }) => (
+              <div key={n} style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '16px 18px' }}>
+                <div style={{ fontSize: 28, fontWeight: 600, color: COLOR.purple, fontFamily: FONT, lineHeight: 1, marginBottom: 8 }}>{n}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLOR.ink, fontFamily: FONT, marginBottom: 4 }}>{label}</div>
+                <p style={{ fontSize: 13, color: COLOR.muted, fontFamily: FONT, margin: 0, lineHeight: 1.5 }}>{text}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        }
+      />
       </section>
 
       {/* Assets */}
       <section ref={(el) => { sectionRefs.current[1] = el; }} aria-label="Assets">
-      <SectionTitle sub="Every file you'll need, grouped by type. Bulk sets (all illustrations, all icons) live on their own pages - linked below.">
-        Assets
-      </SectionTitle>
-
-      <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '18px 18px 20px' }}>
+      <SplitRow
+        title="Assets"
+        body="Every file you'll need, grouped by type. Bulk sets (all illustrations, all icons) live on their own pages - linked below."
+        visual={
+        <div style={{ background: COLOR.panel, borderRadius: RADIUS.lg, padding: '18px 18px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12 }}>
           <span style={{ fontSize: 13, color: COLOR.muted }}>Fonts, logos, color tokens, icons &amp; illustrations</span>
           {DOWNLOADS_ENABLED && (
@@ -759,7 +778,9 @@ export function PartnersHub() {
           <PageLink id={PAGES.agentMel}>Agent Mel guidelines</PageLink>
         </Card>
         </div>
-      </div>
+        </div>
+        }
+      />
       </section>
 
     </div>
