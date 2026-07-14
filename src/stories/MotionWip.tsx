@@ -17,10 +17,10 @@ export function MotionWip() {
         padding: '40px 24px',
       }}
     >
-      <MelAnim url={melioUrl('construction')} size={220} />
+      <MelAnim url={melioUrl('construction')} size={120} />
       <h1 style={{ fontSize: 28, fontWeight: 600, margin: '24px 0 10px' }}>Under construction</h1>
       <p style={{ fontSize: 16, lineHeight: 1.6, color: COLOR.body, maxWidth: 400, margin: 0 }}>
-        The motion guidelines are still being built. Check back soon - Mel's on it.
+        The motion guidelines are still being built. Check back soon - we're on it.
       </p>
     </div>
   );
