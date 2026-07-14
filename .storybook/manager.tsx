@@ -255,7 +255,6 @@ addons.register('melio/section-subtabs', (api) => {
     { id: 'identity-logo--docs',                          sections: ['melio', 'Co-Branding', 'Resources'] },
     { id: 'identity-color--docs',                         sections: ['Guidelines', 'Resources'] },
     { id: 'identity-typography--docs',                    sections: ['Guidelines', 'Resources'] },
-    { id: 'identity-visual-assets-motion--docs',          sections: ['Guidelines', 'Resources'] },
     { id: 'identity-visual-assets-illustrations--docs',   sections: ['Mel', 'Product', 'Devs', 'Resources'] },
     { id: 'identity-visual-assets-icons--docs',           sections: ['Guidelines', 'Resources'] },
     { id: 'identity-visual-assets-simplified-ui--docs',   sections: ['Guidelines', 'Resources'] },
