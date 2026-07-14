@@ -153,6 +153,10 @@
         // Close the open drawer with a bottom outline below its last row.
         if (expanded && lastChild) lastChild.classList.add('melio-child-last');
       });
+      // Marketing is a standalone bottom page (not inside a group), so the loop above
+      // never reaches its sub-tabs. Give them the same grey drawer + guide-line look.
+      var mktWrap = document.getElementById('melio-subtabs-marketing--docs');
+      if (mktWrap) mktWrap.classList.add('melio-child-subtabs');
     }
     /* Hover bg on page title rows (melio-child items) - inline style beats emotion cascade */
     function applyChildHoverListeners() {
