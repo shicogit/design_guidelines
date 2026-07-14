@@ -25,7 +25,7 @@ const SUGGESTION_THUMBS: Record<string, string> = {
   'identity-logo--docs': '/thumbs/logo.png',
   'identity-color--docs': '/thumbs/color.png',
   'identity-typography--docs': '/thumbs/type.png',
-  'identity-motion--docs': '/thumbs/motion.png',
+  'identity-visual-assets-motion--docs': '/thumbs/motion.png',
   'identity-visual-assets-illustrations--docs': '/thumbs/illustration.png',
   'identity-visual-assets-icons--docs': '/thumbs/icons.png',
   'identity-visual-assets-imagery--docs': '/thumbs/art-direction.png',
@@ -38,7 +38,7 @@ const SUGGESTION_DESC: Record<string, string> = {
   'identity-logo--docs': 'Modes, colors and spacing rules',
   'identity-color--docs': 'Brand palette and design tokens',
   'identity-typography--docs': 'Typefaces for brand and product',
-  'identity-motion--docs': 'Animation principles and tokens',
+  'identity-visual-assets-motion--docs': 'Animation principles and tokens',
   'identity-visual-assets-illustrations--docs': 'Product illustration kits',
   'identity-visual-assets-icons--docs': '300+ icon library for product UI',
   'identity-visual-assets-simplified-ui--docs': 'Mini mock UI components',
@@ -52,7 +52,7 @@ const BRAND_IDS = new Set([
   'identity-logo--docs',
   'identity-color--docs',
   'identity-typography--docs',
-  'identity-motion--docs',
+  'identity-visual-assets-motion--docs',
   'identity-visual-assets-illustrations--docs',
   'identity-visual-assets-icons--docs',
   'identity-visual-assets-simplified-ui--docs',
@@ -67,7 +67,7 @@ const NAV: { label: string; id: string }[] = [
   { label: 'Logo', id: 'identity-logo--docs' },
   { label: 'Color', id: 'identity-color--docs' },
   { label: 'Typography', id: 'identity-typography--docs' },
-  { label: 'Motion', id: 'identity-motion--docs' },
+  { label: 'Motion', id: 'identity-visual-assets-motion--docs' },
   { label: 'Illustrations', id: 'identity-visual-assets-illustrations--docs' },
   { label: 'Icons', id: 'identity-visual-assets-icons--docs' },
   { label: 'Simplified UI', id: 'identity-visual-assets-simplified-ui--docs' },
@@ -79,7 +79,7 @@ const NAV: { label: string; id: string }[] = [
 ];
 
 
-function Suggestions() {
+export function Suggestions() {
   let currentId = '';
   try { currentId = new URLSearchParams(window.location.search).get('id') || ''; } catch { /* no-op */ }
   if (!BRAND_IDS.has(currentId)) return null;
