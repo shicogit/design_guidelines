@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 import { BrandPage } from './BrandPage';
-import { ImageryGuidelines, MelInImages, ImageryResources } from './ImageryGuidelines';
+import { WipNote } from './WipNote';
+import { MelInImages } from './ImageryGuidelines';
 
 <Meta title="Identity/Visual Assets/Imagery" />
 
@@ -12,8 +13,7 @@ import { ImageryGuidelines, MelInImages, ImageryResources } from './ImageryGuide
   ]}
   intro="Art direction and photography - how imagery is selected and treated across the Melio brand."
   sections={[
-    { label: 'Guidelines', guidelines: <ImageryGuidelines /> },
+    { label: 'Guidelines', guidelines: <WipNote text="The imagery guidelines are still being built. Check back soon - we're on it." /> },
     { label: 'Mel in images', guidelines: <MelInImages /> },
-    { label: 'Resources', guidelines: <ImageryResources /> },
   ]}
 />
