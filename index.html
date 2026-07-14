@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>storybook - Storybook</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    
+    <style>
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-regular.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-italic.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-bold.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Nunito Sans';
+        font-style: italic;
+        font-weight: 700;
+        font-display: swap;
+        src: url('./sb-common-assets/nunito-sans-bold-italic.woff2') format('woff2');
+      }
+    </style>
+
+    <link href="./sb-manager/runtime.js" rel="modulepreload" />
+
+    
+    <link href="./sb-addons/storybook-core-server-presets-0/common-manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/a11y-1/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/docs-2/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/storybook-3/manager-bundle.js" rel="modulepreload" />
+      <link rel="icon" type="image/png" href="favicon.png" />
+<script>
+  /* Storybook serves its own favicon.svg (pink "S") and browsers prefer SVG,
+     so static overrides lose. Force the Melio app symbol on the live DOM. */
+  (function () {
+    function melioFavicon() {
+      document.querySelectorAll('link[rel~="icon"]').forEach(function (l) { l.remove(); });
+      var link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/png';
+      link.href = 'favicon.png';
+      document.head.appendChild(link);
+    }
+    melioFavicon();
+    window.addEventListener('DOMContentLoaded', melioFavicon);
+    window.addEventListener('load', melioFavicon);
+    setTimeout(melioFavicon, 1500);
+  })();
+</script>
+<script>
+  /* Make the logo link navigate to the Overview home page. */
+  (function () {
+    function patchLogoLink() {
+      var link = document.querySelector('.sidebar-header a');
+      if (!link || link.dataset.melioPatch) return;
+      link.dataset.melioPatch = '1';
+      link.href = '/?path=/docs/overview--docs';
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.assign('/?path=/docs/overview--docs');
+      }, true);
+    }
+    patchLogoLink();
+    window.addEventListener('load', patchLogoLink);
+    setTimeout(patchLogoLink, 500);
+    setTimeout(patchLogoLink, 1500);
+  })();
+</script>
+<script>
+  /* Simplify the sidebar search + inject section sub-tabs under the active page. */
+  (function () {
+    /* Search placeholder */
+    function setPlaceholder() {
+      var i = document.getElementById('storybook-explorer-searchfield');
+      if (i && i.placeholder !== 'Search') i.placeholder = 'Search';
+    }
+    setPlaceholder();
+    window.addEventListener('DOMContentLoaded', setPlaceholder);
+    window.addEventListener('load', setPlaceholder);
+    new MutationObserver(setPlaceholder).observe(document.documentElement, { childList: true, subtree: true });
+
+    /* Section sub-tabs */
+    var PAGES = [
+      { id: 'writing-brand-narrative--docs',              sections: ['Principles', 'The Melio Difference', 'Brand Personality', 'Samples', 'Audiences'] },
+      { id: 'marketing--docs',                            sections: ['How we work', 'Assets'] },
+      { id: 'identity-logo--docs',                        sections: ['melio', 'Co-Branding', 'Resources'] },
+      { id: 'identity-color--docs',                       sections: ['Guidelines', 'Resources'] },
+      { id: 'identity-typography--docs',                  sections: ['Guidelines', 'Resources'] },
+      { id: 'identity-visual-assets-illustrations--docs', sections: ['Mel', 'Product', 'Devs', 'Resources'] },
+      { id: 'identity-visual-assets-icons--docs',         sections: ['Guidelines', 'Resources'] },
+      { id: 'identity-visual-assets-imagery--docs',       sections: ['Guidelines', 'Mel in images'] },
+      { id: 'identity-visual-assets-agent-mel--docs',     sections: ['Guidelines', 'Resources'] },
+    ];
+    var activeSec = '';
+    function previewWindow() {
+      var f = document.getElementById('storybook-preview-iframe');
+      return f && f.contentWindow;
+    }
+    function paintActive() {
+      document.querySelectorAll('.melio-subtabs a').forEach(function (a) {
+        a.toggleAttribute('data-active', a.dataset.sec === activeSec);
+      });
+    }
+    function go(pageId, label) {
+      activeSec = label;
+      var currentPath = new URLSearchParams(window.location.search).get('path');
+      var targetPath = '/docs/' + pageId;
+      if (currentPath !== targetPath) { window.location.href = '/?path=' + targetPath; }
+      [60, 250, 600].forEach(function (t) {
+        setTimeout(function () { var pw = previewWindow(); if (pw) pw.postMessage({ type: 'melio:setsection', sec: label }, '*'); }, t);
+      });
+      paintActive();
+    }
+    function renderSubtabs() {
+      PAGES.forEach(function (page) {
+        var item = document.querySelector('.sidebar-item[data-item-id="' + page.id + '"]');
+        var wrapId = 'melio-subtabs-' + page.id;
+        var existing = document.getElementById(wrapId);
+        var selected = !!item && item.getAttribute('data-selected') === 'true';
+        if (!item || !selected) { if (existing) existing.remove(); return; }
+        if (existing) return;
+        var wrap = document.createElement('div');
+        wrap.id = wrapId;
+        wrap.className = 'melio-subtabs';
+        page.sections.forEach(function (label) {
+          var a = document.createElement('a');
+          a.className = 'melio-subtab';
+          a.textContent = label;
+          a.href = 'javascript:void 0';
+          a.dataset.sec = label;
+          a.addEventListener('click', function (e) { e.preventDefault(); go(page.id, label); });
+          wrap.appendChild(a);
+        });
+        item.insertAdjacentElement('afterend', wrap);
+        paintActive();
+      });
+    }
+    window.addEventListener('message', function (e) {
+      if (e && e.data && e.data.type === 'melio:sectionchanged' && typeof e.data.sec === 'string') {
+        activeSec = e.data.sec; paintActive();
+      }
+    });
+    setInterval(renderSubtabs, 400);
+    setTimeout(renderSubtabs, 1000);
+
+    /* Drawer state: mark open group header + its children for CSS drawer styling */
+    function updateDrawerState() {
+      var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+      var BOTTOM = ['overview--docs', 'marketing--docs'];
+      GROUPS.forEach(function(id) {
+        var group = document.getElementById(id);
+        if (!group) return;
+        var btn = group.querySelector('button[data-action="collapse-root"]');
+        var expanded = !!(btn && btn.getAttribute('aria-expanded') === 'true');
+        group.classList.toggle('melio-open', expanded);
+        var sib = group.nextElementSibling;
+        var lastChild = null; // last row of the open drawer - gets the closing bottom outline
+        while (sib) {
+          if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'standards' || sib.id === 'writing') break;
+          var itemId = sib.getAttribute('data-item-id') || '';
+          if (BOTTOM.indexOf(itemId) !== -1) break;
+          sib.classList.remove('melio-child-last');
+          if (sib.classList.contains('sidebar-item')) { sib.classList.toggle('melio-child', expanded); lastChild = sib; }
+          if (sib.id && sib.id.indexOf('melio-subtabs-') === 0) {
+            sib.classList.toggle('melio-child-subtabs', expanded);
+            lastChild = sib;
+            if (expanded) {
+              sib.style.setProperty('width', '100%', 'important');
+              sib.style.setProperty('margin-left', '0', 'important');
+              sib.style.setProperty('border-left', 'none', 'important');
+              sib.style.setProperty('box-sizing', 'border-box', 'important');
+              sib.style.setProperty('background', 'linear-gradient(#ECECF1, #ECECF1) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA', 'important');
+              sib.style.setProperty('padding', '2px 0', 'important');
+              sib.style.setProperty('display', 'block', 'important');
+            } else {
+              ['width', 'margin-left', 'border-left', 'box-sizing', 'background', 'padding', 'display'].forEach(function(p) { sib.style.removeProperty(p); });
+            }
+          }
+          sib = sib.nextElementSibling;
+        }
+        // Close the open drawer with a bottom outline below its last row.
+        if (expanded && lastChild) lastChild.classList.add('melio-child-last');
+      });
+      // Marketing is a standalone bottom page (not inside a group), so the loop above
+      // never reaches its sub-tabs. Give them the same grey drawer + guide-line look.
+      var mktWrap = document.getElementById('melio-subtabs-marketing--docs');
+      if (mktWrap) mktWrap.classList.add('melio-child-subtabs');
+    }
+    /* Hover bg on page title rows (melio-child items) - inline style beats emotion cascade */
+    function applyChildHoverListeners() {
+      document.querySelectorAll('.sidebar-item.melio-child > a').forEach(function(a) {
+        if (a.dataset.melioHover) return;
+        a.dataset.melioHover = '1';
+        a.addEventListener('mouseenter', function() {
+          if (a.parentElement && a.parentElement.getAttribute('data-selected') !== 'true') {
+            a.style.setProperty('background', '#EBEFF2', 'important');
+          }
+        });
+        a.addEventListener('mouseleave', function() {
+          a.style.removeProperty('background');
+        });
+      });
+    }
+    setInterval(applyChildHoverListeners, 400);
+    setTimeout(applyChildHoverListeners, 1000);
+
+    /* Tag standalone bottom items so future entries just need adding to this array */
+    var FULL_WIDTH_BOTTOM = ['marketing--docs'];
+    function tagBottomItems() {
+      FULL_WIDTH_BOTTOM.forEach(function(id) {
+        var el = document.querySelector('.sidebar-item[data-item-id="' + id + '"]');
+        if (el && !el.classList.contains('melio-bottom')) el.classList.add('melio-bottom');
+      });
+    }
+    setInterval(tagBottomItems, 400);
+    setTimeout(tagBottomItems, 1000);
+
+    /* Force Writing section to look identical to Identity. Emotion runtime CSS
+       wins over static !important rules; inline style.setProperty beats both. */
+    function styleWritingHeader() {
+      var writing = document.getElementById('writing');
+      if (!writing) return;
+
+      /* Container: full-width band, same box as #identity.
+         The -12px left margin + 12px left padding + (100%+12px) width is what
+         makes the band span edge-to-edge and align the text with Identity. */
+      writing.style.setProperty('display', 'block', 'important');
+      writing.style.setProperty('width', 'calc(100% + 12px)', 'important');
+      writing.style.setProperty('margin-top', '0', 'important');
+      writing.style.setProperty('margin-bottom', '0', 'important');
+      writing.style.setProperty('margin-left', '-12px', 'important');
+      writing.style.setProperty('padding-top', '0', 'important');
+      writing.style.setProperty('padding-bottom', '0', 'important');
+      writing.style.setProperty('padding-left', '12px', 'important');
+      /* NO border-top: Writing stacks directly under Identity, whose border-bottom
+         already draws the single divider between them. A border-top here would
+         stack with Identity's border-bottom into a 2px "double divider".
+         (Same reason Collaborators/Changelog use border-top: none.) */
+      writing.style.setProperty('border-top', 'none', 'important');
+      /* border-bottom matches the other dividers: #ECECF1 (same color as the sidebar edge). */
+      var wOpen = writing.classList.contains('melio-open');
+      writing.style.setProperty('border-bottom', '2px solid #ECECF1', 'important');
+
+      /* Hide the expand-all button */
+      var expandBtn = writing.querySelector('button[data-action="expand-all"]');
+      if (expandBtn) expandBtn.style.setProperty('display', 'none', 'important');
+
+      var btn = writing.querySelector('button[data-action="collapse-root"]');
+      if (!btn) return;
+      /* Open drawer: header text goes medium weight + primary purple (runs every
+         tick so it tracks open/close). Inline style beats the emotion cascade. */
+      btn.style.setProperty('color', wOpen ? '#7849FF' : '#1A1A1A', 'important');
+      btn.style.setProperty('font-weight', wOpen ? '500' : '400', 'important');
+      if (btn.dataset.melioWritingStyled) return;
+      btn.dataset.melioWritingStyled = '1';
+
+      /* Identity-level button geometry */
+      ['display:flex', 'align-items:center', 'justify-content:flex-start',
+       'text-align:left', 'gap:0', 'box-sizing:border-box', 'position:relative',
+       'width:100%', 'min-height:45px', 'margin:0', 'padding:12px 14px 12px 22px',
+       'border:none', 'border-radius:0', 'background:transparent', 'color:#1A1A1A',
+       'font-size:16px', 'font-weight:400', 'font-family:Poppins,sans-serif',
+       'line-height:1.4', 'text-transform:none', 'letter-spacing:normal',
+       'white-space:nowrap', 'cursor:pointer'
+      ].forEach(function(rule) {
+        var parts = rule.split(':');
+        btn.style.setProperty(parts[0], parts.slice(1).join(':'), 'important');
+      });
+
+      /* Hide Storybook's native SVG arrow (we use a CSS ::after chevron instead) */
+      var innerDiv = btn.querySelector('div');
+      if (innerDiv) innerDiv.style.setProperty('display', 'none', 'important');
+
+      /* Hover: light grey, same as Identity */
+      btn.addEventListener('mouseenter', function() {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.style.setProperty('background', isOpen ? 'white' : '#EBEFF2', 'important');
+      });
+      btn.addEventListener('mouseleave', function() {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.style.setProperty('background', isOpen ? 'white' : 'transparent', 'important');
+      });
+    }
+    setInterval(styleWritingHeader, 400);
+    setTimeout(styleWritingHeader, 800);
+
+    setInterval(updateDrawerState, 400);
+    setTimeout(updateDrawerState, 1000);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  /* =========================================================
+     Tokens
+     black           #1A1A1A   text + icons (rest)
+     grey-band       #F4F4F6   PRESSED background (selected item, leaf or header)
+     grey-hover      #EBEFF2   hover (lighter than the pressed grey)
+     purple          #7849FF   pressed text/icon + active-ancestor text
+     border          #ECECF1   dividers
+     Rules: pressed = grey bg + purple text. A header has NO background unless it's
+     itself pressed; its text only goes purple when one of its children is pressed.
+     No gradients, no other treatments, never light purple as a background.
+     ========================================================= */
+
+  /* ---- Sidebar logo + container ---- */
+  .sidebar-header img { height: 30px !important; width: auto !important; margin-left: 14px !important; }
+  .sidebar-container { border-right: 1px solid #ECECF1; }
+
+  /* Remove sidebar inner padding (Storybook default is 16px 12px 20px) */
+  header#storybook-sidebar-region > div > div > div > div { padding: 4px 0 8px !important; }
+
+  /* Hide Standards section and all its children */
+  #standards,
+  .sidebar-item[data-item-id^="standards-"],
+  .sidebar-item[data-parent-id="standards"],
+  .sidebar-item[data-parent-id^="standards-"] { display: none !important; }
+
+  /* Hide Storybook's top toolbar entirely (native sidebar is used) */
+  section.sb-bar { display: none !important; }
+
+  /* ---- Shared alignment: one left point for every title ---- */
+  .sidebar-item, .sidebar-subheading {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* =========================================================
+     OTHER TITLES (leaf page items): black text, left-aligned, no icon
+     ========================================================= */
+  .sidebar-item { font-weight: 400 !important; }
+
+  .sidebar-item > a {
+    color: #1A1A1A !important;
+    background: transparent !important;
+    border-radius: 8px !important;
+    margin: 1px 8px !important;
+    padding: 5px 14px 5px 16px !important;
+    font-size: 14px !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  /* no icons on leaf items (Home + Visuals keep their main-title icons) */
+  .sidebar-item:not([data-item-id="overview--docs"]):not([data-item-id="identity-visual-assets"]) a > div:first-child {
+    display: none !important;
+  }
+  /* kill Storybook's purple selected-container background (we only tint text/icon) */
+  .sidebar-item[data-selected="true"] {
+    background: transparent !important;
+  }
+  /* hover: white -> very light grey (lighter than the #F4F4F6 title bands
+     so it doesn't compete with them) */
+  .sidebar-item > a:hover {
+    background: #EBEFF2 !important;
+  }
+  /* pressed (selected): grey bg + purple text */
+  .sidebar-item[data-selected="true"] > a,
+  .sidebar-item[data-selected="true"] > a:hover {
+    color: #7849FF !important;
+    background: #F4F4F6 !important;
+  }
+
+  /* =========================================================
+     MAIN TITLES (Home, Identity, Visuals):
+     light-grey band, rounded, left icon, left-aligned, black text + icon
+     ========================================================= */
+  /* Overview is accessible via the logo — hide it from the menu */
+  .sidebar-item[data-item-id="overview--docs"] { display: none !important; }
+
+  .sidebar-item[data-item-id="marketing--docs"],
+  .sidebar-item.melio-bottom {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+  }
+  .sidebar-item[data-item-id="identity-visual-assets"] {
+    display: block !important;
+    width: 100% !important;
+  }
+  /* #identity has margin-left: -12px so width: 100% ends 12px short on the right.
+     calc(100% + 12px) makes the content box reach the sidebar right edge. */
+  #identity {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+    margin-bottom: 0 !important;
+  }
+
+  #overview--docs,
+  #marketing--docs,
+  #identity > button[data-action="collapse-root"],
+  #writing > button[data-action="collapse-root"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 45px !important;
+    margin: 0 !important;
+    padding: 12px 14px 12px 22px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #1A1A1A !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+  }
+
+  /* main-title hover (when NOT the active section): transparent -> very light grey */
+  #overview--docs:hover,
+  #marketing--docs:hover,
+  #identity > button[data-action="collapse-root"]:hover,
+  #writing > button[data-action="collapse-root"]:hover {
+    background: #EBEFF2 !important;
+  }
+
+  /* A child page is open → Identity text + icon go purple, NO background.
+     (The grey band appears only when Identity itself is pressed — see below.) */
+  #identity > button[data-action="collapse-root"][data-melio-section] {
+    color: #7849FF !important;
+  }
+  #identity > button[data-action="collapse-root"][data-melio-section]::before {
+    background-color: #7849FF !important;
+  }
+
+  /* Identity is a plain collapsible group header (like Foundations & Standards) -
+     no underline, no active/pressed styling. */
+
+  /* main-title pressed (selected): purple text + icon, background stays grey.
+     Selector includes #overview--docs so it outranks the band's #overview--docs color. */
+  .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs,
+  .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs:hover,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs:hover {
+    color: #7849FF !important;
+    background: #F4F4F6 !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+  }
+  /* force the icon purple too (masked ::before doesn't always inherit currentColor) */
+  .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before {
+    background-color: #7849FF !important;
+  }
+
+  /* ---- Main-title icons: hide the original icon/chevron wrapper and paint a
+     clean DS icon as ::before, so <a> and <button> render identically ---- */
+  #overview--docs > div:first-child,
+  #marketing--docs > div:first-child,
+  #identity > button[data-action="collapse-root"] > div:first-child,
+  #identity-visual-assets > div:first-child {
+    display: none !important;
+  }
+  #identity-visual-assets svg { display: none !important; }
+  #overview--docs::before,
+  #marketing--docs::before,
+  #identity > button[data-action="collapse-root"]::before {
+    content: '' !important;
+    display: block !important;
+    flex: 0 0 auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    background-color: currentColor !important;
+  }
+  #overview--docs::before {
+    -webkit-mask: url('/sb-icons/home.svg') center / 18px 18px no-repeat;
+    mask: url('/sb-icons/home.svg') center / 18px 18px no-repeat;
+  }
+  #marketing--docs::before {
+    -webkit-mask: url('/sb-icons/emoji-outline.svg') center / 18px 18px no-repeat;
+    mask: url('/sb-icons/emoji-outline.svg') center / 18px 18px no-repeat;
+  }
+  #identity > button[data-action="collapse-root"]::before {
+    -webkit-mask: url('/sb-icons/art.svg') center / 18px 18px no-repeat;
+    mask: url('/sb-icons/art.svg') center / 18px 18px no-repeat;
+  }
+
+  /* ---- Visuals: behaves exactly like the other Identity children
+     (black text, no icon, light-grey hover, purple when pressed). The only
+     difference is the underline beneath it. ---- */
+  #identity-visual-assets {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+    width: calc(100% - 16px) !important;
+    min-height: 0 !important;
+    margin: 1px 8px !important;
+    padding: 5px 14px 5px 16px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: #1A1A1A !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-family: 'Poppins', sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+    position: relative !important;
+  }
+  /* Visuals hover: white -> very light grey (same as the other children) */
+  #identity-visual-assets:hover {
+    background: #EBEFF2 !important;
+  }
+  /* Items under Visuals: same alignment as other leaf items - no indent, no guide line */
+  .sidebar-item[data-parent-id="identity-visual-assets"]::before {
+    display: none !important;
+  }
+
+  /* ---- Pressed (on its page): keep the background, turn text + icon purple.
+     `data-melio-active` is set by the manager when the section's page is open. */
+  /* Identity pressed (its own Overview open) → grey band + purple text + icon */
+  #identity > button[data-action="collapse-root"][data-melio-active],
+  #identity > button[data-action="collapse-root"][data-melio-active]:hover {
+    background: #F4F4F6 !important;
+    color: #7849FF !important;
+  }
+  #identity > button[data-action="collapse-root"][data-melio-active]::before {
+    background-color: #7849FF !important;
+  }
+  /* Visual Assets: a child page open → purple text only (no bg). */
+  #identity-visual-assets[data-melio-section] {
+    color: #7849FF !important;
+  }
+  /* Visual Assets pressed (its own Overview open) → grey bg + purple text */
+  #identity-visual-assets[data-melio-active],
+  #identity-visual-assets[data-melio-active]:hover {
+    background: #F4F4F6 !important;
+    color: #7849FF !important;
+  }
+
+  /* Identity navigates (via manager); Visuals expands/collapses */
+  #identity > button[data-action="collapse-root"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  /* Visual Assets is a non-clickable grouping label (no landing page) */
+  #identity-visual-assets {
+    pointer-events: auto !important;
+    cursor: default !important;
+  }
+  #identity-visual-assets:hover {
+    background: transparent !important;
+  }
+  #identity .sidebar-subheading-action,
+  #identity-visual-assets .sidebar-subheading-action,
+  #foundations .sidebar-subheading-action,
+  #standards .sidebar-subheading-action,
+  #writing .sidebar-subheading-action {
+    display: none !important;
+  }
+
+  /* Dividers between the high-level headers — full-width (negative margin beats container padding) */
+  [data-item-id="identity"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: 2px solid #ECECF1 !important;
+    border-bottom: 2px solid #ECECF1 !important;
+  }
+  .sidebar-item[data-item-id="marketing--docs"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: none !important;
+    border-bottom: 2px solid #ECECF1 !important;
+  }
+
+  /* ---- Settings gear: DS icon ---- */
+  button[aria-label="Settings"] svg {
+    -webkit-mask: url('/sb-icons/settings.svg') center / 18px 18px no-repeat;
+    mask: url('/sb-icons/settings.svg') center / 18px 18px no-repeat;
+    background-color: currentColor !important;
+    color: #6B7280 !important;
+    width: 18px !important;
+    height: 18px !important;
+  }
+  button[aria-label="Settings"] svg > * { display: none !important; }
+
+  /* Hide the Visuals Overview entry (the band navigates to it) */
+  .sidebar-item[data-item-id="identity-visual-assets-overview--docs"] {
+    display: none !important;
+  }
+  /* Delete the "Visual Assets" group title from the sidebar — its children stay
+     listed (indented, with the vertical guide line) so the grouping still reads. */
+  .sidebar-item[data-item-id="identity-visual-assets"] { display: none !important; }
+
+  /* ---- Section sub-tabs (injected by manager.tsx): shown under the active page,
+     linked to in-page sections via scroll + postMessage. ---- */
+  .melio-subtabs { display: block; }
+  .melio-subtabs::before { display: none !important; }
+  .melio-subtabs .melio-subtab {
+    display: block;
+    margin: 0 8px 0 8px;
+    padding: 3px 12px;
+    border-radius: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #6B7280;
+    text-decoration: none;
+    cursor: pointer;
+    line-height: 1.5;
+    transition: color 120ms;
+  }
+  .melio-subtabs .melio-subtab:hover { background: transparent; color: #1A1A1A; }
+  .melio-subtabs .melio-subtab[data-active] { color: #7849FF; font-weight: 500; }
+  /* never show a container background — kills Storybook's light-purple
+     selection/hover tint on every sidebar row (we never use light purple). */
+  .sidebar-item { background: transparent !important; }
+
+  /* Hide the focus-revealed "Skip to content" link inside sidebar items —
+     it appears when an item is selected/focused and adds a gap beneath it. */
+  .sidebar-item a[href="#storybook-preview-wrapper"] {
+    display: none !important;
+  }
+
+  /* Context-menu ("•••") button: no purple background / glow — grey icon only */
+  button[aria-label="Open context menu"],
+  button[aria-label="Open context menu"]:hover,
+  button[aria-label="Open context menu"]:focus,
+  button[aria-label="Open context menu"]:active,
+  button[aria-label="Open context menu"][aria-expanded="true"] {
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #6B7280 !important;
+  }
+
+  /* Hide the "Create a new story" (+) toolbar button */
+  button[aria-label="Create a new story"] { display: none !important; }
+
+  /* Hide Storybook's "new stories" review UI: the "Review new stories" banner
+     button and the per-item ✦ new-status badges in the sidebar. */
+  button[aria-label="Review new stories"],
+  button[data-testid="tree-change-status-button"] { display: none !important; }
+
+  /* Hide the Expand / Collapse tooltip on sidebar section headers */
+  [role="tooltip"] { display: none !important; }
+
+  /* Simplify the search field: drop the ⌘K hint and the tag-filter button */
+  .search-field code { display: none !important; }
+  .search-field button[aria-label="Tag filters"] { display: none !important; }
+  .search-field div:has(> button[aria-label="Tag filters"]) { display: none !important; }
+
+  /* Align the search field's left edge with the logo + menu boxes (x = 20),
+     and match their 8px corner radius */
+  .search-field { margin: 0 8px !important; flex: 1 1 auto !important; border-radius: 8px !important; }
+
+  /* Hide the notification badge on the Settings gear — both the white cut-out (::before) and green dot (::after) */
+  button[aria-label="Settings"]::before,
+  button[aria-label="Settings"]::after { display: none !important; }
+  /* Settings gear hover background → Lilac-200 */
+  button[aria-label="Settings"]:hover { background: #EAEDFE !important; }
+
+  /* =========================================================
+     New top-level groups: Foundations & Standards.
+     Style their collapse-root buttons as bands with a left icon,
+     matching the Identity treatment.
+     ========================================================= */
+  #foundations > button[data-action="collapse-root"],
+  #standards > button[data-action="collapse-root"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 1px 14px 1px 22px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: #1A1A1A !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+  }
+  #foundations > button[data-action="collapse-root"]:hover,
+  #standards > button[data-action="collapse-root"]:hover { background: #EBEFF2 !important; }
+  /* hide the default icon/chevron wrapper */
+  #foundations > button[data-action="collapse-root"] > div:first-child,
+  #standards > button[data-action="collapse-root"] > div:first-child,
+  #writing > button[data-action="collapse-root"] > div:first-child { display: none !important; }
+  /* Dividers above Foundations and Standards */
+  [data-item-id="foundations"],
+  [data-item-id="standards"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: 2px solid #ECECF1 !important;
+  }
+  /* Writing stacks under Identity: NO border-top (Identity's border-bottom is the
+     single divider between them), border-bottom only - like Collaborators/Changelog. */
+  [data-item-id="writing"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: none !important;
+    border-bottom: 2px solid #ECECF1 !important;
+  }
+  /* Writing container: full width like Identity */
+  #writing {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Right-aligned chevron on the collapsible group headers (Foundations, Identity,
+     Standards, Writing). Points right when collapsed, rotates down when open. */
+  #foundations > button[data-action="collapse-root"]::after,
+  #identity > button[data-action="collapse-root"]::after,
+  #standards > button[data-action="collapse-root"]::after,
+  #writing > button[data-action="collapse-root"]::after {
+    content: '' !important;
+    position: absolute !important;
+    right: 14px !important;
+    top: 50% !important;
+    width: 13px !important;
+    height: 13px !important;
+    margin-top: -6.5px !important;
+    background-color: currentColor !important;
+    opacity: 0.45 !important;
+    -webkit-mask: url('/sb-icons/chevron-down.svg') center / 13px 13px no-repeat;
+    mask: url('/sb-icons/chevron-down.svg') center / 13px 13px no-repeat;
+    transform: rotate(-90deg) !important;
+    transition: transform 150ms ease !important;
+  }
+  #foundations > button[data-action="collapse-root"][aria-expanded="true"]::after,
+  #identity > button[data-action="collapse-root"][aria-expanded="true"]::after,
+  #standards > button[data-action="collapse-root"][aria-expanded="true"]::after,
+  #writing > button[data-action="collapse-root"][aria-expanded="true"]::after {
+    transform: rotate(0deg) !important;
+  }
+
+  /* =========================================================
+     Remove icons from all main section headers
+     ========================================================= */
+  #overview--docs::before,
+  #marketing--docs::before,
+  #identity > button[data-action="collapse-root"]::before,
+  #identity > button[data-action="collapse-root"][data-melio-section]::before,
+  #identity > button[data-action="collapse-root"][data-melio-active]::before,
+  #foundations > button[data-action="collapse-root"]::before,
+  #standards > button[data-action="collapse-root"]::before,
+  #writing > button[data-action="collapse-root"]::before,
+  .sidebar-item[data-item-id="overview--docs"][data-selected="true"] #overview--docs::before,
+  .sidebar-item[data-item-id="marketing--docs"][data-selected="true"] #marketing--docs::before {
+    display: none !important;
+  }
+
+  /* Add Poppins to section header buttons for visual consistency */
+  #overview--docs,
+  #marketing--docs,
+  #identity > button[data-action="collapse-root"],
+  #foundations > button[data-action="collapse-root"],
+  #standards > button[data-action="collapse-root"],
+  #writing > button[data-action="collapse-root"] {
+    font-family: 'Poppins', sans-serif !important;
+  }
+
+  /* =========================================================
+     Drawer state: open group children get a full-width grey band.
+     Title button stays transparent - no bg or border.
+     ========================================================= */
+
+  /* Divider between Identity/Foundations/Writing title and their children */
+  #identity.melio-open,
+  #foundations.melio-open,
+  #writing.melio-open {
+    border-bottom: 2px solid #ECECF1 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Open section header button: white bg (the grey section is below it),
+     text in medium weight + primary purple to mark the open section. */
+  #identity.melio-open > button[data-action="collapse-root"],
+  #foundations.melio-open > button[data-action="collapse-root"],
+  #standards.melio-open > button[data-action="collapse-root"],
+  #writing.melio-open > button[data-action="collapse-root"] {
+    background: white !important;
+    color: #7849FF !important;
+    font-weight: 500 !important;
+  }
+
+  /* Writing: child page open → text goes purple */
+  #writing:has(.sidebar-item[data-selected="true"]) > button[data-action="collapse-root"] {
+    color: #7849FF !important;
+  }
+
+  /* Items in open drawer: grey section background */
+  .sidebar-item.melio-child {
+    background: #F4F6FA !important;
+  }
+  /* Closing outline at the bottom of an open drawer - marks where the grey drawer ends.
+     Applied by updateDrawerState() to the last row of the open group. */
+  .melio-child-last {
+    border-bottom: 2px solid #ECECF1 !important;
+  }
+  /* Page title rows within the drawer: transparent on the grey, aligned with main headers.
+     9px vertical padding gives drawer rows breathing room (esp. a single-child drawer
+     like Writing/Voice & Tone, which otherwise looks cramped between two dividers). */
+  .sidebar-item.melio-child > a {
+    background: transparent !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 9px 14px 9px 22px !important;
+  }
+  .sidebar-item.melio-child > a:hover {
+    background: #EBEFF2 !important;
+  }
+  /* Selected page: transparent bg, brand purple text */
+  .sidebar-item.melio-child[data-selected="true"] > a,
+  .sidebar-item.melio-child[data-selected="true"] > a:hover {
+    background: transparent !important;
+    color: #7849FF !important;
+    font-weight: 500 !important;
+  }
+
+  /* Subtabs: full-width grey row; vertical line drawn via gradient at page-title left edge */
+  .melio-child-subtabs {
+    display: block !important;
+    width: 100% !important;
+    background: linear-gradient(#ECECF1, #ECECF1) no-repeat 22px 6px / 2px calc(100% - 12px), #F4F6FA !important;
+    margin-left: 0 !important;
+    border-left: none !important;
+    padding: 2px 0 !important;
+  }
+  .melio-child-subtabs .melio-subtab {
+    margin: 0 !important;
+    padding: 3px 12px 3px 32px !important;
+  }
+
+  /* "No components found" renders as <strong> (weight 700) — override to stay within max fontWeight 600 */
+  #storybook-explorer-menu strong { font-weight: 500 !important; }
+</style>
+ 
+
+    <style>
+      #storybook-root[hidden] {
+        display: none !important;
+      }
+    </style>
+
+    
+  </head>
+  <body>
+    <div id="root"></div>
+
+    
+    <script>
+      
+        
+          window['FEATURES'] = {
+  "actions": true,
+  "argTypeTargetsV7": true,
+  "backgrounds": true,
+  "changeDetection": true,
+  "componentsManifest": true,
+  "controls": true,
+  "disallowImplicitActionsInRenderV8": true,
+  "highlight": true,
+  "interactions": true,
+  "legacyDecoratorFileOrder": false,
+  "measure": true,
+  "outline": true,
+  "sidebarOnboardingChecklist": false,
+  "viewport": true
+};
+        
+      
+        
+          window['REFS'] = {};
+        
+      
+        
+          window['LOGLEVEL'] = "info";
+        
+      
+        
+          window['DOCS_OPTIONS'] = {
+  "defaultName": "Docs"
+};
+        
+      
+        
+          window['CONFIG_TYPE'] = "PRODUCTION";
+        
+      
+        
+      
+        
+      
+        
+          window['TAGS_OPTIONS'] = {};
+        
+      
+        
+          window['STORYBOOK_BUILDER'] = "vite";
+        
+      
+        
+          window['STORYBOOK_FRAMEWORK'] = "react-vite";
+        
+      
+        
+          window['STORYBOOK_RENDERER'] = "react";
+        
+      
+        
+      
+    </script>
+    
+
+    <script type="module">
+      import './sb-manager/globals-runtime.js';
+
+      
+        import './sb-addons/storybook-core-server-presets-0/common-manager-bundle.js';
+      
+        import './sb-addons/a11y-1/manager-bundle.js';
+      
+        import './sb-addons/docs-2/manager-bundle.js';
+      
+        import './sb-addons/storybook-3/manager-bundle.js';
+      
+
+      import './sb-manager/runtime.js';
+    </script>
+  </body>
+</html>

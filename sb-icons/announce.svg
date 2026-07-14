@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Horn / cone -->
+  <path d="M8 8L18 3V21L8 16V8Z" fill="#18191B"/>
+  <!-- Speaker box -->
+  <path d="M3 9H8V15H3C2.448 15 2 14.552 2 14V10C2 9.448 2.448 9 3 9Z" fill="#18191B"/>
+  <!-- Handle cord below box -->
+  <path d="M6 15L7.5 19.5C7.75 20.25 7.35 21 6.6 21H5.4C4.65 21 4.25 20.25 4.5 19.5L6 15Z" fill="#18191B"/>
+</svg>
