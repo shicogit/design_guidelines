@@ -373,9 +373,7 @@ export function ColorResources() {
         body="Color tokens, styles, and Pantone references live in the BD Foundations Figma file. For accessibility checks or new palette approvals, contact the design team."
         links={[
           { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },
-          { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
-          { label: 'Accessibility checker', disabled: true },
-        ]}
+          { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },        ]}
       />
     </div>
   );

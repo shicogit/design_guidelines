@@ -668,9 +668,7 @@ export function AgentMelResources() {
         title="Need a new animation state?"
         body="Agent Mel's motion system and animation specs live in the DS Foundations Figma file. Reach out to the design team before creating new states or poses."
         links={[
-          { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },
-          { label: 'Animation brief', disabled: true },
-        ]}
+          { label: 'DS Foundations', href: 'https://www.figma.com/design/G6zl0KicUc7ZOA4euH5VEs/🤍-DS-Foundations-🤍', icon: <FigmaLogo /> },        ]}
       />
     </div>
   );

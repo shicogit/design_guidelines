@@ -601,9 +601,7 @@ export function LogoResources() {
         title="Need a logo file?"
         body="Source files, usage rules, and co-brand lockups live in the BD Foundations Figma file. Contact the design team for custom lockups or partner logo applications."
         links={[
-          { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },
-          { label: 'Brand toolkit', disabled: true },
-        ]}
+          { label: 'BD Foundations', href: 'https://www.figma.com/design/P7XSaH7fPQtWh83hKilsLQ/🟪-BD-Foundations', icon: <FigmaLogo /> },        ]}
       />
     </div>
   );

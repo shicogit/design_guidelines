@@ -556,10 +556,7 @@ export function ImageryResources() {
       <ResourceFooter
         title="Photography sourcing"
         body={<>Melio's photography must be licensed, authentic, and approved before use. Source from stock libraries or commission original photography - always brief against these guidelines. <Med>Contact the design team</Med> before commissioning; they review and approve image selects before delivery.</>}
-        links={[
-          { label: 'Stock library', disabled: true },
-          { label: 'Photo brief template', disabled: true },
-        ]}
+        links={[        ]}
       />
     </div>
   );
