@@ -218,7 +218,6 @@ addons.register('melio/move-bottom-pages', () => {
 addons.register('melio/wip-labels', () => {
   const WIP = [
     'identity-motion--docs',
-    'identity-visuals--docs',
     'visuals-simplified-ui--docs',
     'visuals-imagery--docs',
     'visuals-art--docs',
