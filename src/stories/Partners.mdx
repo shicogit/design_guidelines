@@ -1,6 +1,12 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { PartnersHub } from './PartnersHub';
+import { BrandPage } from './BrandPage';
+import { WipNote } from './WipNote';
 
 <Meta title="Marketing" />
 
-<PartnersHub />
+<BrandPage
+  title="Marketing"
+  intro="Resources and guidance for partners and freelancers working with the Melio marketing team."
+  guidelines={<WipNote text="The marketing page is still being built. Check back soon - we're on it." />}
+  tabs={false}
+/>

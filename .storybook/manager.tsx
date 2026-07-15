@@ -221,6 +221,7 @@ addons.register('melio/wip-labels', () => {
     'identity-visual-assets-simplified-ui--docs',
     'identity-visual-assets-imagery--docs',
     'writing-voice-tone--docs',
+    'marketing--docs',
   ];
   const PILL = 'display:inline-block;margin-left:6px;padding:1px 5px;font-size:10px;font-weight:600;line-height:1.5;border-radius:999px;background:#FEF9C3;color:#854D0E;border:1px solid #FDE047;vertical-align:middle;flex-shrink:0;font-family:inherit';
   const paint = () => {
@@ -251,7 +252,6 @@ addons.register('melio/wip-labels', () => {
 addons.register('melio/section-subtabs', (api) => {
   const PAGES: { id: string; sections: string[] }[] = [
     { id: 'writing-brand-narrative--docs',                sections: ['Principles', 'The Melio Difference', 'Brand Personality', 'Samples', 'Audiences'] },
-    { id: 'marketing--docs',                              sections: ['How we work', 'Assets'] },
     { id: 'identity-logo--docs',                          sections: ['melio', 'Co-Branding', 'Resources'] },
     { id: 'identity-color--docs',                         sections: ['Guidelines', 'Resources'] },
     { id: 'identity-typography--docs',                    sections: ['Guidelines', 'Resources'] },
