@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { FONT, COLOR, RADIUS, Med, Lead, SectionTitle, Hero, DsIcon, ResourceFooter, FigmaLogo } from './brandKit';
 
 const mods = import.meta.glob('../assets/guidelines/art/*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
@@ -45,17 +44,32 @@ function DoDontTile({ name, verdict, label }: { name: string; verdict: Verdict; 
       <img src={url} alt="" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
         <DsIcon name={m.icon} size={12} style={{ color: m.color, flexShrink: 0 }} />
-        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4 }}>{label}</span>
+        <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4, whiteSpace: 'nowrap' }}>{label}</span>
       </div>
     </div>
   );
 }
 
-const PAIRS: { do: { name: string; label: string }; dont: { name: string; label: string } }[] = [
-  { do: { name: 'do-thumbnails.png', label: 'Framed, offset heights' }, dont: { name: 'dont-thumbnails.png', label: 'Not crossing the edge' } },
-  { do: { name: 'do-simplified-ui.png', label: 'Anchored to a side' }, dont: { name: 'dont-simplified-ui.png', label: 'Over the top edge' } },
-  { do: { name: 'do-business-tag.png', label: 'Pinned to a corner' }, dont: { name: 'dont-business-tag.png', label: 'Centered on the subject' } },
-  { do: { name: 'do-transaction-tag.png', label: 'Crossing the edge' }, dont: { name: 'dont-transaction-tag.png', label: 'Floating in the center' } },
+// Grid matches the Typography page: one panel of do's, one panel of don'ts.
+const GALLERY_GRID: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+  gridTemplateRows: 'auto auto',
+  gap: 10,
+};
+
+const DO_ITEMS: { name: string; label: string }[] = [
+  { name: 'do-thumbnails.png', label: 'Framed & offset' },
+  { name: 'do-simplified-ui.png', label: 'On a side' },
+  { name: 'do-business-tag.png', label: 'On a corner' },
+  { name: 'do-transaction-tag.png', label: 'Crosses the edge' },
+];
+
+const DONT_ITEMS: { name: string; label: string }[] = [
+  { name: 'dont-thumbnails.png', label: 'No edge overlap' },
+  { name: 'dont-simplified-ui.png', label: 'On the top edge' },
+  { name: 'dont-business-tag.png', label: 'Centered on subject' },
+  { name: 'dont-transaction-tag.png', label: 'Floating center' },
 ];
 
 export function ArtGuidelines() {
@@ -109,14 +123,20 @@ export function ArtGuidelines() {
       />
 
       <SectionTitle sub="The same four elements, placed right and placed wrong.">Do's and don'ts</SectionTitle>
-      <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: 'auto', columnGap: 16, rowGap: 20 }}>
-          {PAIRS.map((p) => (
-            <Fragment key={p.do.name}>
-              <DoDontTile name={p.do.name} verdict="do" label={p.do.label} />
-              <DoDontTile name={p.dont.name} verdict="dont" label={p.dont.label} />
-            </Fragment>
-          ))}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+          <div style={GALLERY_GRID}>
+            {DO_ITEMS.map((it) => (
+              <DoDontTile key={it.name} name={it.name} verdict="do" label={it.label} />
+            ))}
+          </div>
+        </div>
+        <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+          <div style={GALLERY_GRID}>
+            {DONT_ITEMS.map((it) => (
+              <DoDontTile key={it.name} name={it.name} verdict="dont" label={it.label} />
+            ))}
+          </div>
         </div>
       </div>
 
