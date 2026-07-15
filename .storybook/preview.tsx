@@ -8,7 +8,7 @@ const preview: Preview = {
         order: [
           'Overview',
           'Identity',
-          ['Logo', 'Color', 'Typography', 'Iconography', 'Motion', 'Visuals'],
+          ['Logo', 'Color', 'Typography', 'Iconography', 'Motion', 'Visual identity'],
           'Visuals',
           ['Illustrations', 'Product kit', 'Simplified UI', 'Imagery', 'Art', 'Agent Mel'],
           'Writing',
