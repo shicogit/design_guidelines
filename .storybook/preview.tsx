@@ -15,6 +15,8 @@ const preview: Preview = {
             'Visual Assets',
             ['Overview', 'Illustrations', 'Icons', 'Motion', 'Simplified UI', 'Imagery', 'Agent Mel'],
           ],
+          'Visuals',
+          ['Overview'],
           'Writing',
           ['Brand Narrative', 'Voice & Tone'],
           'Standards',

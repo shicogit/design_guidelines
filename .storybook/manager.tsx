@@ -35,7 +35,7 @@ addons.register('melio/section-links', () => {
    collapse each group that doesn't contain the currently-selected page, so at most the group
    you deep-linked into stays open - and on Overview, all of them close. Runs once. */
 addons.register('melio/default-collapsed', () => {
-  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+  const GROUPS = ['foundations', 'identity', 'visuals', 'standards', 'writing'];
   setTimeout(() => {
     GROUPS.forEach((id) => {
       const root = document.getElementById(id);
@@ -51,7 +51,7 @@ addons.register('melio/default-collapsed', () => {
    Sidebar items are a flat list — group children are next-siblings of the heading div,
    not descendants. We click the first child item directly so Storybook handles routing. */
 addons.register('melio/section-navigate', () => {
-  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+  const GROUPS = ['foundations', 'identity', 'visuals', 'standards', 'writing'];
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement | null)?.closest?.('button[data-action="collapse-root"]') as HTMLElement | null;
     if (!btn) return;
@@ -83,7 +83,7 @@ addons.register('melio/section-navigate', () => {
 
 /* Accordion: opening one top-level group collapses the others, so only one is open at a time. */
 addons.register('melio/accordion', () => {
-  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+  const GROUPS = ['foundations', 'identity', 'visuals', 'standards', 'writing'];
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement | null)?.closest?.('button[data-action="collapse-root"]') as HTMLElement | null;
     if (!btn) return;
@@ -111,7 +111,7 @@ addons.register('melio/accordion', () => {
    bottom page is still selected (before section-navigate moves the selection into the group),
    making the section headers feel unclickable. */
 addons.register('melio/accordion-bottom', () => {
-  const GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+  const GROUPS = ['foundations', 'identity', 'visuals', 'standards', 'writing'];
   const BOTTOM = ['overview--docs', 'marketing--docs'];
   const enforce = () => {
     const selected = document.querySelector('.sidebar-item[data-selected="true"]');

@@ -114,7 +114,7 @@
 
     /* Drawer state: mark open group header + its children for CSS drawer styling */
     function updateDrawerState() {
-      var GROUPS = ['foundations', 'identity', 'standards', 'writing'];
+      var GROUPS = ['foundations', 'identity', 'visuals', 'standards', 'writing'];
       var BOTTOM = ['overview--docs', 'marketing--docs'];
       GROUPS.forEach(function(id) {
         var group = document.getElementById(id);
@@ -125,7 +125,7 @@
         var sib = group.nextElementSibling;
         var lastChild = null; // last row of the open drawer - gets the closing bottom outline
         while (sib) {
-          if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'standards' || sib.id === 'writing') break;
+          if (sib.id === 'foundations' || sib.id === 'identity' || sib.id === 'visuals' || sib.id === 'standards' || sib.id === 'writing') break;
           var itemId = sib.getAttribute('data-item-id') || '';
           if (BOTTOM.indexOf(itemId) !== -1) break;
           sib.classList.remove('melio-child-last');
@@ -186,8 +186,8 @@
 
     /* Force Writing section to look identical to Identity. Emotion runtime CSS
        wins over static !important rules; inline style.setProperty beats both. */
-    function styleWritingHeader() {
-      var writing = document.getElementById('writing');
+    function styleSectionHeader(id) {
+      var writing = document.getElementById(id);
       if (!writing) return;
 
       /* Container: full-width band, same box as #identity.
@@ -250,8 +250,9 @@
         btn.style.setProperty('background', isOpen ? 'white' : 'transparent', 'important');
       });
     }
-    setInterval(styleWritingHeader, 400);
-    setTimeout(styleWritingHeader, 800);
+    function styleSectionHeaders() { styleSectionHeader('writing'); styleSectionHeader('visuals'); }
+    setInterval(styleSectionHeaders, 400);
+    setTimeout(styleSectionHeaders, 800);
 
     setInterval(updateDrawerState, 400);
     setTimeout(updateDrawerState, 1000);
@@ -773,6 +774,52 @@
   /* Writing: child page open → text goes purple */
   #writing:has(.sidebar-item[data-selected="true"]) > button[data-action="collapse-root"] {
     color: #7849FF !important;
+  }
+
+  /* ---- Visuals: top-level section header, styled like Writing/Identity.
+     Button geometry/color/hover/font are set inline by styleSectionHeader('visuals');
+     these rules cover the pseudo-elements + states CSS-only. ---- */
+  #visuals > button[data-action="collapse-root"]::after {
+    content: '' !important;
+    position: absolute !important;
+    right: 14px !important;
+    top: 50% !important;
+    width: 13px !important;
+    height: 13px !important;
+    margin-top: -6.5px !important;
+    background-color: currentColor !important;
+    opacity: 0.45 !important;
+    -webkit-mask: url('sb-icons/chevron-down.svg') center / 13px 13px no-repeat;
+    mask: url('sb-icons/chevron-down.svg') center / 13px 13px no-repeat;
+    transform: rotate(-90deg) !important;
+    transition: transform 150ms ease !important;
+  }
+  #visuals > button[data-action="collapse-root"][aria-expanded="true"]::after {
+    transform: rotate(0deg) !important;
+  }
+  #visuals > button[data-action="collapse-root"]::before { display: none !important; }
+  #visuals .sidebar-subheading-action { display: none !important; }
+  #visuals.melio-open > button[data-action="collapse-root"] {
+    background: white !important;
+    color: #7849FF !important;
+    font-weight: 500 !important;
+  }
+  #visuals:has(.sidebar-item[data-selected="true"]) > button[data-action="collapse-root"] {
+    color: #7849FF !important;
+  }
+  /* Visuals stacks under Identity: no border-top (single divider), border-bottom only. */
+  [data-item-id="visuals"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-left: -12px !important;
+    padding-left: 12px !important;
+    border-top: none !important;
+    border-bottom: 2px solid #ECECF1 !important;
+  }
+  #visuals {
+    display: block !important;
+    width: calc(100% + 12px) !important;
+    margin-bottom: 0 !important;
   }
 
   /* Items in open drawer: grey section background */
