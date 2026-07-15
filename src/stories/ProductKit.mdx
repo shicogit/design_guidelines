@@ -1,0 +1,16 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { ProductGuidelines } from './IllustrationsGuidelines';
+import { IllustrationsDevelopers } from './IllustrationsDevelopers';
+
+<Meta title="Visuals/Product kit" />
+
+<BrandPage
+  title="Product kit"
+  crumbs={[{ label: 'Visuals', href: '?path=/docs/visuals-illustrations--docs' }]}
+  intro="The Melio and Partners illustration kits - built on Mel and recolorable to any partner's brand."
+  sections={[
+    { label: 'Guidelines', guidelines: <ProductGuidelines /> },
+    { label: 'Developers', guidelines: <IllustrationsDevelopers /> },
+  ]}
+/>

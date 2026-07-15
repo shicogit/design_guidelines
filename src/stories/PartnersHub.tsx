@@ -86,9 +86,9 @@ const PAGES = {
   logo: 'identity-logo--docs',
   color: 'identity-color--docs',
   type: 'identity-typography--docs',
-  illustrations: 'identity-visual-assets-illustrations--docs',
-  icons: 'identity-visual-assets-icons--docs',
-  agentMel: 'identity-visual-assets-agent-mel--docs',
+  illustrations: 'visuals-illustrations--docs',
+  icons: 'identity-iconography--docs',
+  agentMel: 'visuals-agent-mel--docs',
 };
 
 // ---------- small building blocks ----------

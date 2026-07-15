@@ -217,9 +217,11 @@ addons.register('melio/move-bottom-pages', () => {
 /* Yellow "WIP" pill next to pages that are still in progress. */
 addons.register('melio/wip-labels', () => {
   const WIP = [
-    'identity-visual-assets-motion--docs',
-    'identity-visual-assets-simplified-ui--docs',
-    'identity-visual-assets-imagery--docs',
+    'identity-motion--docs',
+    'identity-visuals--docs',
+    'visuals-simplified-ui--docs',
+    'visuals-imagery--docs',
+    'visuals-art--docs',
     'writing-voice-tone--docs',
     'marketing--docs',
   ];
@@ -255,10 +257,10 @@ addons.register('melio/section-subtabs', (api) => {
     { id: 'identity-logo--docs',                          sections: ['melio', 'Co-Branding', 'Resources'] },
     { id: 'identity-color--docs',                         sections: ['Guidelines', 'Resources'] },
     { id: 'identity-typography--docs',                    sections: ['Guidelines', 'Resources'] },
-    { id: 'identity-visual-assets-illustrations--docs',   sections: ['Mel', 'Product', 'Devs', 'Resources'] },
-    { id: 'identity-visual-assets-icons--docs',           sections: ['Guidelines', 'Resources'] },
-    { id: 'identity-visual-assets-imagery--docs',         sections: ['Guidelines', 'Mel in images'] },
-    { id: 'identity-visual-assets-agent-mel--docs',       sections: ['Guidelines', 'Resources'] },
+    { id: 'visuals-product-kit--docs',   sections: ['Guidelines', 'Developers'] },
+    { id: 'identity-iconography--docs',           sections: ['Guidelines', 'Resources'] },
+    { id: 'visuals-imagery--docs',         sections: ['Guidelines', 'Mel in images'] },
+    { id: 'visuals-agent-mel--docs',       sections: ['Guidelines', 'Resources'] },
   ];
   let activeSec = '';
 

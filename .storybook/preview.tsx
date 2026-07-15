@@ -8,15 +8,9 @@ const preview: Preview = {
         order: [
           'Overview',
           'Identity',
-          [
-            'Logo',
-            'Color',
-            'Typography',
-            'Visual Assets',
-            ['Overview', 'Illustrations', 'Icons', 'Motion', 'Simplified UI', 'Imagery', 'Agent Mel'],
-          ],
+          ['Logo', 'Color', 'Typography', 'Iconography', 'Motion', 'Visuals'],
           'Visuals',
-          ['Overview'],
+          ['Illustrations', 'Product kit', 'Simplified UI', 'Imagery', 'Art', 'Agent Mel'],
           'Writing',
           ['Brand Narrative', 'Voice & Tone'],
           'Standards',

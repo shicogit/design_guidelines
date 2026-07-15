@@ -1,0 +1,13 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { BrandPage } from './BrandPage';
+import { WipNote } from './WipNote';
+
+<Meta title="Visuals/Art" />
+
+<BrandPage
+  title="Art"
+  crumbs={[{ label: 'Visuals', href: '?path=/docs/visuals-illustrations--docs' }]}
+  intro="Art direction for Melio's brand visuals."
+  guidelines={<WipNote text="The art guidelines are still being built. Check back soon - we're on it." />}
+  tabs={false}
+/>

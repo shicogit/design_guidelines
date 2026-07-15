@@ -1,21 +1,13 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 import { BrandPage } from './BrandPage';
-import { ProductGuidelines, MelIntro, IllustrationsResources } from './IllustrationsGuidelines';
-import { IllustrationsDevelopers } from './IllustrationsDevelopers';
+import { MelIntro } from './IllustrationsGuidelines';
 
-<Meta title="Identity/Visual Assets/Illustrations" />
+<Meta title="Visuals/Illustrations" />
 
 <BrandPage
   title="Illustrations"
-  crumbs={[
-    { label: 'Identity', href: '?path=/docs/identity-color--docs' },
-    { label: 'Visual Assets', href: '?path=/docs/identity-visual-assets-overview--docs' },
-  ]}
+  crumbs={[{ label: 'Visuals', href: '?path=/docs/visuals-illustrations--docs' }]}
   intro="Illustrations bring warmth and personality to every Melio surface - built around Mel, our illustrated character."
-  sections={[
-    { label: 'Mel', guidelines: <MelIntro /> },
-    { label: 'Product', guidelines: <ProductGuidelines /> },
-    { label: 'Devs', guidelines: <IllustrationsDevelopers /> },
-    { label: 'Resources', guidelines: <IllustrationsResources /> },
-  ]}
+  guidelines={<MelIntro />}
+  tabs={false}
 />

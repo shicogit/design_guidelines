@@ -36,7 +36,7 @@ const CARDS: Card[] = [
   {
     title: 'Illustrations',
     desc: "Mel, Melio's illustrated brand mascot, and the illustration kits.",
-    href: docs('identity-visual-assets-illustrations--docs'),
+    href: docs('visuals-illustrations--docs'),
     thumb: 'thumbs/illustration.png',
   },
   {
@@ -48,37 +48,37 @@ const CARDS: Card[] = [
   {
     title: 'Simplified UI',
     desc: 'Simplified interfaces to the minimum needed to support a given product message.',
-    href: docs('identity-visual-assets-simplified-ui--docs'),
+    href: docs('visuals-simplified-ui--docs'),
     thumb: 'thumbs/simplified-ui.png',
   },
   {
     title: 'Icons',
     desc: "Melio's 300+ custom pixel-perfect icons.",
-    href: docs('identity-visual-assets-icons--docs'),
+    href: docs('identity-iconography--docs'),
     thumb: 'thumbs/icons.png',
   },
   {
     title: 'Partners illustrations',
     desc: 'Default illustrations in three sizes with a 2-color palette (for Melio & partners).',
-    href: docs('identity-visual-assets-illustrations--docs'),
+    href: docs('visuals-illustrations--docs'),
     thumb: 'thumbs/partners.png',
   },
   {
     title: 'Imagery',
     desc: 'Art direction and photography across the Melio brand.',
-    href: docs('identity-visual-assets-imagery--docs'),
+    href: docs('visuals-imagery--docs'),
     thumb: 'thumbs/art-direction.png',
   },
   {
     title: 'Mel in images',
     desc: 'Mel alongside real photography - in cities, offices, and branded environments.',
-    href: docs('identity-visual-assets-imagery--docs') + '&sec=Mel+in+images',
+    href: docs('visuals-imagery--docs') + '&sec=Mel+in+images',
     thumb: 'thumbs/mel-in-images.png',
   },
   {
     title: 'Agent Mel',
     desc: "Melio's AI - Agent Mel's visual language.",
-    href: docs('identity-visual-assets-agent-mel--docs'),
+    href: docs('visuals-agent-mel--docs'),
     thumb: 'thumbs/agent-mel.png',
   },
 ];
