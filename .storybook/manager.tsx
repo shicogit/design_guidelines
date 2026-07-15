@@ -220,7 +220,6 @@ addons.register('melio/wip-labels', () => {
     'identity-motion--docs',
     'visuals-simplified-ui--docs',
     'visuals-imagery--docs',
-    'visuals-art--docs',
     'writing-voice-tone--docs',
     'marketing--docs',
   ];
