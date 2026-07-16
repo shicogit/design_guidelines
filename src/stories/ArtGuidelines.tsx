@@ -7,10 +7,10 @@ const art = (name: string) => mods[`../assets/guidelines/art/${name}`];
 // Transparent-background diagrams sit on a grey panel; captions go on top (never bordered).
 type Figure = { name: string; caption?: string };
 
-function FigureGrid({ items, min = 280 }: { items: Figure[]; min?: number }) {
+function FigureGrid({ items }: { items: Figure[] }) {
   return (
     <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${min}px, 1fr))`, gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 16 }}>
         {items.map((f) => {
           const url = art(f.name);
           if (!url) return null;
