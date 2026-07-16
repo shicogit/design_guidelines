@@ -85,7 +85,7 @@ export function ArtGuidelines() {
     <div style={{ fontFamily: FONT, color: COLOR.ink }}>
       <Hero
         title="Composing with imagery"
-        visual={<img src={art('ui-two-example.png')} alt="" style={{ width: '100%', objectFit: 'contain', borderRadius: RADIUS.lg }} />}
+        visual={<img src={art('hero.png')} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />}
       >
         <Lead>
           This chapter covers the types of imagery used in Melio's visual language and how to properly
