@@ -53,8 +53,8 @@ function DoDontTile({ tile, verdict }: { tile: Tile; verdict: Verdict }) {
   );
 }
 
-// Two tiles per row, filling the width.
-const TILE_GRID: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 };
+// Three tiles per row, filling the width.
+const TILE_GRID: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 };
 
 // Gallery block: galleries on the left (standard content width), text on the right.
 function Gallery({ dos, donts, note }: { dos: Tile[]; donts: Tile[]; note: React.ReactNode }) {
@@ -112,12 +112,16 @@ export function ArtGuidelines() {
         ]}
       />
       <Gallery
-        dos={[{ name: 'dd-thumb-do-1.png' }, { name: 'dd-thumb-do-2.png' }, { name: 'dd-thumb-do-3.png' }]}
+        dos={[
+          { name: 'dd-thumb-do-1.png', label: 'Two thumbnails, offset heights' },
+          { name: 'dd-thumb-do-2.png', label: 'Single thumbnail on the edge' },
+          { name: 'dd-thumb-do-3.png', label: 'Crossing the image edge' },
+        ]}
         donts={[
           { name: 'dd-thumb-dont-1.png', label: 'Without border intersection' },
           { name: 'dd-thumb-dont-2.png', label: 'Without their frame' },
-          { name: 'dd-thumb-dont-3.png' },
-          { name: 'dd-thumb-dont-4.png' },
+          { name: 'dd-thumb-dont-3.png', label: 'Not touching the edge' },
+          { name: 'dd-thumb-dont-4.png', label: 'Overlapping the subject' },
         ]}
         note={<>Keep every thumbnail's frame and let it cross the SMB image's edge, at offset heights.</>}
       />
@@ -140,15 +144,21 @@ export function ArtGuidelines() {
       />
       <Gallery
         dos={[
-          { name: 'dd-ui-do-1.png' }, { name: 'dd-ui-do-2.png' }, { name: 'dd-ui-do-3.png' },
-          { name: 'dd-ui-do-4.png' }, { name: 'dd-ui-do-5.png' },
+          { name: 'dd-ui-do-1.png', label: 'On a side, off-center' },
+          { name: 'dd-ui-do-2.png', label: 'Single UI on a side' },
+          { name: 'dd-ui-do-3.png', label: 'Two UIs, opposing edges' },
+          { name: 'dd-ui-do-4.png', label: 'Opposing edges, offset' },
+          { name: 'dd-ui-do-5.png', label: 'Two UIs on opposite sides' },
         ]}
         donts={[
           { name: 'dd-ui-dont-1.png', label: 'On the top edge of the image' },
           { name: 'dd-ui-dont-2.png', label: 'On the center of an image' },
           { name: 'dd-ui-dont-3.png', label: 'Two UIs on a single edge' },
-          { name: 'dd-ui-dont-4.png' }, { name: 'dd-ui-dont-5.png' }, { name: 'dd-ui-dont-6.png' },
-          { name: 'dd-ui-dont-7.png' }, { name: 'dd-ui-dont-8.png' },
+          { name: 'dd-ui-dont-4.png', label: 'Two UIs on a single edge' },
+          { name: 'dd-ui-dont-5.png', label: 'Two UIs on a single edge' },
+          { name: 'dd-ui-dont-6.png', label: 'Two UIs on a single edge' },
+          { name: 'dd-ui-dont-7.png', label: 'Both stacked on one side' },
+          { name: 'dd-ui-dont-8.png', label: 'Both stacked on one side' },
         ]}
         note={<>Anchor mini-mocks to a side - never the top edge or the dead center of the image.</>}
       />
@@ -169,11 +179,15 @@ export function ArtGuidelines() {
         ]}
       />
       <Gallery
-        dos={[{ name: 'dd-txn-do-1.png' }, { name: 'dd-txn-do-2.png' }, { name: 'dd-txn-do-3.png' }]}
+        dos={[
+          { name: 'dd-txn-do-1.png', label: 'Crossing the edge' },
+          { name: 'dd-txn-do-2.png', label: 'Crossing the top edge' },
+          { name: 'dd-txn-do-3.png', label: 'Crossing a side edge' },
+        ]}
         donts={[
           { name: 'dd-txn-dont-1.png', label: 'Misplaced title badge' },
-          { name: 'dd-txn-dont-2.png' },
-          { name: 'dd-txn-dont-3.png' },
+          { name: 'dd-txn-dont-2.png', label: 'Floating over the subject' },
+          { name: 'dd-txn-dont-3.png', label: 'Not aligned to the edge' },
         ]}
         note={<>Pin the title badge to an edge; don't misplace, rescale, or center-justify it.</>}
       />
@@ -192,10 +206,13 @@ export function ArtGuidelines() {
         ]}
       />
       <Gallery
-        dos={[{ name: 'dd-biz-do-1.png' }, { name: 'dd-biz-do-2.png' }]}
+        dos={[
+          { name: 'dd-biz-do-1.png', label: 'In a bottom corner' },
+          { name: 'dd-biz-do-2.png', label: 'In a top corner' },
+        ]}
         donts={[
-          { name: 'dd-biz-dont-1.png', label: 'Not as the on-image positioning shows' },
-          { name: 'dd-biz-dont-2.png' },
+          { name: 'dd-biz-dont-1.png', label: 'Centered on the subject' },
+          { name: 'dd-biz-dont-2.png', label: 'In the top safe zone' },
         ]}
         note={<>Place the SMB badge exactly as the on-image positioning shows.</>}
       />
