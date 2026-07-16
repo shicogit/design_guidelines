@@ -35,14 +35,17 @@ const MARK: Record<Verdict, { icon: string; color: string }> = {
 
 type Tile = { name: string; label?: string };
 
+// Uniform-height tile so captions line up across a 2-up row; image already carries its frame.
 function DoDontTile({ tile, verdict }: { tile: Tile; verdict: Verdict }) {
   const url = art(tile.name);
   if (!url) return null;
   const m = MARK[verdict];
   return (
-    <div style={{ display: 'grid', gridTemplateRows: 'subgrid', gridRow: 'span 2', rowGap: 8 }}>
-      <img src={url} alt="" style={{ width: '100%', display: 'block', objectFit: 'contain', borderRadius: 0 }} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 4px' }}>
+    <div>
+      <div style={{ aspectRatio: '1 / 1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img src={url} alt="" style={{ maxWidth: '100%', maxHeight: '100%', display: 'block', objectFit: 'contain' }} />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 4px 0' }}>
         <DsIcon name={m.icon} size={12} style={{ color: m.color, flexShrink: 0 }} />
         {tile.label && <span style={{ fontSize: 13, color: '#4B4B57', lineHeight: 1.4 }}>{tile.label}</span>}
       </div>
@@ -50,25 +53,28 @@ function DoDontTile({ tile, verdict }: { tile: Tile; verdict: Verdict }) {
   );
 }
 
-const GALLERY_GRID: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-  gridTemplateRows: 'auto auto',
-  gap: 10,
-};
+// Two tiles per row, filling the width.
+const TILE_GRID: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 };
 
-function Gallery({ dos, donts }: { dos: Tile[]; donts: Tile[] }) {
+// Gallery block: galleries on the left (standard content width), text on the right.
+function Gallery({ dos, donts, note }: { dos: Tile[]; donts: Tile[]; note: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-      <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-        <div style={GALLERY_GRID}>
-          {dos.map((t) => <DoDontTile key={t.name} tile={t} verdict="do" />)}
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 36, margin: '16px 0 0', alignItems: 'start' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+          <div style={TILE_GRID}>
+            {dos.map((t) => <DoDontTile key={t.name} tile={t} verdict="do" />)}
+          </div>
+        </div>
+        <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
+          <div style={TILE_GRID}>
+            {donts.map((t) => <DoDontTile key={t.name} tile={t} verdict="dont" />)}
+          </div>
         </div>
       </div>
-      <div style={{ background: COLOR.panel, borderRadius: 15, padding: 16 }}>
-        <div style={GALLERY_GRID}>
-          {donts.map((t) => <DoDontTile key={t.name} tile={t} verdict="dont" />)}
-        </div>
+      <div>
+        <h3 style={{ fontFamily: FONT, fontSize: 17, fontWeight: 600, color: COLOR.ink, margin: '0 0 10px', lineHeight: 1.25 }}>Do's and don'ts</h3>
+        <p style={{ fontFamily: FONT, fontSize: 13, color: COLOR.body, lineHeight: 1.65, margin: 0 }}>{note}</p>
       </div>
     </div>
   );
@@ -113,6 +119,7 @@ export function ArtGuidelines() {
           { name: 'dd-thumb-dont-3.png' },
           { name: 'dd-thumb-dont-4.png' },
         ]}
+        note={<>Keep every thumbnail's frame and let it cross the SMB image's edge, at offset heights.</>}
       />
 
       {/* ---- Simplified UIs ---- */}
@@ -143,6 +150,7 @@ export function ArtGuidelines() {
           { name: 'dd-ui-dont-4.png' }, { name: 'dd-ui-dont-5.png' }, { name: 'dd-ui-dont-6.png' },
           { name: 'dd-ui-dont-7.png' }, { name: 'dd-ui-dont-8.png' },
         ]}
+        note={<>Anchor mini-mocks to a side - never the top edge or the dead center of the image.</>}
       />
 
       {/* ---- Value proposition ---- */}
@@ -167,6 +175,7 @@ export function ArtGuidelines() {
           { name: 'dd-txn-dont-2.png' },
           { name: 'dd-txn-dont-3.png' },
         ]}
+        note={<>Pin the title badge to an edge; don't misplace, rescale, or center-justify it.</>}
       />
 
       {/* ---- SMB badge ---- */}
@@ -188,6 +197,7 @@ export function ArtGuidelines() {
           { name: 'dd-biz-dont-1.png', label: 'Not as the on-image positioning shows' },
           { name: 'dd-biz-dont-2.png' },
         ]}
+        note={<>Place the SMB badge exactly as the on-image positioning shows.</>}
       />
 
       <ResourceFooter
