@@ -229,7 +229,7 @@ export function ArtGuidelines() {
           <DoDontGallery
             dos={[
               { name: 'dd-biz-do-1.png', label: 'In a bottom corner' },
-              { name: 'dd-biz-do-2.png', label: 'In a top corner' },
+              { name: 'dd-biz-do-2.png', label: 'Crossing edges' },
             ]}
             donts={[
               { name: 'dd-biz-dont-1.png', label: 'Centered on the subject' },
