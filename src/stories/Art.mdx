@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 import { BrandPage } from './BrandPage';
-import { ArtGuidelines } from './ArtGuidelines';
+import { ArtVendorThumbnails, ArtSimplifiedUIs, ArtValueProp, ArtSmbBadge } from './ArtGuidelines';
 
 <Meta title="Visuals/Art" />
 
@@ -8,6 +8,10 @@ import { ArtGuidelines } from './ArtGuidelines';
   title="Art"
   crumbs={[{ label: 'Visuals', href: '?path=/docs/visuals-illustrations--docs' }]}
   intro="How photography, product elements, and badges are composed into Melio's brand imagery."
-  guidelines={<ArtGuidelines />}
-  tabs={false}
+  sections={[
+    { label: 'Vendor thumbnails', guidelines: <ArtVendorThumbnails /> },
+    { label: 'Simplified UIs', guidelines: <ArtSimplifiedUIs /> },
+    { label: 'Value proposition', guidelines: <ArtValueProp /> },
+    { label: 'SMB badge', guidelines: <ArtSmbBadge /> },
+  ]}
 />

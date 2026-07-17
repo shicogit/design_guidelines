@@ -258,6 +258,7 @@ addons.register('melio/section-subtabs', (api) => {
     { id: 'visuals-product-kit--docs',   sections: ['Guidelines', 'Developers'] },
     { id: 'identity-iconography--docs',           sections: ['Guidelines', 'Resources'] },
     { id: 'visuals-imagery--docs',         sections: ['Guidelines', 'Mel in images'] },
+    { id: 'visuals-art--docs',             sections: ['Vendor thumbnails', 'Simplified UIs', 'Value proposition', 'SMB badge'] },
     { id: 'visuals-agent-mel--docs',       sections: ['Guidelines', 'Resources'] },
   ];
   let activeSec = '';

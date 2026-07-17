@@ -67,9 +67,12 @@ function DoDontGallery({ dos, donts }: { dos: Tile[]; donts: Tile[] }) {
   );
 }
 
-export function ArtGuidelines() {
+const wrap: React.CSSProperties = { fontFamily: FONT, color: COLOR.ink };
+
+// ===================== Section: Vendor thumbnails =====================
+export function ArtVendorThumbnails() {
   return (
-    <div style={{ fontFamily: FONT, color: COLOR.ink }}>
+    <div style={wrap}>
       <Hero
         title="Composing with imagery"
         visual={<img src={art('hero.png')} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />}
@@ -83,7 +86,6 @@ export function ArtGuidelines() {
         </Lead>
       </Hero>
 
-      {/* ---- Vendor thumbnails ---- */}
       <SectionTitle sub="Vendor and SMB unit dimensions.">Vendor thumbnails</SectionTitle>
       <SplitRow
         noDivider
@@ -120,8 +122,14 @@ export function ArtGuidelines() {
         title="Do's and don'ts"
         body="Keep every thumbnail's frame and let it cross the SMB image's edge, at offset heights."
       />
+    </div>
+  );
+}
 
-      {/* ---- Simplified UIs ---- */}
+// ===================== Section: Simplified UIs =====================
+export function ArtSimplifiedUIs() {
+  return (
+    <div style={wrap}>
       <SectionTitle sub="Images and simplified UIs.">Simplified UIs</SectionTitle>
       <SplitRow
         noDivider
@@ -168,9 +176,15 @@ export function ArtGuidelines() {
         title="Do's and don'ts"
         body="Anchor mini-mocks to a side - never the top edge or the dead center of the image."
       />
+    </div>
+  );
+}
 
-      {/* ---- Value proposition ---- */}
-      <SectionTitle sub="Simplified UIs and vendor thumbnails supporting the value proposition.">Supporting the value proposition</SectionTitle>
+// ===================== Section: Value proposition =====================
+export function ArtValueProp() {
+  return (
+    <div style={wrap}>
+      <SectionTitle sub="Simplified UIs and vendor thumbnails supporting the value proposition.">Value proposition</SectionTitle>
       <SplitRow
         noDivider
         visual={<FigurePanel name="value-prop.png" />}
@@ -210,8 +224,14 @@ export function ArtGuidelines() {
         title="Do's and don'ts"
         body="Pin the title badge to an edge; don't misplace, rescale, or center-justify it."
       />
+    </div>
+  );
+}
 
-      {/* ---- SMB badge ---- */}
+// ===================== Section: SMB badge =====================
+export function ArtSmbBadge() {
+  return (
+    <div style={wrap}>
       <SectionTitle sub="An informative component for images of real Melio users.">SMB badge</SectionTitle>
       <SplitRow
         noDivider
