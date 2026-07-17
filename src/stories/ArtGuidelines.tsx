@@ -159,8 +159,8 @@ export function ArtGuidelines() {
               { name: 'dd-ui-dont-2.png', label: 'On the center of an image' },
               { name: 'dd-ui-dont-3.png', label: 'Tags crowding the UI' },
               { name: 'dd-ui-dont-4.png', label: 'Title tag on top of UI' },
-              { name: 'dd-ui-dont-5.png', label: 'Title tag on top of UI' },
-              { name: 'dd-ui-dont-6.png', label: 'Title tag on top of UI' },
+              { name: 'dd-ui-dont-5.png', label: 'UI on top of thumbnail image' },
+              { name: 'dd-ui-dont-6.png', label: 'UI on top of thumbnail image' },
               { name: 'dd-ui-dont-7.png', label: 'Two UIs on a single edge' },
               { name: 'dd-ui-dont-8.png', label: 'Two UIs on a single edge' },
             ]}
