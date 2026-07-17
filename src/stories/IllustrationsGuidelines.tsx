@@ -557,6 +557,11 @@ export function ProductGuidelines() {
         </div>
       </div>
 
+      <SectionTitle sub="Every illustration plays on loop. Switch kits with the toggle; on Partners, pick a brand to recolor.">
+        The library
+      </SectionTitle>
+      <IllustrationGallery set={set} onSetChange={setSet} />
+
       {productIlloKitUrl && (
         <div style={{ marginBottom: 8 }}>
           <VideoClip src={productIlloKitUrl} />
