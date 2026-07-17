@@ -218,6 +218,43 @@ function BackToTop() {
 }
 
 
+// Per-section "Copy link" - copies a deep-link (?path=...&sec=<section>) to the current page's
+// section, so any section in the menu can be shared directly. Cold-loading it scrolls there.
+function SectionLink({ label }: { label: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    let url = `?sec=${encodeURIComponent(label)}`;
+    try {
+      const w = window.top || window;
+      const u = new URL(w.location.href);
+      u.searchParams.set('sec', label);
+      url = u.toString();
+    } catch { /* cross-origin */ }
+    (navigator.clipboard?.writeText(url) ?? Promise.reject()).then(
+      () => { setCopied(true); setTimeout(() => setCopied(false), 1600); },
+      () => { window.prompt('Copy this link', url); },
+    );
+  };
+  return (
+    <button
+      onClick={copy}
+      title="Copy a link to this section"
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
+        fontFamily: FONT, fontSize: 12, fontWeight: 600, lineHeight: 1,
+        color: copied ? '#1F9254' : '#6B7280',
+        background: '#FFFFFF', border: `1px solid ${copied ? '#B7E4C7' : '#D9D9E0'}`,
+        borderRadius: 999, padding: '5px 10px', transition: 'color 120ms, border-color 120ms, background 120ms',
+      }}
+      onMouseEnter={(e) => { if (!copied) e.currentTarget.style.background = '#FAFAFB'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = '#FFFFFF'; }}
+    >
+      <DsIcon name={copied ? 'checked' : 'link-open'} size={12} style={{ color: 'inherit' }} />
+      {copied ? 'Copied' : 'Copy link'}
+    </button>
+  );
+}
+
 export function BrandPage({ title, crumbs, intro, guidelines, resources, developers, tabs = true, sections }: Props) {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const [activeSec, setActiveSec] = useState(0);
@@ -313,6 +350,9 @@ export function BrandPage({ title, crumbs, intro, guidelines, resources, develop
                 ref={(el) => { sectionRefs.current[i] = el; }}
                 aria-label={s.label}
               >
+                <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 0 4px' }}>
+                  <SectionLink label={s.label} />
+                </div>
                 {s.guidelines ?? <Placeholder kind={s.label} />}
               </section>
             </div>
