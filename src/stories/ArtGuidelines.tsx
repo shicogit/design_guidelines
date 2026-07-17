@@ -160,9 +160,8 @@ export function ArtGuidelines() {
               { name: 'dd-ui-dont-3.png', label: 'Tags crowding the UI' },
               { name: 'dd-ui-dont-4.png', label: 'Title tag on top of UI' },
               { name: 'dd-ui-dont-5.png', label: 'UI on top of thumbnail image' },
-              { name: 'dd-ui-dont-6.png', label: 'UI on top of thumbnail image' },
               { name: 'dd-ui-dont-7.png', label: 'Two UIs on a single edge' },
-              { name: 'dd-ui-dont-8.png', label: 'Two UIs on a single edge' },
+              { name: 'dd-ui-dont-8.png', label: 'Two UIs on the center of an image' },
             ]}
           />
         }
@@ -198,13 +197,13 @@ export function ArtGuidelines() {
           <DoDontGallery
             dos={[
               { name: 'dd-txn-do-1.png', label: 'Crossing the edge' },
-              { name: 'dd-txn-do-2.png', label: 'Crossing the top edge' },
+              { name: 'dd-txn-do-2.png', label: 'Crossing the bottom middle edge' },
               { name: 'dd-txn-do-3.png', label: 'Crossing a side edge' },
             ]}
             donts={[
-              { name: 'dd-txn-dont-1.png', label: 'Misplaced title badge' },
+              { name: 'dd-txn-dont-1.png', label: 'Centered, not crossing edges' },
               { name: 'dd-txn-dont-2.png', label: 'Floating over the subject' },
-              { name: 'dd-txn-dont-3.png', label: 'Not aligned to the edge' },
+              { name: 'dd-txn-dont-3.png', label: "Hiding subject's face" },
             ]}
           />
         }
