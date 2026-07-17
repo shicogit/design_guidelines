@@ -1,4 +1,48 @@
-import { FONT, COLOR, RADIUS, Med, Lead, SectionTitle, Hero, DsIcon, ResourceFooter, FigmaLogo } from './brandKit';
+import { useState } from 'react';
+import { FONT, COLOR, RADIUS, Med, Lead, Hero, DsIcon, ResourceFooter, FigmaLogo } from './brandKit';
+
+const ART_QUERY = '?path=/docs/visuals-art--docs';
+
+// Section heading with a "Copy link" control that yields a shareable deep-link to this section.
+function SectionHeader({ title, sub, sec }: { title: string; sub?: string; sec: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    let base = `/${ART_QUERY}`;
+    try {
+      const t = window.top || window;
+      base = `${t.location.origin}${t.location.pathname}${ART_QUERY}`;
+    } catch { /* cross-origin: fall back to relative path */ }
+    const url = `${base}&sec=${encodeURIComponent(sec)}`;
+    (navigator.clipboard?.writeText(url) ?? Promise.reject()).then(
+      () => { setCopied(true); setTimeout(() => setCopied(false), 1600); },
+      () => { window.prompt('Copy this link', url); }
+    );
+  };
+  return (
+    <div style={{ margin: '32px 0 12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ fontSize: 22, fontWeight: 600, color: COLOR.ink, lineHeight: 1.25 }}>{title}</div>
+        <button
+          onClick={copy}
+          title="Copy a link to this section"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
+            fontFamily: FONT, fontSize: 12, fontWeight: 600, lineHeight: 1,
+            color: copied ? '#1F9254' : COLOR.muted,
+            background: COLOR.white, border: `1px solid ${copied ? '#B7E4C7' : COLOR.outline}`,
+            borderRadius: 999, padding: '5px 10px', transition: 'color 120ms, border-color 120ms, background 120ms',
+          }}
+          onMouseEnter={(e) => { if (!copied) e.currentTarget.style.background = COLOR.hover; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = COLOR.white; }}
+        >
+          <DsIcon name={copied ? 'checked' : 'link-open'} size={12} style={{ color: 'inherit' }} />
+          {copied ? 'Copied' : 'Copy link'}
+        </button>
+      </div>
+      {sub && <p style={{ fontSize: 14, color: COLOR.muted, margin: '6px 0 0', lineHeight: 1.6 }}>{sub}</p>}
+    </div>
+  );
+}
 
 const mods = import.meta.glob('../assets/guidelines/art/*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const art = (name: string) => mods[`../assets/guidelines/art/${name}`];
@@ -86,7 +130,7 @@ export function ArtVendorThumbnails() {
         </Lead>
       </Hero>
 
-      <SectionTitle sub="Vendor and SMB unit dimensions.">Vendor thumbnails</SectionTitle>
+      <SectionHeader sec="Vendor thumbnails" title="Vendor thumbnails" sub="Vendor and SMB unit dimensions." />
       <SplitRow
         noDivider
         visual={<FigurePanel name="thumbnail-single.png" />}
@@ -130,7 +174,7 @@ export function ArtVendorThumbnails() {
 export function ArtSimplifiedUIs() {
   return (
     <div style={wrap}>
-      <SectionTitle sub="Images and simplified UIs.">Simplified UIs</SectionTitle>
+      <SectionHeader sec="Simplified UIs" title="Simplified UIs" sub="Images and simplified UIs." />
       <SplitRow
         noDivider
         visual={<FigurePanel name="ui-vertical.png" />}
@@ -184,7 +228,7 @@ export function ArtSimplifiedUIs() {
 export function ArtValueProp() {
   return (
     <div style={wrap}>
-      <SectionTitle sub="Simplified UIs and vendor thumbnails supporting the value proposition.">Value proposition</SectionTitle>
+      <SectionHeader sec="Value proposition" title="Value proposition" sub="Simplified UIs and vendor thumbnails supporting the value proposition." />
       <SplitRow
         noDivider
         visual={<FigurePanel name="value-prop.png" />}
@@ -232,7 +276,7 @@ export function ArtValueProp() {
 export function ArtSmbBadge() {
   return (
     <div style={wrap}>
-      <SectionTitle sub="An informative component for images of real Melio users.">SMB badge</SectionTitle>
+      <SectionHeader sec="SMB badge" title="SMB badge" sub="An informative component for images of real Melio users." />
       <SplitRow
         noDivider
         visual={<FigurePanel name="smb-badge-dims.png" />}
