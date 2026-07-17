@@ -563,7 +563,7 @@ export function ProductGuidelines() {
       <IllustrationGallery set={set} onSetChange={setSet} />
 
       {productIlloKitUrl && (
-        <div style={{ marginBottom: 8 }}>
+        <div style={{ marginTop: 28, marginBottom: 8 }}>
           <VideoClip src={productIlloKitUrl} />
         </div>
       )}
